@@ -7,28 +7,85 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { PoseLandmark } from '../pose';
 import { WS_URL } from '../config';
 
+export interface CandidateExercise {
+  exercise: string;
+  confidence: number;
+  source: string;
+}
+
+export interface ActionViolation {
+  type: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high';
+  confidence: number;
+  joints: string[];
+  correction: string;
+  consecutive_frames: number;
+}
+
+export interface ActionReport {
+  schema_version: 'v1';
+  session_id: string;
+  timestamp_ms: number;
+  recognition_status: 'unknown' | 'candidate' | 'confirmed';
+  recognized_exercise: string;
+  recognition_confidence: number;
+  candidate_exercises: CandidateExercise[];
+  specialist: string | null;
+  phase: string;
+  repetition: number;
+  pose_quality: 'good' | 'acceptable' | 'unreliable';
+  camera_view: string;
+  metrics: {
+    joint_angles: Record<string, number>;
+    hold_seconds: number;
+    rep_quality: number | null;
+    partial_reps: number;
+  };
+  violations: ActionViolation[];
+  agent_context: {
+    should_coach_now: boolean;
+    priority: 'none' | 'encouragement' | 'form_correction' | 'safety';
+    recommended_intent: string;
+    repeated_error_count: number;
+    possible_fatigue: boolean;
+  };
+}
+
+export interface RecognitionEvent {
+  event: 'exercise_confirmed' | 'exercise_switched';
+  session_id: string;
+  timestamp_ms: number;
+  exercise: string;
+  confidence: number;
+  specialist: string;
+  message: string;
+}
+
 export interface FormCorrectionResponse {
   state: 'idle' | 'stationary' | 'scanning' | 'active';
   current_exercise: string | null;
   exercise_display: string;
   rep_count: number;
   rep_phase: string;
+  phase_display?: string;
   is_rep_valid: boolean;
   violations: string[];
   corrections: string[];
   correction_message: string;
   joint_colors: Record<string, string>;
   confidence: number;
+  is_stationary?: boolean;
   timestamp: number;
+  exercise_confidence?: number;
+  form_confidence?: number;
+  signal_quality?: string;
+  exercise_variant?: string | null;
+  exercise_source?: string;
+  camera_view?: string;
   hold_seconds?: number;
-  recognition_event?: {
-    event: 'exercise_confirmed' | 'exercise_switched';
-    exercise: string;
-    confidence: number;
-    specialist: string;
-    message: string;
-  } | null;
-  action_report?: Record<string, unknown>;
+  recognition_event?: RecognitionEvent | null;
+  action_report?: ActionReport;
 }
 
 export interface UsePoseStreamOptions {

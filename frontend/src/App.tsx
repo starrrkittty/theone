@@ -6,8 +6,18 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { VideoPlayer } from './components/VideoPlayer';
 import { ExerciseDisplay } from './components/ExerciseDisplay';
+import { AgentInspector } from './components/AgentInspector';
 import { useVideoProcessor } from './hooks/useVideoProcessor';
-import { usePoseStream, FormCorrectionResponse } from './hooks/usePoseStream';
+import {
+  usePoseStream,
+  FormCorrectionResponse,
+  RecognitionEvent,
+} from './hooks/usePoseStream';
+import {
+  accumulateAgentTelemetry,
+  createAgentTelemetry,
+  type EvaluationExercise,
+} from './agent/telemetry';
 import { PoseLandmark } from './pose';
 import {
   STGCNClassifier,
@@ -57,6 +67,12 @@ function extractNormalisedFrame(
 function App() {
   const [currentLandmarks, setCurrentLandmarks] = useState<PoseLandmark[] | null>(null);
   const [formResponse, setFormResponse] = useState<FormCorrectionResponse | null>(null);
+  const [agentTelemetry, setAgentTelemetry] = useState(createAgentTelemetry);
+  const [expectedExercise, setExpectedExercise] = useState<EvaluationExercise | null>(null);
+  const expectedExerciseRef = useRef<EvaluationExercise | null>(null);
+  const [recognitionHistory, setRecognitionHistory] = useState<RecognitionEvent[]>([]);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const seenRecognitionEventsRef = useRef<Set<string>>(new Set());
 
   const [poseLibraryExercise, setPoseLibraryExercise] = useState('squat');
   const [poseLibraryMaxFrames, setPoseLibraryMaxFrames] = useState(180);
@@ -118,11 +134,53 @@ function App() {
     autoConnect: false,  // Don't auto-connect, we'll manage this ourselves
     onResponse: (response) => {
       setFormResponse(response);
+      setAgentTelemetry((previous) => accumulateAgentTelemetry(
+        previous,
+        response,
+        performance.now(),
+        expectedExerciseRef.current,
+      ));
+
+      const recognitionEvent = response.recognition_event;
+      if (recognitionEvent) {
+        const eventKey = [
+          recognitionEvent.session_id,
+          recognitionEvent.event,
+          recognitionEvent.exercise,
+          recognitionEvent.timestamp_ms,
+        ].join(':');
+        if (!seenRecognitionEventsRef.current.has(eventKey)) {
+          seenRecognitionEventsRef.current.add(eventKey);
+          setRecognitionHistory((previous) => [recognitionEvent, ...previous].slice(0, 8));
+          if (voiceEnabled && 'speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(recognitionEvent.message);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+          }
+        }
+      }
     },
     onError: (error) => {
       console.error('WebSocket error:', error);
     },
   });
+
+  const resetAgentTelemetry = useCallback(() => {
+    setAgentTelemetry(createAgentTelemetry());
+    setRecognitionHistory([]);
+    seenRecognitionEventsRef.current.clear();
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+  }, []);
+
+  const handleExpectedExerciseChange = useCallback((value: EvaluationExercise | null) => {
+    expectedExerciseRef.current = value;
+    setExpectedExercise(value);
+    resetAgentTelemetry();
+  }, [resetAgentTelemetry]);
 
   // Connect/disconnect WebSocket based on processing state
   useEffect(() => {
@@ -296,13 +354,15 @@ function App() {
   }, [isPoseLibraryRecording, isProcessing, stopPoseLibraryRecording]);
 
   const handleFileSelect = useCallback(async (file: File) => {
+    resetAgentTelemetry();
     await loadFile(file);
-  }, [loadFile]);
+  }, [loadFile, resetAgentTelemetry]);
 
   const handleStartCamera = useCallback(async () => {
+    resetAgentTelemetry();
     await startWebcam({ facingMode: 'user' });
     await play();
-  }, [startWebcam, play]);
+  }, [startWebcam, play, resetAgentTelemetry]);
 
   const handleStopCamera = useCallback(() => {
     stopSource();
@@ -320,7 +380,10 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Activity className="w-8 h-8 text-blue-500" />
-            <h1 className="text-xl font-bold">Exercise Form Correction</h1>
+            <div>
+              <h1 className="text-xl font-bold">AI 智能健身私教 · Agent A</h1>
+              <p className="text-xs text-gray-400">自动识别、动作分析与专项 Agent 路由</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
@@ -403,22 +466,32 @@ function App() {
               isConnected={isConnected}
             />
 
+            <AgentInspector
+              response={formResponse}
+              telemetry={agentTelemetry}
+              expectedExercise={expectedExercise}
+              recognitionHistory={recognitionHistory}
+              voiceEnabled={voiceEnabled}
+              onExpectedExerciseChange={handleExpectedExerciseChange}
+              onVoiceEnabledChange={setVoiceEnabled}
+              onResetTelemetry={resetAgentTelemetry}
+            />
+
             {/* Instructions */}
             <div className="bg-gray-800 rounded-xl p-4">
-              <h3 className="text-lg font-semibold mb-3">How to Use</h3>
+              <h3 className="text-lg font-semibold mb-3">使用方法</h3>
               <ol className="space-y-2 text-sm text-gray-400 list-decimal list-inside">
-                <li>Click Start Camera to open your device camera</li>
-                <li>Or upload a video and press play</li>
-                <li>The system will detect your exercise automatically</li>
-                <li>Watch for form corrections in real-time</li>
-                <li>Green skeleton = good form</li>
-                <li>Red skeleton = needs correction</li>
+                <li>打开开发摄像头，或上传测试视频并播放</li>
+                <li>无需选择运动，系统会自动产生候选并确认</li>
+                <li>确认后自动播报，并路由到对应专项 Agent</li>
+                <li>绿色骨架表示正常，红色关节表示需要纠正</li>
+                <li>评测视频可填写 Ground Truth，实时查看指标</li>
               </ol>
             </div>
 
             {/* Supported exercises */}
             <div className="bg-gray-800 rounded-xl p-4">
-              <h3 className="text-lg font-semibold mb-3">Supported Exercises</h3>
+              <h3 className="text-lg font-semibold mb-3">当前支持的运动</h3>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
@@ -427,6 +500,10 @@ function App() {
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
                   <span className="text-gray-300">Push-ups</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="text-gray-300">Forearm Plank (beta)</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-blue-500" />
@@ -594,7 +671,7 @@ function App() {
       {/* Footer */}
       <footer className="bg-gray-800 border-t border-gray-700 mt-8">
         <div className="max-w-7xl mx-auto px-4 py-4 text-center text-sm text-gray-400">
-          Exercise Form Correction System - Powered by MediaPipe
+          Agent A 开发控制台 · MediaPipe + 时序识别 + URDF 运动学
         </div>
       </footer>
     </div>

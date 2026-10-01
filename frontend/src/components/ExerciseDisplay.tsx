@@ -53,7 +53,7 @@ export const ExerciseDisplay: React.FC<ExerciseDisplayProps> = ({
       <div className={`bg-gray-800 rounded-xl p-4 text-white ${className}`}>
         <div className="flex items-center gap-2 text-gray-400">
           <Loader className="w-5 h-5" />
-          <span>Connecting to server...</span>
+          <span>等待视频开始后连接分析服务...</span>
         </div>
       </div>
     );
