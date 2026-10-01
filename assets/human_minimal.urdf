@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot name="ai_coach_human_v1">
+  <link name="pelvis"/>
+  <link name="left_thigh"/>
+  <link name="left_shin"/>
+  <link name="left_foot"/>
+  <link name="right_thigh"/>
+  <link name="right_shin"/>
+  <link name="right_foot"/>
+
+  <joint name="left_hip_joint" type="revolute">
+    <parent link="pelvis"/>
+    <child link="left_thigh"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.10" upper="1.05" effort="1" velocity="5"/>
+  </joint>
+  <joint name="left_knee_joint" type="revolute">
+    <parent link="left_thigh"/>
+    <child link="left_shin"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="2.53" effort="1" velocity="5"/>
+  </joint>
+  <joint name="left_ankle_joint" type="revolute">
+    <parent link="left_shin"/>
+    <child link="left_foot"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.79" upper="0.79" effort="1" velocity="5"/>
+  </joint>
+  <joint name="right_hip_joint" type="revolute">
+    <parent link="pelvis"/>
+    <child link="right_thigh"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.10" upper="1.05" effort="1" velocity="5"/>
+  </joint>
+  <joint name="right_knee_joint" type="revolute">
+    <parent link="right_thigh"/>
+    <child link="right_shin"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="2.53" effort="1" velocity="5"/>
+  </joint>
+  <joint name="right_ankle_joint" type="revolute">
+    <parent link="right_shin"/>
+    <child link="right_foot"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.79" upper="0.79" effort="1" velocity="5"/>
+  </joint>
+</robot>
