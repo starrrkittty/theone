@@ -17,6 +17,7 @@ export const IS_DEVELOPMENT = import.meta.env.DEV;
 
 // MediaPipe model path
 export const MEDIAPIPE_MODEL_PATH = '/models/pose_landmarker_lite.task';
+export const MEDIAPIPE_WASM_PATH = '/mediapipe-wasm';
 
 export default {
   API_BASE_URL,
@@ -24,4 +25,5 @@ export default {
   IS_PRODUCTION,
   IS_DEVELOPMENT,
   MEDIAPIPE_MODEL_PATH,
+  MEDIAPIPE_WASM_PATH,
 };

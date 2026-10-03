@@ -2,7 +2,6 @@ export const WINDOW = 30;
 export const N_JOINTS = 17;
 export const COORD_DIM = 3;
 const HIDDEN = 64;
-const N_CLASSES = 4;
 
 export const KEY_JOINT_INDICES = [11,12,13,14,15,16,23,24,25,26,27,28,0,7,8,9,10] as const;
 
@@ -106,11 +105,12 @@ export class STGCNClassifier {
     }
 
     // FC -> (N_CLASSES,)
-    const logits = new Float32Array(N_CLASSES);
-    for (let c = 0; c < N_CLASSES; c++) {
+    const nClasses = W.labels.length;
+    const logits = new Float32Array(nClasses);
+    for (let c = 0; c < nClasses; c++) {
       let sum = W.fc_b[c];
       for (let i = 0; i < N_JOINTS * HIDDEN; i++) {
-        sum += pooled[i] * W.fc_W[i * N_CLASSES + c];
+        sum += pooled[i] * W.fc_W[i * nClasses + c];
       }
       logits[c] = sum;
     }
@@ -118,7 +118,7 @@ export class STGCNClassifier {
     const probs = this._softmax(logits);
 
     const out: Record<string, number> = {};
-    for (let c = 0; c < N_CLASSES; c++) {
+    for (let c = 0; c < nClasses; c++) {
       out[W.labels[c]] = probs[c];
     }
     return out;

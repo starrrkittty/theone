@@ -18,7 +18,7 @@ import {
   createAgentTelemetry,
   type EvaluationExercise,
 } from './agent/telemetry';
-import { PoseLandmark } from './pose';
+import { PoseLandmark, type PoseTrackingInfo } from './pose';
 import {
   STGCNClassifier,
   WINDOW as STGCN_WINDOW,
@@ -72,6 +72,8 @@ function App() {
   const expectedExerciseRef = useRef<EvaluationExercise | null>(null);
   const [recognitionHistory, setRecognitionHistory] = useState<RecognitionEvent[]>([]);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [poseTracking, setPoseTracking] = useState<PoseTrackingInfo | null>(null);
+  const [stgcnProbabilities, setStgcnProbabilities] = useState<Record<string, number> | null>(null);
   const seenRecognitionEventsRef = useRef<Set<string>>(new Set());
 
   const [poseLibraryExercise, setPoseLibraryExercise] = useState('squat');
@@ -117,6 +119,7 @@ function App() {
   } = useVideoProcessor({
     onPoseResult: (result) => {
       setCurrentLandmarks(result.landmarks);
+      setPoseTracking(result.tracking);
     },
     onError: (error) => {
       console.error('Video processing error:', error);
@@ -189,6 +192,7 @@ function App() {
     } else if (!isProcessing && isConnected) {
       stgcnWindowRef.current = [];
       clientProbsRef.current = null;
+      setStgcnProbabilities(null);
       stgcnLastInferRef.current = 0;
       disconnect();
     }
@@ -221,13 +225,19 @@ function App() {
         ) {
           const probs = clf.infer(stgcnWindowRef.current);
           stgcnLastInferRef.current = now;
-          if (probs) clientProbsRef.current = probs;
+          if (probs) {
+            clientProbsRef.current = probs;
+            setStgcnProbabilities(probs);
+          }
         }
       }
     }
 
+    // Do not update counters from an ambiguous multi-person frame.  The
+    // selected skeleton remains visible so the developer can fix framing.
+    if (poseTracking && !poseTracking.subjectLocked) return;
     sendLandmarks(currentLandmarks, now, clientProbsRef.current);
-  }, [currentLandmarks, isConnected, isProcessing, sendLandmarks]);
+  }, [currentLandmarks, isConnected, isProcessing, poseTracking, sendLandmarks]);
 
   const updatePoseLibraryStats = useCallback(() => {
     const start = poseLibraryStartRef.current;
@@ -469,6 +479,8 @@ function App() {
             <AgentInspector
               response={formResponse}
               telemetry={agentTelemetry}
+              poseTracking={poseTracking}
+              clientProbabilities={stgcnProbabilities}
               expectedExercise={expectedExercise}
               recognitionHistory={recognitionHistory}
               voiceEnabled={voiceEnabled}

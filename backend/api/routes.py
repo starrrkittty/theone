@@ -6,7 +6,7 @@ import time
 from typing import Optional
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from config.settings import settings
 from exercises.registry import supported_exercises_payload
@@ -46,6 +46,7 @@ class FormCorrectionResponse(BaseModel):
     hold_seconds: float = 0.0
     recognition_event: Optional[RecognitionEvent] = None
     action_report: ActionReport
+    recognition_debug: dict = Field(default_factory=dict)
 
 
 class ConnectionManager:
@@ -151,6 +152,15 @@ async def pose_websocket(websocket: WebSocket, client_id: str):
                 hold_seconds=float(getattr(result, "hold_seconds", 0.0)) if result else 0.0,
                 recognition_event=recognition_event,
                 action_report=report,
+                recognition_debug={
+                    "candidate": (
+                        state.candidate_exercise.value
+                        if state.candidate_exercise else None
+                    ),
+                    "candidate_confidence": state.candidate_confidence,
+                    "rejection_reason": state.rejection_reason,
+                    "external": state.external_debug,
+                },
             )
 
             await manager.send_response(client_id, response)

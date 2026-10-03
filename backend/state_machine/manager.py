@@ -86,6 +86,8 @@ class FormManagerState:
     frames_processed: int = 0
     candidate_exercise: Optional[ExerciseType] = None
     candidate_confidence: float = 0.0
+    rejection_reason: Optional[str] = None
+    external_debug: dict = field(default_factory=dict)
 
 
 class FormManager:
@@ -129,6 +131,16 @@ class FormManager:
         self._current_below_drop_since: Optional[float] = None
         self._last_candidate_exercise: Optional[ExerciseType] = None
         self._last_candidate_confidence: float = 0.0
+        self._last_rejection_reason: Optional[str] = None
+        self._last_external_debug: dict = {
+            "received": False,
+            "accepted": False,
+            "scope": None,
+            "raw_top1": None,
+            "mapped_top1": None,
+            "confidence": 0.0,
+            "reason": "no_external_probabilities",
+        }
 
     def process_frame(
         self,
@@ -145,6 +157,7 @@ class FormManager:
             payload = {"landmarks": landmarks, "timestamp": now * 1000}
             validated = self._validator.validate(payload)
         except ValidationError:
+            self._last_rejection_reason = "invalid_landmarks"
             return self._create_state(0.0, 0.0, "unreliable", [])
 
         # 2. Kalman filter
@@ -258,6 +271,12 @@ class FormManager:
         ex_name = _EX_TYPE_TO_NAME.get(candidate_exercise or self._current_exercise)
         conf_result = self._confidence_composer.compose(
             candidate_conf, frame, validated.quality_flags, ex_name
+        )
+        self._last_rejection_reason = self._recognition_rejection_reason(
+            candidate_exercise,
+            candidate_conf,
+            conf_result.signal_quality,
+            new_sys_state,
         )
 
         # 8. Exercise switching with hysteresis + rep-phase gating
@@ -498,30 +517,77 @@ class FormManager:
     ) -> tuple[Optional[ExerciseType], float, str]:
         """Fuse optional ST-GCN/ActionCLIP scores with local pose evidence."""
         evidence = parse_external_probabilities(probabilities)
+        self._last_external_debug = {
+            "received": bool(probabilities),
+            "accepted": False,
+            "scope": evidence.scope if evidence else None,
+            "raw_top1": evidence.raw_top1 if evidence else None,
+            "mapped_top1": evidence.top1 if evidence else None,
+            "confidence": evidence.top1_confidence if evidence else 0.0,
+            "margin": evidence.margin if evidence else 0.0,
+            "reason": "invalid_or_empty_probabilities" if evidence is None else "pending",
+        }
         if evidence is None or evidence.top1 == "unknown":
+            if evidence is not None:
+                self._last_external_debug["reason"] = "external_predicted_unknown"
             return candidate_exercise, candidate_conf, candidate_source
         if (
             evidence.top1_confidence < settings.EXTERNAL_RECOGNITION_THRESHOLD
             or evidence.margin < settings.EXTERNAL_RECOGNITION_MARGIN
         ):
+            self._last_external_debug["reason"] = "below_confidence_or_margin_threshold"
             return candidate_exercise, candidate_conf, candidate_source
 
         try:
             external_exercise = ExerciseType(evidence.top1)
         except ValueError:
+            self._last_external_debug["reason"] = "unsupported_mapped_label"
+            return candidate_exercise, candidate_conf, candidate_source
+
+        curl_types = {
+            ExerciseType.BICEP_CURL,
+            ExerciseType.ALTERNATE_BICEP_CURL,
+        }
+        # The bundled ST-GCN only distinguishes curl variants.  It must never
+        # create a curl candidate from an unrelated or unknown motion.  It is
+        # used only after the geometry/HMM pipeline has established that the
+        # current motion is curl-like.
+        if evidence.scope == "curl_only" and candidate_exercise not in curl_types:
+            self._last_external_debug["reason"] = "curl_model_requires_curl_candidate"
             return candidate_exercise, candidate_conf, candidate_source
 
         if candidate_exercise == external_exercise:
             fused = 0.55 * candidate_conf + 0.45 * evidence.top1_confidence
+            self._last_external_debug.update(accepted=True, reason="fused_with_candidate")
             return external_exercise, max(candidate_conf, fused), "fused"
         if candidate_exercise is None:
+            self._last_external_debug.update(accepted=True, reason="supplied_missing_candidate")
             return external_exercise, evidence.top1_confidence, "external"
         if (
             evidence.top1_confidence >= settings.EXTERNAL_OVERRIDE_THRESHOLD
             and candidate_conf < settings.EXERCISE_SWITCH_CONFIDENCE
         ):
+            self._last_external_debug.update(accepted=True, reason="high_confidence_override")
             return external_exercise, evidence.top1_confidence, "external"
+        self._last_external_debug["reason"] = "disagreed_without_override"
         return candidate_exercise, candidate_conf, candidate_source
+
+    def _recognition_rejection_reason(
+        self,
+        candidate_exercise: Optional[ExerciseType],
+        candidate_conf: float,
+        signal_quality: str,
+        system_state: SystemState,
+    ) -> Optional[str]:
+        if signal_quality == "unreliable":
+            return "low_pose_quality"
+        if candidate_exercise is None:
+            return "no_supported_motion_match"
+        if candidate_conf < settings.MIN_CONFIDENCE_FOR_REPS:
+            return "candidate_confidence_too_low"
+        if system_state == SystemState.STATIONARY and candidate_exercise != ExerciseType.PLANK:
+            return "stationary_non_plank"
+        return None
 
     def _maybe_switch_exercise(
         self,
@@ -629,6 +695,8 @@ class FormManager:
             frames_processed=self._frames_processed,
             candidate_exercise=self._last_candidate_exercise,
             candidate_confidence=self._last_candidate_confidence,
+            rejection_reason=self._last_rejection_reason,
+            external_debug=dict(self._last_external_debug),
         )
 
     def get_exercise_name(self) -> str:
@@ -674,6 +742,16 @@ class FormManager:
         self._current_below_drop_since = None
         self._last_candidate_exercise = None
         self._last_candidate_confidence = 0.0
+        self._last_rejection_reason = None
+        self._last_external_debug = {
+            "received": False,
+            "accepted": False,
+            "scope": None,
+            "raw_top1": None,
+            "mapped_top1": None,
+            "confidence": 0.0,
+            "reason": "no_external_probabilities",
+        }
         self._validator.reset()
         self._kalman.reset()
         self._feature_extractor.reset()

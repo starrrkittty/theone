@@ -64,6 +64,10 @@ temp/
 *.avi
 *.webm
 
+# Public datasets and generated training runs
+training/data/
+training/runs/
+
 # Environment
 .env
 .env.local

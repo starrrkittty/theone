@@ -8,6 +8,7 @@ import {
   FilesetResolver,
   NormalizedLandmark,
 } from '@mediapipe/tasks-vision';
+import { MEDIAPIPE_MODEL_PATH, MEDIAPIPE_WASM_PATH } from '../config';
 
 export interface PoseLandmark {
   x: number;
@@ -20,6 +21,15 @@ export interface PoseResult {
   landmarks: PoseLandmark[];
   worldLandmarks: PoseLandmark[];
   timestamp: number;
+  tracking: PoseTrackingInfo;
+}
+
+export interface PoseTrackingInfo {
+  personCount: number;
+  selectedPoseIndex: number;
+  subjectLocked: boolean;
+  ambiguity: number;
+  warning: string | null;
 }
 
 export type OnResultsCallback = (result: PoseResult) => void;
@@ -48,6 +58,7 @@ export class PoseDetector {
   private onResultsCallback: OnResultsCallback | null = null;
   private processingFrame = false;
   private initPromise: Promise<void> | null = null;
+  private lastSubjectCenter: { x: number; y: number } | null = null;
 
   constructor() {
     // Don't auto-initialize - let consumer call initialize()
@@ -78,17 +89,17 @@ export class PoseDetector {
 
       // Create the fileset resolver to load WASM files
       const vision = await FilesetResolver.forVisionTasks(
-        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/wasm'
+        MEDIAPIPE_WASM_PATH
       );
 
       // Create the pose landmarker
       this.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
         baseOptions: {
-          modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
+          modelAssetPath: MEDIAPIPE_MODEL_PATH,
           delegate: 'GPU',
         },
         runningMode: 'VIDEO',
-        numPoses: 1,
+        numPoses: 3,
         minPoseDetectionConfidence: 0.5,
         minPosePresenceConfidence: 0.5,
         minTrackingConfidence: 0.5,
@@ -140,20 +151,29 @@ export class PoseDetector {
         return null;
       }
 
+      const selection = this.selectPrimaryPose(results.landmarks);
+      const selectedWorld = results.worldLandmarks?.[selection.index] ?? [];
       const poseResult: PoseResult = {
-        landmarks: results.landmarks[0].map((lm: NormalizedLandmark) => ({
+        landmarks: results.landmarks[selection.index].map((lm: NormalizedLandmark) => ({
           x: lm.x,
           y: lm.y,
           z: lm.z,
           visibility: lm.visibility ?? 0,
         })),
-        worldLandmarks: results.worldLandmarks?.[0]?.map((lm: NormalizedLandmark) => ({
+        worldLandmarks: selectedWorld.map((lm: NormalizedLandmark) => ({
           x: lm.x,
           y: lm.y,
           z: lm.z,
           visibility: lm.visibility ?? 0,
         })) ?? [],
         timestamp: startTime,
+        tracking: {
+          personCount: results.landmarks.length,
+          selectedPoseIndex: selection.index,
+          subjectLocked: selection.locked,
+          ambiguity: selection.ambiguity,
+          warning: selection.warning,
+        },
       };
 
       this.onResultsCallback?.(poseResult);
@@ -164,6 +184,64 @@ export class PoseDetector {
     } finally {
       this.processingFrame = false;
     }
+  }
+
+  private selectPrimaryPose(poses: NormalizedLandmark[][]): {
+    index: number;
+    locked: boolean;
+    ambiguity: number;
+    warning: string | null;
+  } {
+    const descriptors = poses.map((pose, index) => {
+      const core = [11, 12, 23, 24]
+        .map(i => pose[i])
+        .filter((lm): lm is NormalizedLandmark => Boolean(lm));
+      const center = core.reduce(
+        (acc, lm) => ({ x: acc.x + lm.x / core.length, y: acc.y + lm.y / core.length }),
+        { x: 0, y: 0 },
+      );
+      const visible = pose.filter(lm => (lm.visibility ?? 0) >= 0.3);
+      const xs = visible.map(lm => lm.x);
+      const ys = visible.map(lm => lm.y);
+      const area = xs.length
+        ? (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys))
+        : 0;
+      const visibility = core.reduce((sum, lm) => sum + (lm.visibility ?? 0), 0) /
+        Math.max(core.length, 1);
+      const centerDistance = Math.hypot(center.x - 0.5, center.y - 0.5);
+      const continuityDistance = this.lastSubjectCenter
+        ? Math.hypot(center.x - this.lastSubjectCenter.x, center.y - this.lastSubjectCenter.y)
+        : centerDistance;
+      const continuity = Math.max(0, 1 - continuityDistance / 0.35);
+      const centered = Math.max(0, 1 - centerDistance / 0.7);
+      const size = Math.min(1, Math.sqrt(Math.max(area, 0)) * 2.2);
+      const score = (this.lastSubjectCenter ? 0.6 : 0.35) * continuity
+        + 0.25 * size
+        + 0.2 * visibility
+        + (this.lastSubjectCenter ? 0 : 0.2) * centered;
+      return { index, center, continuityDistance, score };
+    }).sort((a, b) => b.score - a.score);
+
+    const best = descriptors[0];
+    const second = descriptors[1];
+    const ambiguity = second ? Math.max(0, 1 - Math.abs(best.score - second.score) / 0.2) : 0;
+    const locked = poses.length === 1 || (
+      best.continuityDistance <= 0.22 && (!second || ambiguity < 0.8)
+    );
+    if (locked || this.lastSubjectCenter === null) {
+      this.lastSubjectCenter = best.center;
+    }
+
+    return {
+      index: best.index,
+      locked,
+      ambiguity,
+      warning: poses.length > 1
+        ? locked
+          ? `检测到${poses.length}人，已锁定主要锻炼者`
+          : `检测到${poses.length}人，无法稳定锁定主要锻炼者`
+        : null,
+    };
   }
 
   /**
@@ -183,6 +261,7 @@ export class PoseDetector {
     }
     this.isInitialized = false;
     this.onResultsCallback = null;
+    this.lastSubjectCenter = null;
   }
 }
 

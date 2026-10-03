@@ -86,6 +86,21 @@ export interface FormCorrectionResponse {
   hold_seconds?: number;
   recognition_event?: RecognitionEvent | null;
   action_report?: ActionReport;
+  recognition_debug?: {
+    candidate: string | null;
+    candidate_confidence: number;
+    rejection_reason: string | null;
+    external: {
+      received?: boolean;
+      accepted?: boolean;
+      scope?: string | null;
+      raw_top1?: string | null;
+      mapped_top1?: string | null;
+      confidence?: number;
+      margin?: number;
+      reason?: string;
+    };
+  };
 }
 
 export interface UsePoseStreamOptions {

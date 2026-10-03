@@ -1,0 +1,23 @@
+[
+  {
+    "path": "data/mmfit/w00_rgb.mp4",
+    "label": "squat",
+    "subject": "w00",
+    "start_sec": 12.0,
+    "end_sec": 26.0
+  },
+  {
+    "path": "data/mmfit/w01_rgb.mp4",
+    "label": "pushup",
+    "subject": "w01",
+    "start_sec": 31.0,
+    "end_sec": 46.0
+  },
+  {
+    "path": "data/local/subject_01_sitting.mp4",
+    "label": "unknown",
+    "subject": "local_01",
+    "start_sec": 0.0,
+    "end_sec": 12.0
+  }
+]
