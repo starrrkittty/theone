@@ -9,6 +9,7 @@ import {
   Users,
   ScanSearch,
 } from 'lucide-react';
+import { useState } from 'react';
 
 import type {
   FormCorrectionResponse,
@@ -21,6 +22,10 @@ import {
   type EvaluationExercise,
   summarizeAgentTelemetry,
 } from '../agent/telemetry';
+import {
+  buildRuntimeEvaluationExport,
+  type RuntimeEvaluationMetadata,
+} from '../agent/runtimeEvaluation';
 
 interface AgentInspectorProps {
   response: FormCorrectionResponse | null;
@@ -41,7 +46,7 @@ const DISPLAY_NAMES: Record<string, string> = {
   plank: '前臂平板支撑',
   bicep_curl: '哑铃弯举',
   alternate_bicep_curl: '交替哑铃弯举',
-  unknown: '尚未确认',
+  unknown: '非支持/未知动作',
 };
 
 const RAW_MODEL_LABEL_NAMES: Record<string, string> = {
@@ -100,6 +105,20 @@ export function AgentInspector({
   onVoiceEnabledChange,
   onResetTelemetry,
 }: AgentInspectorProps) {
+  const [evaluationMetadata, setEvaluationMetadata] = useState<Omit<
+    RuntimeEvaluationMetadata,
+    'expectedExercise'
+  >>({
+    participantId: '',
+    clipId: '',
+    sourceType: 'uploaded_video',
+    cameraView: 'front',
+    lighting: 'normal',
+    occlusion: 'none',
+    multiPerson: false,
+    notes: '',
+  });
+  const [exportError, setExportError] = useState('');
   const report = response?.action_report;
   const summary = summarizeAgentTelemetry(telemetry);
   const candidate = report?.candidate_exercises[0];
@@ -113,14 +132,24 @@ export function AgentInspector({
       : null);
 
   const exportTelemetry = () => {
-    const payload = {
-      exported_at: new Date().toISOString(),
-      expected_exercise: expectedExercise,
-      telemetry,
-      summary,
-      recognition_history: recognitionHistory,
-      latest_action_report: report ?? null,
-    };
+    if (!expectedExercise) {
+      setExportError('请先选择测试视频的真实动作；非目标动作请选择 unknown。');
+      return;
+    }
+    let payload;
+    try {
+      payload = buildRuntimeEvaluationExport(
+        { ...evaluationMetadata, expectedExercise },
+        telemetry,
+        summary,
+        recognitionHistory,
+        report ?? null,
+      );
+      setExportError('');
+    } catch (error) {
+      setExportError(error instanceof Error ? error.message : '评测信息不完整');
+      return;
+    }
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: 'application/json',
     });
@@ -333,6 +362,102 @@ export function AgentInspector({
           ))}
         </select>
 
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          <label className="text-xs text-gray-400">
+            参与者 ID
+            <input
+              value={evaluationMetadata.participantId}
+              onChange={(event) => setEvaluationMetadata((previous) => ({
+                ...previous,
+                participantId: event.target.value,
+              }))}
+              placeholder="p01（勿填真实姓名）"
+              className="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-2 text-sm text-white"
+            />
+          </label>
+          <label className="text-xs text-gray-400">
+            片段 ID
+            <input
+              value={evaluationMetadata.clipId}
+              onChange={(event) => setEvaluationMetadata((previous) => ({
+                ...previous,
+                clipId: event.target.value,
+              }))}
+              placeholder="p01-squat-front-01"
+              className="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-2 text-sm text-white"
+            />
+          </label>
+          <EvaluationSelect
+            label="来源"
+            value={evaluationMetadata.sourceType}
+            options={[
+              ['uploaded_video', '上传视频'],
+              ['live_video_call', '实时视频通话'],
+            ]}
+            onChange={(sourceType) => setEvaluationMetadata((previous) => ({
+              ...previous,
+              sourceType: sourceType as RuntimeEvaluationMetadata['sourceType'],
+            }))}
+          />
+          <EvaluationSelect
+            label="机位"
+            value={evaluationMetadata.cameraView}
+            options={[
+              ['front', '正面'], ['side', '侧面'], ['oblique', '斜侧'], ['mixed', '移动/混合'],
+            ]}
+            onChange={(cameraView) => setEvaluationMetadata((previous) => ({
+              ...previous,
+              cameraView: cameraView as RuntimeEvaluationMetadata['cameraView'],
+            }))}
+          />
+          <EvaluationSelect
+            label="光照"
+            value={evaluationMetadata.lighting}
+            options={[
+              ['normal', '正常'], ['dim', '昏暗'], ['backlit', '逆光'], ['mixed', '变化'],
+            ]}
+            onChange={(lighting) => setEvaluationMetadata((previous) => ({
+              ...previous,
+              lighting: lighting as RuntimeEvaluationMetadata['lighting'],
+            }))}
+          />
+          <EvaluationSelect
+            label="遮挡"
+            value={evaluationMetadata.occlusion}
+            options={[
+              ['none', '无遮挡'], ['partial', '部分遮挡'], ['severe', '严重遮挡'],
+            ]}
+            onChange={(occlusion) => setEvaluationMetadata((previous) => ({
+              ...previous,
+              occlusion: occlusion as RuntimeEvaluationMetadata['occlusion'],
+            }))}
+          />
+        </div>
+
+        <label className="mt-3 flex items-center gap-2 text-xs text-gray-400">
+          <input
+            type="checkbox"
+            checked={evaluationMetadata.multiPerson}
+            onChange={(event) => setEvaluationMetadata((previous) => ({
+              ...previous,
+              multiPerson: event.target.checked,
+            }))}
+          />
+          画面中出现第二个人
+        </label>
+
+        <label className="block mt-3 text-xs text-gray-400">
+          备注（可写遮挡位置、错误动作或转场）
+          <input
+            value={evaluationMetadata.notes}
+            onChange={(event) => setEvaluationMetadata((previous) => ({
+              ...previous,
+              notes: event.target.value,
+            }))}
+            className="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-2 text-sm text-white"
+          />
+        </label>
+
         <div className="grid grid-cols-2 gap-2 mt-4 text-sm">
           <Metric label="处理帧数" value={String(telemetry.frames)} />
           <Metric
@@ -369,12 +494,45 @@ export function AgentInspector({
           </button>
         </div>
 
+        {exportError && (
+          <div className="mt-3 rounded-lg border border-red-500/30 bg-red-500/10 p-2 text-xs text-red-200">
+            {exportError}
+          </div>
+        )}
+
         <div className="mt-3 flex items-start gap-2 text-xs text-gray-500">
           <Route className="w-4 h-4 shrink-0" />
           在线统计只能衡量当前视频；正式能力结论需要多人、多光照、多机位的标注回放集。
         </div>
       </section>
     </div>
+  );
+}
+
+function EvaluationSelect({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: [string, string][];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="text-xs text-gray-400">
+      {label}
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-1 w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-2 text-sm text-white"
+      >
+        {options.map(([optionValue, optionLabel]) => (
+          <option key={optionValue} value={optionValue}>{optionLabel}</option>
+        ))}
+      </select>
+    </label>
   );
 }
 

@@ -134,6 +134,7 @@ function App() {
     sendLandmarks,
     connect,
     disconnect,
+    reset,
   } = usePoseStream({
     autoConnect: false,  // Don't auto-connect, we'll manage this ourselves
     onResponse: (response) => {
@@ -175,10 +176,11 @@ function App() {
     setAgentTelemetry(createAgentTelemetry());
     setRecognitionHistory([]);
     seenRecognitionEventsRef.current.clear();
+    void reset();
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
-  }, []);
+  }, [reset]);
 
   const handleExpectedExerciseChange = useCallback((value: EvaluationExercise | null) => {
     expectedExerciseRef.current = value;

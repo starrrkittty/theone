@@ -300,3 +300,17 @@ Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public
 5. 导出 JSON，保存本次测试结果。
 
 训练曲线只能说明优化过程，不能证明产品质量；最终结论以独立人员、真实视频通话场景的回放测试为准。
+
+## 6. 真实视频通话批量验收
+
+开发者评测模式现在会导出 `agent-a-runtime-evaluation/v1` 证据包，包含匿名参与者/片段 ID、场景条件、逐响应识别轨迹、确认事件和模型 ID。非支持动作必须标为 `unknown`，不能只测系统已支持的五类动作。
+
+收集完成后运行：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\aggregate_runtime_evaluations.py `
+  --input D:\datasets\agent-a-runtime-eval\exports `
+  --output-dir D:\datasets\agent-a-runtime-eval\reports
+```
+
+脚本按片段而非按高度相关的连续帧评分，并检查人数、类别覆盖、已支持动作召回率、unknown 误接收、首次确认延迟、错误切换和不可靠关键点比例。完整录制矩阵与默认门槛见 `docs/REAL_VIDEO_ACCEPTANCE.md`。

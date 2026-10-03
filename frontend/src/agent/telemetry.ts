@@ -6,9 +6,24 @@ export const EVALUATION_EXERCISES = [
   'plank',
   'bicep_curl',
   'alternate_bicep_curl',
+  'unknown',
 ] as const;
 
 export type EvaluationExercise = (typeof EVALUATION_EXERCISES)[number];
+
+export interface AgentTelemetryFrame {
+  elapsedMs: number;
+  expectedExercise: EvaluationExercise | null;
+  recognitionStatus: 'unknown' | 'candidate' | 'confirmed';
+  recognizedExercise: string;
+  recognitionConfidence: number;
+  formConfidence: number;
+  poseQuality: string | null;
+  cameraView: string | null;
+  rejectionReason: string | null;
+  recognitionEvent: 'exercise_confirmed' | 'exercise_switched' | null;
+  clientModelId: string | null;
+}
 
 export interface AgentTelemetry {
   startedAtMs: number | null;
@@ -25,6 +40,7 @@ export interface AgentTelemetry {
   evaluatedConfirmedFrames: number;
   correctConfirmedFrames: number;
   incorrectConfirmedFrames: number;
+  trace: AgentTelemetryFrame[];
 }
 
 export interface AgentTelemetrySummary {
@@ -52,6 +68,7 @@ export function createAgentTelemetry(): AgentTelemetry {
     evaluatedConfirmedFrames: 0,
     correctConfirmedFrames: 0,
     incorrectConfirmedFrames: 0,
+    trace: [],
   };
 }
 
@@ -74,6 +91,19 @@ export function accumulateAgentTelemetry(
   const newlyConfirmed = status === 'confirmed';
   const shouldEvaluate = newlyConfirmed && expectedExercise !== null;
   const isCorrect = shouldEvaluate && recognizedExercise === expectedExercise;
+  const traceFrame: AgentTelemetryFrame = {
+    elapsedMs: Math.max(0, observedAtMs - startedAtMs),
+    expectedExercise,
+    recognitionStatus: status,
+    recognizedExercise,
+    recognitionConfidence,
+    formConfidence,
+    poseQuality: report?.pose_quality ?? response.signal_quality ?? null,
+    cameraView: report?.camera_view ?? response.camera_view ?? null,
+    rejectionReason: response.recognition_debug?.rejection_reason ?? null,
+    recognitionEvent: response.recognition_event?.event ?? null,
+    clientModelId: response.recognition_debug?.semantic?.client_model_id ?? null,
+  };
 
   return {
     startedAtMs,
@@ -98,6 +128,7 @@ export function accumulateAgentTelemetry(
     incorrectConfirmedFrames: previous.incorrectConfirmedFrames + (
       shouldEvaluate && !isCorrect ? 1 : 0
     ),
+    trace: [...previous.trace.slice(-4999), traceFrame],
   };
 }
 

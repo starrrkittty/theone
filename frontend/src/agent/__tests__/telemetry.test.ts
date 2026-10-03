@@ -119,4 +119,38 @@ describe('agent telemetry', () => {
 
     expect(summarizeAgentTelemetry(telemetry).confirmedAccuracy).toBeNull();
   });
+
+  it('keeps an auditable per-response trace with relative timing', () => {
+    let telemetry = accumulateAgentTelemetry(
+      createAgentTelemetry(), response('candidate', 'squat'), 1000, 'squat',
+    );
+    telemetry = accumulateAgentTelemetry(
+      telemetry, response('confirmed', 'squat'), 1350, 'squat',
+    );
+
+    expect(telemetry.trace).toHaveLength(2);
+    expect(telemetry.trace[0]).toMatchObject({
+      elapsedMs: 0,
+      expectedExercise: 'squat',
+      recognitionStatus: 'candidate',
+    });
+    expect(telemetry.trace[1]).toMatchObject({
+      elapsedMs: 350,
+      recognizedExercise: 'squat',
+      recognitionStatus: 'confirmed',
+    });
+  });
+
+  it('bounds the exported trace to 5000 responses', () => {
+    let telemetry = createAgentTelemetry();
+    for (let index = 0; index < 5002; index += 1) {
+      telemetry = accumulateAgentTelemetry(
+        telemetry, response('unknown'), index, 'unknown',
+      );
+    }
+
+    expect(telemetry.frames).toBe(5002);
+    expect(telemetry.trace).toHaveLength(5000);
+    expect(telemetry.trace[0].elapsedMs).toBe(2);
+  });
 });
