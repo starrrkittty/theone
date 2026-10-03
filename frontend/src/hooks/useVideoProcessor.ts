@@ -132,7 +132,7 @@ export function useVideoProcessor(options: UseVideoProcessorOptions = {}): UseVi
         poseDetectorRef.current = null;
       }
     };
-  }, []); // Empty deps - only run once on mount
+  }, [stopProcessingInternal]);
 
   // Handle video time updates
   useEffect(() => {
@@ -160,7 +160,7 @@ export function useVideoProcessor(options: UseVideoProcessorOptions = {}): UseVi
       videoElement.removeEventListener('pause', handlePause);
       videoElement.removeEventListener('ended', handleEnded);
     };
-  }, [videoElement]);
+  }, [videoElement, stopProcessingInternal]);
 
   const initializeSource = useCallback(async (source: VideoSource) => {
     setError(null);
@@ -324,7 +324,7 @@ export function useVideoProcessor(options: UseVideoProcessorOptions = {}): UseVi
         videoSourceRef.current.stop();
       }
     };
-  }, []);
+  }, [stopProcessingInternal]);
 
   return {
     videoElement,

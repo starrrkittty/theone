@@ -61,7 +61,7 @@ export function useChunkedUpload(options: UseChunkedUploadOptions = {}): UseChun
     });
   }, [onProgress]);
 
-  const uploadChunk = async (
+  const uploadChunk = useCallback(async (
     uploadId: string,
     chunk: Blob,
     chunkIndex: number,
@@ -98,7 +98,7 @@ export function useChunkedUpload(options: UseChunkedUploadOptions = {}): UseChun
 
       throw error;
     }
-  };
+  }, [maxRetries]);
 
   const upload = useCallback(async (file: File) => {
     abortControllerRef.current = new AbortController();
@@ -212,7 +212,7 @@ export function useChunkedUpload(options: UseChunkedUploadOptions = {}): UseChun
       });
       onError?.(err);
     }
-  }, [chunkSize, maxRetries, updateProgress, onComplete, onError]);
+  }, [chunkSize, uploadChunk, updateProgress, onComplete, onError]);
 
   const pause = useCallback(() => {
     isPausedRef.current = true;

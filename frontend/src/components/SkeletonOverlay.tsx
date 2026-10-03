@@ -158,7 +158,7 @@ export const SkeletonOverlay: React.FC<SkeletonOverlayProps> = ({
         ctx.fillText(label, x + pointRadius + 4, y + 4);
       }
     }
-  }, [landmarks, width, height, jointColors, lineWidth, pointRadius, showLabels, getJointColor, getConnectionColor]);
+  }, [landmarks, width, height, lineWidth, pointRadius, showLabels, getJointColor, getConnectionColor]);
 
   useEffect(() => {
     drawSkeleton();
