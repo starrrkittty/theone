@@ -11,8 +11,22 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-from dataset_io import load_dataset
-from train_stgcn import BrowserSTGCN, WindowDataset, classification_metrics
+try:
+    from .dataset_io import load_dataset
+    from .train_stgcn import (
+        BrowserSTGCN,
+        WindowDataset,
+        classification_metrics,
+        load_split_file,
+    )
+except ImportError:  # Direct script execution
+    from dataset_io import load_dataset
+    from train_stgcn import (
+        BrowserSTGCN,
+        WindowDataset,
+        classification_metrics,
+        load_split_file,
+    )
 
 
 DEFAULT_CORE_LABELS = [
@@ -199,8 +213,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", type=Path, required=True)
     parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--validation-subjects", nargs="+", required=True)
-    parser.add_argument("--test-subjects", nargs="+", required=True)
+    parser.add_argument("--validation-subjects", nargs="+")
+    parser.add_argument("--test-subjects", nargs="+")
+    parser.add_argument(
+        "--split-file", type=Path,
+        help="Use validation and test subject lists from a training split JSON.",
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--max-validation-unknown-far", type=float, default=0.10)
@@ -209,6 +227,16 @@ def main() -> None:
     parser.add_argument("--minimum-runtime-threshold", type=float, default=0.72)
     parser.add_argument("--core-labels", nargs="*", default=DEFAULT_CORE_LABELS)
     args = parser.parse_args()
+
+    if args.split_file:
+        if args.validation_subjects or args.test_subjects:
+            raise ValueError("Use either --split-file or subject arguments, not both")
+        _, validation_subjects, test_subjects = load_split_file(args.split_file.resolve())
+    else:
+        if not args.validation_subjects or not args.test_subjects:
+            raise ValueError("Provide --split-file or both validation/test subjects")
+        validation_subjects = args.validation_subjects
+        test_subjects = args.test_subjects
 
     data = load_dataset(args.dataset, mmap_mode="r")
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
@@ -220,10 +248,10 @@ def main() -> None:
     ]
 
     validation_probs, validation_truths = probabilities_for_subjects(
-        data, checkpoint, args.validation_subjects, args.batch_size
+        data, checkpoint, validation_subjects, args.batch_size
     )
     test_probs, test_truths = probabilities_for_subjects(
-        data, checkpoint, args.test_subjects, args.batch_size
+        data, checkpoint, test_subjects, args.batch_size
     )
     thresholds = np.concatenate(
         (np.round(np.arange(0.50, 0.951, 0.01), 2), np.asarray([0.97, 0.98, 0.99, 0.995, 0.999]))
@@ -297,8 +325,9 @@ def main() -> None:
         "checkpoint": str(args.checkpoint.resolve()),
         "semantic_labels": semantic_labels,
         "core_labels_excluded": args.core_labels,
-        "validation_subjects": args.validation_subjects,
-        "test_subjects": args.test_subjects,
+        "validation_subjects": validation_subjects,
+        "test_subjects": test_subjects,
+        "split_file": str(args.split_file.resolve()) if args.split_file else None,
         "max_validation_unknown_false_accept_rate": args.max_validation_unknown_far,
         "validation_constraint_satisfied": bool(eligible),
         "selected_threshold": threshold,

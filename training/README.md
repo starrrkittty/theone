@@ -9,6 +9,8 @@
 3. UI-PRMD：可用于深蹲等康复动作的轨迹/动作质量研究，不适合作为本项目五类动作的唯一分类训练集。
 4. 团队自录视频通话数据：补充 `plank`、普通弯举、低光、遮挡、多人和非运动负样本。
 
+补充数据的采用门槛是：来源可追溯、许可可记录、动作定义与本项目一致，并且能按独立人物或独立源视频划分。仅有 GitHub 代码、没有可靠视频来源和许可的数据，不进入正式模型。
+
 MM-Fit 官方入口：https://mmfit.github.io/
 
 实际下载约束：
@@ -91,6 +93,29 @@ unknown
 
 必须加入 `unknown`，包括坐下、弯腰、喝水、走动和其他不支持运动，否则分类器会被迫把任何动作归入五类运动之一。
 
+### 从“类别/人物/视频”目录生成 manifest
+
+对 HAA500 子集、团队自录视频或其他按目录整理的数据，可先生成带来源审计的 manifest：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\prepare_directory_manifest.py `
+  --dataset-root D:\datasets\haa500\selected `
+  --label-map training\example_directory_label_map.json `
+  --output D:\datasets\haa500\selected-manifest.json `
+  --dataset-id haa500-v1.1-selected `
+  --source-url https://cse.hkust.edu.hk/haa/ `
+  --license MIT `
+  --license-url https://cse.hkust.edu.hk/haa/LICENSE `
+  --subject-mode file
+```
+
+支持两种常见布局：
+
+- `<原始类别>/<人物或录制场次>/<视频>`：使用默认 `--subject-mode parent`。
+- `<原始类别>/<独立源视频>`：仅当每个文件确实来自不同源录制时使用 `--subject-mode file`。
+
+脚本默认要求每个目标类别至少 3 个独立人物/场次，并输出同名 `.provenance.json`，记录来源、许可、标签映射、类别数量和被忽略的视频。它不会把公开数据集的类别标签误当成动作质量标签。
+
 ## 3. 用与产品一致的 MediaPipe 模型提取窗口
 
 对 MM-Fit 原始帧号标注，优先使用专用脚本；它会保留官方 participant 身份，按视频逐段处理并写分片：
@@ -119,6 +144,8 @@ unknown
 
 `--workers 0` 会根据当前可用物理内存自动选择并发数，上限为 4；每个 worker 按 1.5 GB 估算并预留指定内存。任务队列最多保留 `2×worker` 个片段。每个片段先写临时分片，最终合并为 `.npy` 内存映射文件，不会在 RAM 中堆积整个数据集。
 
+HAA500 这类已裁剪的 atomic-action 视频常短于 2 秒。仅对这种“整段只有一个动作”的公开短片可增加 `--short-clip-policy resample --minimum-short-frames 8`，把不足 30 个有效姿态帧的片段线性重采样为一个窗口；连续视频通话、自录长视频和带开始/结束标注的片段仍使用默认 `drop`，避免把停顿或跨动作区间压进一个窗口。
+
 每个样本是连续 30 帧、17 个关键关节、3 个坐标，归一化方法与浏览器一致。输出保留 `subject`，训练脚本按人员/session划分数据。
 
 ## 4. 训练并导出浏览器可读权重
@@ -144,6 +171,27 @@ Windows 上默认 `dataloader-workers=0`，避免多进程复制内存映射数�
 MM-Fit 的公开预提取骨架只有 2D 坐标，因此该预训练模型使用 `--coordinate-mode xy`，并在导出权重中记录这个契约；浏览器会自动忽略 z。不要让一个从未见过 z 分布的模型直接读取 MediaPipe z。前端也按导出的 `target_fps` 采样，避免不同设备帧率改变速度特征。训练连续若干轮不提升时会早停，并恢复验证集最优权重。
 
 `--init-checkpoint` 用于公开骨架预训练后的 RGB 同域微调；不传该参数就是从头训练。二者必须使用完全相同的人员划分再比较，避免把“换了测试人”误当成模型提升。
+
+若新增数据带来新类别（例如在现有 MM-Fit 数据上新增 HAA500 `plank`），先进行内存映射合并：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\merge_datasets.py `
+  --inputs D:\datasets\mmfit\mediapipe-rgb-p05-p09 D:\datasets\haa500\plank-windows `
+  --output D:\datasets\combined\mmfit-haa500-v1
+```
+
+合并器按标签名称重映射类别，不要求各来源拥有完全相同的标签表。训练时显式使用 `--init-classifier-mode shared`，只继承旧模型的骨干参数和同名分类头，新增类别的分类头随机初始化后共同微调：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\train_stgcn.py `
+  --dataset D:\datasets\combined\mmfit-haa500-v1 `
+  --output-dir D:\datasets\ai-fitness-runs\mmfit-haa500-v1 `
+  --init-checkpoint D:\datasets\ai-fitness-runs\mmfit-rgb-finetuned-balanced\stgcn_checkpoint.pt `
+  --init-classifier-mode shared `
+  --dataloader-workers 0
+```
+
+新增类别后必须重新做独立人员/源视频测试和阈值校准，不能仅因训练 loss 下降就覆盖部署权重。
 
 训练输出：
 
@@ -210,7 +258,9 @@ Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public
   --report D:\datasets\ai-fitness-runs\mmfit-v1\training_report.json `
   --min-accuracy 0.80 `
   --min-balanced-accuracy 0.75 `
+  --min-class-precision 0.55 `
   --min-class-recall 0.55 `
+  --min-class-support 10 `
   --max-unknown-false-accept 0.10
 ```
 

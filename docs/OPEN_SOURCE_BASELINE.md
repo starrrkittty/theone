@@ -25,6 +25,15 @@ MM-Fit 类别映射：
 | dumbbell_shoulder_press | shoulder_press |
 | lateral_shoulder_raises | lateral_raise |
 
+### HAA500（目标类别补充）
+
+- 官方页面：https://cse.hkust.edu.hk/haa/
+- 论文：https://arxiv.org/abs/2009.05224
+- 用途：官方 500 类中包含 `Gym Plank`，每类约 20 个经过人工裁剪的短视频，可补充 MM-Fit 缺失的平板支撑画面。
+- 限制：类别表中没有可直接等价为本项目“普通双臂哑铃弯举”的类别；不能用相近的 `Gym Lift` 或 `Workout Chest-Pull` 偷换标签。
+- 许可判断：项目页面附有 MIT LICENSE，但视频源自第三方 YouTube 片段。训练时保留 URL/片段来源，仓库不再分发原视频，商业使用前仍需复核原视频权利。
+- 决策：只提取目标类别并重新运行产品同款 MediaPipe；作为补充训练和独立跨域评测，不单独作为万能动作模型。
+
 ## 借鉴，不直接并入第一版依赖
 
 ### MMAction2 / PoseC3D
@@ -51,6 +60,19 @@ MM-Fit 类别映射：
 - 用途：后续通用重复动作计数和 RepCount-pose 对照。
 - 不直接采用原因：专项计数状态机已可解释且低延迟；先测量跨动作计数误差，再决定是否引入模型。
 
+### Fitness-AI-Trainer BiLSTM
+
+- 仓库：https://github.com/RiccardoRiccio/Fitness-AI-Trainer-With-Automatic-Exercise-Recognition-and-Counting
+- 数据页：https://huggingface.co/datasets/RickyRiccio/Real_Time_Exercise_Recognition_Dataset
+- 可借鉴内容：MediaPipe 时序窗口、自动动作识别和专项计数解耦。
+- 不直接并入训练集原因：数据页声明 CC BY-NC-SA 4.0，但说明中还混有 Kaggle、InfiniteRep、在线抓取及 Shutterstock 等来源；逐视频权利链和商业可用性不够清楚。可用于研究对照，不作为参赛发布模型的默认训练源。
+
+### PocketGym 等个人演示仓库
+
+- 示例：https://github.com/musickevan1/pocket-gym
+- 可借鉴内容：浏览器/摄像头交互、角度提示和动作模块化界面。
+- 不直接采用原因：代码规模、测试证据、数据来源和模型评测不如官方论文仓库；只借鉴交互，不把 README 中的支持动作数量当成模型质量证据。
+
 ## 采用原则
 
 1. 数据许可、下载来源和引用信息必须保留。
@@ -64,6 +86,7 @@ MM-Fit 类别映射：
 - 已实际使用 MM-Fit 的官方标签、骨架数据和 Zenodo RGB 视频完成预训练、跨域复评与 RGB 同域微调。
 - 已借鉴 MMAction2/PoseC3D 的骨架时序建模思路，在现有浏览器轻量模型中加入 mean、std、absolute velocity 和 range 时序池化；没有引入 MMAction2 的重依赖。
 - 已把部署模型限定为“长尾语义候选器”，核心动作继续走可解释专项模块。
+- 已增加目录视频到 manifest 的通用导入器、来源/许可审计、跨标签表内存映射合并，以及新增类别时按同名标签继承分类头的训练能力。
 - 尚未引入 ActionCLIP、RTMPose 或 PoseRAC；只有真实视频通话评测证明现方案在开放词汇、遮挡姿态或通用计数上不足时才升级。
 
 这意味着“借鉴 GitHub repo”已经转化成了可复现实现和选择依据，但没有为了展示技术栈而堆砌三个重复解决同一问题的模型。

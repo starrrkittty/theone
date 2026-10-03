@@ -102,6 +102,30 @@
 
 `p08/w19` 没有 jumping jack 样本，因此该类只有验证集证据，不能声称已在未见人员上验证。lateral raise、lunge 和 shoulder press 当前倾向“宁可不报，也不乱报”，召回率仍需真实视频补强。
 
+### 5. HAA500 目标类别补充实验（未部署）
+
+为补 MM-Fit 缺失的平板支撑，并给 jumping jack 增加未见源视频证据，使用 HAA500 v1.1 做了一轮受控实验：
+
+- 官方页面：https://cse.hkust.edu.hk/haa/
+- 原始压缩包：`D:\datasets\haa500\haa500_v1_1.zip`，约 4.10 GB。
+- 仅提取 9 类共 180 个短视频：`gym_plank`、`pushup`、`gym_squat`、`gym_lunges`、`jumping_jack`、`situp`，以及 3 个 `unknown` 负类。
+- 产品同款 MediaPipe 输出：`D:\datasets\haa500\mediapipe-selected-15fps-v1`，253 个窗口。
+- 与 MM-Fit 合并集：`D:\datasets\combined\mmfit-haa500-15fps-v1`，7,022 个窗口。
+- 按 HAA500 官方序号划分：`000–015` 训练、`016` 验证、`017–019` 测试；MM-Fit 仍保持 `p05/p07/p09`、`p06`、`p08` 的人员隔离。
+- 训练产物：`D:\datasets\ai-fitness-runs\mmfit-haa500-finetuned-v1`。
+
+训练从当前 checkpoint 继承骨干和 11 个同名分类头，只随机初始化新增 `plank` 分类头。结果：
+
+- 测试 accuracy：0.8771。
+- 测试 balanced accuracy：0.8551。
+- 原始 argmax unknown false accept rate：0.3170。
+- `plank` 只有 3 个测试窗口，precision 0.071、recall 0.667；使用验证集阈值后 precision/recall 均为 0。
+- 按验证集 unknown FAR 不超过 0.08 校准长尾阈值后，测试 balanced accuracy 为 0.690、unknown FAR 为 0.098；仍没有超过当前部署模型的 0.735 balanced accuracy / 0.048 unknown FAR。
+
+结论：HAA500 给出了有用的跨来源压力测试，也证明新数据导入和新增类别微调链路可用，但每类约 20 个极短片段不足以把 `plank` 分类头投入产品。该 checkpoint 不覆盖 `mmfit-mediapipe-semantic-v1`，平板支撑继续使用几何、静止状态和专项姿态约束确认。
+
+另外审计了 652 段、22 类的 Workout/Exercises Video 镜像。其 Hugging Face 卡片没有填写许可，原 Kaggle/第三方视频的权利链也不清楚，因此没有把其中的 plank 或 barbell curl 混进正式训练集。
+
 ## 已部署内容
 
 - `frontend/public/stgcn_weights.json`：RGB 同域微调权重。
@@ -118,5 +142,7 @@
 3. 对低召回长尾类补采并微调；任何新增人员都继续按人划分，不能随机拆帧。
 4. 为每个拟宣传为“专项纠错”的动作建立动作质量标注和独立验收，不能只凭动作类别分类准确率。
 5. API Key 明确后接入受控 Video LLM 作为开放词汇和复杂场景补充；LLM 不参与关节角、次数、URDF 约束或确定性阈值计算。
+
+其中第 2 项现在已有 HAA500 的初步跨域实验，但尚未达到部署门槛。下一步优先级是：至少补录多人物、多设备、侧面/斜侧面、完整 5–10 秒的 plank 和普通双臂弯举视频，并把同一人的全部视频固定在同一数据划分；不能继续用同一个人的裁剪片段堆高样本数。
 
 公开数据解决的是可复现基线和初始泛化，不等于真实视频通话验收完成。后续最有价值的数据不是再盲目扩大通用动作集，而是按上述失败场景定向补采。

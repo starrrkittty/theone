@@ -13,7 +13,10 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from dataset_io import load_dataset
+try:
+    from .dataset_io import load_dataset
+except ImportError:  # Direct script execution: python training/train_stgcn.py
+    from dataset_io import load_dataset
 
 
 HIDDEN = 64
@@ -162,7 +165,20 @@ def requested_subject_split(subjects: np.ndarray, train, validation, test):
     missing = set.union(*requested) - available
     if missing:
         raise ValueError(f"Explicit split references missing subjects: {sorted(missing)}")
+    omitted = available - set.union(*requested)
+    if omitted:
+        raise ValueError(f"Explicit split omits available subjects: {sorted(omitted)}")
     return tuple(requested)
+
+
+def load_split_file(path: Path) -> tuple[list[str], list[str], list[str]]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Split file must be a JSON object")
+    required = ("train", "validation", "test")
+    if any(not isinstance(payload.get(key), list) for key in required):
+        raise ValueError("Split file requires train, validation, and test lists")
+    return tuple([str(value) for value in payload[key]] for key in required)
 
 
 def indices_for(subjects, selected):
@@ -331,6 +347,49 @@ def export_weights(model, graph, labels, mean, std, output_dir, coordinate_mode,
     )
 
 
+def initialize_from_checkpoint(model, checkpoint, labels, classifier_mode: str) -> dict:
+    """Load an exact checkpoint or expand its classifier by shared label name."""
+    initial_labels = [str(label) for label in checkpoint["labels"]]
+    if len(initial_labels) != len(set(initial_labels)) or len(labels) != len(set(labels)):
+        raise ValueError("Checkpoint and dataset label tables must not contain duplicates")
+    if initial_labels == labels:
+        model.load_state_dict(checkpoint["state_dict"])
+        return {"mode": "exact", "shared_labels": labels, "new_labels": []}
+    if classifier_mode != "shared":
+        raise ValueError(
+            "Initialization checkpoint label order differs from the dataset. "
+            "Use --init-classifier-mode shared only when intentionally adding or removing labels: "
+            f"checkpoint={initial_labels}, dataset={labels}"
+        )
+
+    source = checkpoint["state_dict"]
+    destination = model.state_dict()
+    for key in destination:
+        if key.startswith("fc."):
+            continue
+        if key not in source or source[key].shape != destination[key].shape:
+            raise ValueError(f"Checkpoint backbone is incompatible at {key}")
+        destination[key].copy_(source[key])
+
+    shared = [label for label in labels if label in initial_labels]
+    if not shared:
+        raise ValueError("Checkpoint and dataset have no labels in common")
+    if source["fc.weight"].shape[0] != len(initial_labels):
+        raise ValueError("Checkpoint classifier rows do not match its label table")
+    for label in shared:
+        old_index = initial_labels.index(label)
+        new_index = labels.index(label)
+        destination["fc.weight"][new_index].copy_(source["fc.weight"][old_index])
+        destination["fc.bias"][new_index].copy_(source["fc.bias"][old_index])
+    model.load_state_dict(destination)
+    return {
+        "mode": "shared",
+        "shared_labels": shared,
+        "new_labels": [label for label in labels if label not in initial_labels],
+        "dropped_labels": [label for label in initial_labels if label not in labels],
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", type=Path, required=True)
@@ -350,9 +409,19 @@ def main():
     parser.add_argument("--validation-subjects", nargs="*", default=[])
     parser.add_argument("--test-subjects", nargs="*", default=[])
     parser.add_argument(
+        "--split-file", type=Path,
+        help="JSON object with train, validation, and test subject/session lists.",
+    )
+    parser.add_argument(
         "--init-checkpoint",
         type=Path,
-        help="Optional same-label checkpoint used to initialize domain adaptation.",
+        help="Optional checkpoint used to initialize domain adaptation.",
+    )
+    parser.add_argument(
+        "--init-classifier-mode",
+        default="exact",
+        choices=["exact", "shared"],
+        help="shared copies the backbone and classifier rows whose label names match.",
     )
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda", "xpu"])
     parser.add_argument("--dataloader-workers", type=int, default=0)
@@ -385,12 +454,14 @@ def main():
     if x.ndim != 4 or x.shape[2:] != (N_JOINTS, COORD_DIM):
         raise ValueError(f"Expected x shape [N,T,17,3], got {x.shape}")
 
-    explicit_split = requested_subject_split(
-        subjects,
-        args.train_subjects,
-        args.validation_subjects,
-        args.test_subjects,
+    if args.split_file and any((args.train_subjects, args.validation_subjects, args.test_subjects)):
+        raise ValueError("Use either --split-file or explicit subject arguments, not both")
+    split_values = (
+        load_split_file(args.split_file.resolve())
+        if args.split_file
+        else (args.train_subjects, args.validation_subjects, args.test_subjects)
     )
+    explicit_split = requested_subject_split(subjects, *split_values)
     train_subjects, val_subjects, test_subjects = (
         explicit_split if explicit_split is not None else subject_split(subjects, args.seed)
     )
@@ -423,15 +494,13 @@ def main():
     )
     graph = adjacency()
     model = BrowserSTGCN(len(labels), graph).to(device)
+    initialization = None
     if args.init_checkpoint:
         initial = torch.load(args.init_checkpoint, map_location="cpu", weights_only=False)
-        initial_labels = [str(label) for label in initial["labels"]]
-        if initial_labels != labels:
-            raise ValueError(
-                "Initialization checkpoint label order differs from the dataset: "
-                f"checkpoint={initial_labels}, dataset={labels}"
-            )
-        model.load_state_dict(initial["state_dict"])
+        initialization = initialize_from_checkpoint(
+            model, initial, labels, args.init_classifier_mode
+        )
+        print(f"checkpoint_initialization={initialization}")
     optimizer = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
     loss_fn = nn.CrossEntropyLoss(weight=torch.tensor(weights, device=device))
     history = {
@@ -511,12 +580,14 @@ def main():
         "coordinate_mode": args.coordinate_mode,
         "target_fps": args.target_fps,
         "initial_checkpoint": str(args.init_checkpoint.resolve()) if args.init_checkpoint else None,
+        "checkpoint_initialization": initialization,
         "class_weights": {
             label: float(weights[index]) for index, label in enumerate(labels)
         },
         "train_subjects": sorted(train_subjects),
         "validation_subjects": sorted(val_subjects),
         "test_subjects": sorted(test_subjects),
+        "split_file": str(args.split_file.resolve()) if args.split_file else None,
         "history": history,
         "selection_metric": args.selection_metric,
         "best_selection_value": best_selection_value,

@@ -14,7 +14,10 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-from dataset_io import create_dataset
+try:
+    from .dataset_io import create_dataset
+except ImportError:  # Direct script execution: python training/build_windows.py
+    from dataset_io import create_dataset
 
 
 WINDOW = 30
@@ -77,7 +80,9 @@ def normalized_frame(landmarks) -> np.ndarray | None:
     return ((xyz[KEY_JOINT_INDICES] - hip) / torso).astype(np.float32)
 
 
-def process_segment(detector, entry: dict, root: Path) -> list[np.ndarray]:
+def process_segment(
+    detector, entry: dict, root: Path, target_fps: float
+) -> list[np.ndarray]:
     video_path = resolve_video_path(root, str(entry["path"]))
     cap = cv2.VideoCapture(str(video_path))
     if not cap.isOpened():
@@ -88,6 +93,7 @@ def process_segment(detector, entry: dict, root: Path) -> list[np.ndarray]:
     cap.set(cv2.CAP_PROP_POS_MSEC, start_sec * 1000.0)
     frames: list[np.ndarray] = []
     frame_index = int(round(start_sec * fps))
+    next_sample_sec = start_sec
     while cap.isOpened():
         ok, bgr = cap.read()
         if not ok:
@@ -95,6 +101,9 @@ def process_segment(detector, entry: dict, root: Path) -> list[np.ndarray]:
         time_sec = frame_index / fps
         if time_sec > end_sec:
             break
+        if time_sec + 1e-9 < next_sample_sec:
+            frame_index += 1
+            continue
         rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
         image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
         result = detector.detect_for_video(image, int(round(time_sec * 1000.0)))
@@ -102,6 +111,8 @@ def process_segment(detector, entry: dict, root: Path) -> list[np.ndarray]:
             frame = normalized_frame(result.pose_landmarks[0])
             if frame is not None:
                 frames.append(frame)
+        while next_sample_sec <= time_sec + 1e-9:
+            next_sample_sec += 1.0 / target_fps
         frame_index += 1
     cap.release()
     return frames
@@ -145,10 +156,39 @@ def window_starts(frame_count: int, window: int, stride: int, maximum: int) -> l
     return starts
 
 
+def resample_short_sequence(frames: list[np.ndarray], window: int) -> np.ndarray:
+    """Linearly stretch a short atomic clip to one fixed-length window."""
+    source = np.stack(frames).astype(np.float32)
+    positions = np.linspace(0.0, len(source) - 1, window, dtype=np.float32)
+    lower = np.floor(positions).astype(np.int64)
+    upper = np.ceil(positions).astype(np.int64)
+    alpha = (positions - lower).reshape(-1, 1, 1)
+    return ((1.0 - alpha) * source[lower] + alpha * source[upper]).astype(np.float32)
+
+
+def make_windows(
+    frames: list[np.ndarray],
+    window: int,
+    stride: int,
+    maximum: int,
+    short_clip_policy: str,
+    minimum_short_frames: int,
+) -> np.ndarray:
+    if len(frames) < window:
+        if short_clip_policy == "resample" and len(frames) >= minimum_short_frames:
+            return resample_short_sequence(frames, window)[None, ...]
+        return np.empty((0, window, len(KEY_JOINT_INDICES), 3), dtype=np.float32)
+    starts = window_starts(len(frames), window, stride, maximum)
+    return np.stack([
+        np.stack(frames[start:start + window]) for start in starts
+    ]).astype(np.float32)
+
+
 def process_entry_to_shard(
     index: int, entry: dict, manifest_root: str, model_path: str,
     shard_dir: str, label_to_id: dict[str, int], window: int,
-    stride: int, max_windows: int,
+    stride: int, max_windows: int, target_fps: float,
+    short_clip_policy: str, minimum_short_frames: int,
 ) -> tuple[str, int, str]:
     options = mp.tasks.vision.PoseLandmarkerOptions(
         base_options=mp.tasks.BaseOptions(model_asset_path=model_path),
@@ -159,14 +199,11 @@ def process_entry_to_shard(
         min_tracking_confidence=0.5,
     )
     with mp.tasks.vision.PoseLandmarker.create_from_options(options) as detector:
-        frames = process_segment(detector, entry, Path(manifest_root))
-    starts = window_starts(len(frames), window, stride, max_windows)
-    if starts:
-        x = np.stack([
-            np.stack(frames[start:start + window]) for start in starts
-        ]).astype(np.float32)
-    else:
-        x = np.empty((0, window, len(KEY_JOINT_INDICES), 3), dtype=np.float32)
+        frames = process_segment(detector, entry, Path(manifest_root), target_fps)
+    x = make_windows(
+        frames, window, stride, max_windows,
+        short_clip_policy, minimum_short_frames,
+    )
     count = len(x)
     shard_path = Path(shard_dir) / f"{index:05d}.npz"
     np.savez_compressed(
@@ -185,16 +222,26 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True, help="Output dataset directory")
     parser.add_argument("--window", type=int, default=WINDOW)
     parser.add_argument("--stride", type=int, default=STRIDE)
+    parser.add_argument("--target-fps", type=float, default=15.0)
     parser.add_argument("--workers", type=int, default=0, help="0 selects a RAM-aware value")
     parser.add_argument("--memory-reserve-gb", type=float, default=4.0)
     parser.add_argument("--estimated-worker-gb", type=float, default=1.5)
     parser.add_argument("--max-windows-per-segment", type=int, default=160)
+    parser.add_argument(
+        "--short-clip-policy", choices=("drop", "resample"), default="drop",
+        help="resample linearly stretches short curated clips to one fixed window",
+    )
+    parser.add_argument("--minimum-short-frames", type=int, default=8)
     args = parser.parse_args()
 
     manifest_path = args.manifest.resolve()
     entries = json.loads(manifest_path.read_text(encoding="utf-8"))
     if not isinstance(entries, list):
         raise ValueError("Manifest root must be a JSON list")
+    if args.target_fps <= 0:
+        raise ValueError("--target-fps must be positive")
+    if not 2 <= args.minimum_short_frames <= args.window:
+        raise ValueError("--minimum-short-frames must be between 2 and --window")
     validate_manifest(entries, manifest_path.parent)
     labels = sorted({str(entry["label"]) for entry in entries})
     label_to_id = {label: index for index, label in enumerate(labels)}
@@ -216,7 +263,8 @@ def main() -> None:
                         process_entry_to_shard, next_index, entries[next_index],
                         str(manifest_path.parent), str(args.model.resolve()), shard_dir,
                         label_to_id, args.window, args.stride,
-                        args.max_windows_per_segment,
+                        args.max_windows_per_segment, args.target_fps,
+                        args.short_clip_policy, args.minimum_short_frames,
                     )
                     pending[future] = next_index
                     next_index += 1
@@ -228,6 +276,17 @@ def main() -> None:
                     counts[label] += count
                     print(f"segment={index + 1}/{len(entries)} label={label} windows={count}")
         metadata = create_dataset(args.output, sorted(shard_paths), labels)
+        metadata.update({
+            "source_manifest": str(manifest_path),
+            "target_fps": args.target_fps,
+            "window_frames": args.window,
+            "stride_frames": args.stride,
+            "short_clip_policy": args.short_clip_policy,
+            "minimum_short_frames": args.minimum_short_frames,
+        })
+        (args.output / "metadata.json").write_text(
+            json.dumps(metadata, indent=2), encoding="utf-8"
+        )
     print(f"saved {metadata['samples']} windows to {args.output}")
     print(f"labels: {labels}")
     print(f"windows per label: {dict(counts)}")

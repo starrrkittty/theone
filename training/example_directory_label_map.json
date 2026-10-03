@@ -1,0 +1,7 @@
+{
+  "gym_plank": "plank",
+  "pushup": "pushup",
+  "gym_squat": "squat",
+  "gym_lunges": "lunge",
+  "non_exercise": "unknown"
+}

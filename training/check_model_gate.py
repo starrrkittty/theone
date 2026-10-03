@@ -12,7 +12,9 @@ def main() -> None:
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--min-accuracy", type=float, default=0.80)
     parser.add_argument("--min-balanced-accuracy", type=float, default=0.75)
+    parser.add_argument("--min-class-precision", type=float, default=0.55)
     parser.add_argument("--min-class-recall", type=float, default=0.55)
+    parser.add_argument("--min-class-support", type=int, default=10)
     parser.add_argument("--max-unknown-false-accept", type=float, default=0.10)
     args = parser.parse_args()
 
@@ -33,9 +35,18 @@ def main() -> None:
             f"unknown_false_accept_rate {unknown_far} > {args.max_unknown_false_accept:.3f}"
         )
     for label, values in metrics.get("per_class", {}).items():
-        if int(values.get("support", 0)) == 0:
+        support = int(values.get("support", 0))
+        if support < args.min_class_support:
+            failures.append(
+                f"{label} support {support} < {args.min_class_support}"
+            )
             continue
+        precision = float(values.get("precision", 0.0))
         recall = float(values.get("recall", 0.0))
+        if precision < args.min_class_precision:
+            failures.append(
+                f"{label} precision {precision:.3f} < {args.min_class_precision:.3f}"
+            )
         if recall < args.min_class_recall:
             failures.append(
                 f"{label} recall {recall:.3f} < {args.min_class_recall:.3f}"
