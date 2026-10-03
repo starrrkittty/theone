@@ -10,9 +10,16 @@ from pydantic import BaseModel, Field
 
 from config.settings import settings
 from exercises.registry import supported_exercises_payload
+from exercises.catalog import exercise_catalog_payload
 from reporting.builder import ActionReportBuilder
 from schemas.action_report import ActionReport, RecognitionEvent
 from state_machine.manager import FormManager, SystemState
+from recognition.semantic import (
+    LOCAL_STGCN_MODEL_ID,
+    SemanticRecognitionTracker,
+    parse_semantic_probabilities,
+    parse_semantic_result,
+)
 
 
 router = APIRouter()
@@ -54,6 +61,7 @@ class ConnectionManager:
         self.active_connections: dict[str, WebSocket] = {}
         self.form_managers: dict[str, FormManager] = {}
         self.report_builders: dict[str, ActionReportBuilder] = {}
+        self.semantic_trackers: dict[str, SemanticRecognitionTracker] = {}
         self._last_frame_times: dict[str, float] = {}
 
     async def connect(self, websocket: WebSocket, client_id: str) -> None:
@@ -61,12 +69,14 @@ class ConnectionManager:
         self.active_connections[client_id] = websocket
         self.form_managers[client_id] = FormManager()
         self.report_builders[client_id] = ActionReportBuilder(client_id)
+        self.semantic_trackers[client_id] = SemanticRecognitionTracker()
         self._last_frame_times[client_id] = 0.0
 
     def disconnect(self, client_id: str) -> None:
         self.active_connections.pop(client_id, None)
         self.form_managers.pop(client_id, None)
         self.report_builders.pop(client_id, None)
+        self.semantic_trackers.pop(client_id, None)
         self._last_frame_times.pop(client_id, None)
 
     def get_manager(self, client_id: str) -> Optional[FormManager]:
@@ -74,6 +84,9 @@ class ConnectionManager:
 
     def get_report_builder(self, client_id: str) -> Optional[ActionReportBuilder]:
         return self.report_builders.get(client_id)
+
+    def get_semantic_tracker(self, client_id: str) -> Optional[SemanticRecognitionTracker]:
+        return self.semantic_trackers.get(client_id)
 
     def should_rate_limit(self, client_id: str, max_fps: Optional[int] = None) -> bool:
         """Return True if this frame should be dropped (rate limit exceeded)."""
@@ -106,6 +119,7 @@ async def pose_websocket(websocket: WebSocket, client_id: str):
     await manager.connect(websocket, client_id)
     form_manager = manager.get_manager(client_id)
     report_builder = manager.get_report_builder(client_id)
+    semantic_tracker = manager.get_semantic_tracker(client_id)
 
     try:
         while True:
@@ -126,11 +140,28 @@ async def pose_websocket(websocket: WebSocket, client_id: str):
 
             result = state.exercise_result
             timestamp_ms = float(timestamp or (time.time() * 1000.0))
-            report, recognition_event = report_builder.build(state, timestamp_ms)
+            semantic_evidence = parse_semantic_result(data.get("semantic_result"))
+            client_model_id = data.get("client_model_id")
+            local_model_accepted = client_model_id == LOCAL_STGCN_MODEL_ID
+            if semantic_evidence is None and local_model_accepted:
+                semantic_evidence = parse_semantic_probabilities(data.get("client_probs"))
+            semantic_state = semantic_tracker.update(
+                semantic_evidence,
+                timestamp_ms,
+                core_confirmed=state.current_exercise is not None,
+            )
+            report, recognition_event = report_builder.build(
+                state,
+                timestamp_ms,
+                semantic=semantic_state,
+            )
             report.camera_view = camera_view
             response = FormCorrectionResponse(
                 state=state.system_state.value,
-                current_exercise=state.current_exercise.value if state.current_exercise else None,
+                current_exercise=(
+                    report.recognized_exercise
+                    if report.recognition_status == "confirmed" else None
+                ),
                 exercise_display=form_manager.get_state_display(),
                 rep_count=form_manager.rep_count,
                 rep_phase=result.rep_phase if result else "idle",
@@ -160,6 +191,18 @@ async def pose_websocket(websocket: WebSocket, client_id: str):
                     "candidate_confidence": state.candidate_confidence,
                     "rejection_reason": state.rejection_reason,
                     "external": state.external_debug,
+                    "semantic": {
+                        "received": semantic_evidence is not None,
+                        "client_model_id": client_model_id,
+                        "local_model_accepted": local_model_accepted,
+                        "candidate": (
+                            semantic_state.profile.id if semantic_state else None
+                        ),
+                        "confidence": (
+                            semantic_state.confidence if semantic_state else 0.0
+                        ),
+                        "confirmed": bool(semantic_state and semantic_state.confirmed),
+                    },
                 },
             )
 
@@ -205,6 +248,12 @@ async def list_supported_exercises():
     return {"exercises": supported_exercises_payload()}
 
 
+@router.get("/exercise-catalog")
+async def list_exercise_catalog():
+    """List semantic vocabulary separately from verified realtime support."""
+    return {"exercises": exercise_catalog_payload()}
+
+
 @router.post("/reset/{client_id}")
 async def reset_session(client_id: str):
     form_manager = manager.get_manager(client_id)
@@ -213,5 +262,8 @@ async def reset_session(client_id: str):
         report_builder = manager.get_report_builder(client_id)
         if report_builder:
             report_builder.reset()
+        semantic_tracker = manager.get_semantic_tracker(client_id)
+        if semantic_tracker:
+            semantic_tracker.reset()
         return {"status": "reset", "client_id": client_id}
     return {"status": "not_found", "client_id": client_id}

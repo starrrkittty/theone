@@ -24,7 +24,7 @@ export interface ActionViolation {
 }
 
 export interface ActionReport {
-  schema_version: 'v1';
+  schema_version: 'v2';
   session_id: string;
   timestamp_ms: number;
   recognition_status: 'unknown' | 'candidate' | 'confirmed';
@@ -50,6 +50,25 @@ export interface ActionReport {
     repeated_error_count: number;
     possible_fatigue: boolean;
   };
+  recognition: {
+    exercise_id: string;
+    display_name: string;
+    category: string;
+    source: string;
+    uncertainty_reason: string | null;
+  };
+  routing: {
+    mode: 'verified_specialist' | 'general_coaching' | 'observe_more';
+    specialist: string | null;
+    fallback_specialist: string | null;
+  };
+  capabilities: {
+    semantic_recognition: boolean;
+    precise_rep_count: boolean;
+    specialized_form_correction: boolean;
+    hold_timing: boolean;
+    general_guidance: boolean;
+  };
 }
 
 export interface RecognitionEvent {
@@ -60,6 +79,7 @@ export interface RecognitionEvent {
   confidence: number;
   specialist: string;
   message: string;
+  route_mode: 'verified_specialist' | 'general_coaching';
 }
 
 export interface FormCorrectionResponse {
@@ -100,6 +120,14 @@ export interface FormCorrectionResponse {
       margin?: number;
       reason?: string;
     };
+    semantic?: {
+      received?: boolean;
+      client_model_id?: string | null;
+      local_model_accepted?: boolean;
+      candidate?: string | null;
+      confidence?: number;
+      confirmed?: boolean;
+    };
   };
 }
 
@@ -120,7 +148,12 @@ export interface UsePoseStreamReturn {
   error: Error | null;
   connect: () => void;
   disconnect: () => void;
-  sendLandmarks: (landmarks: PoseLandmark[], timestamp: number, clientProbs?: Record<string, number> | null) => void;
+  sendLandmarks: (
+    landmarks: PoseLandmark[],
+    timestamp: number,
+    clientProbs?: Record<string, number> | null,
+    clientModelId?: string | null,
+  ) => void;
   reset: () => Promise<void>;
 }
 
@@ -130,17 +163,20 @@ export function buildPoseMessage(
   landmarks: PoseLandmark[],
   timestamp: number,
   clientProbs: Record<string, number> | null,
+  clientModelId: string | null = null,
 ): string {
   const payload: {
     landmarks: { x: number; y: number; z: number; visibility: number }[];
     timestamp: number;
     client_probs?: Record<string, number>;
+    client_model_id?: string;
   } = {
     landmarks: landmarks.map(lm => ({ x: lm.x, y: lm.y, z: lm.z, visibility: lm.visibility })),
     timestamp,
   };
   if (clientProbs !== null && clientProbs !== undefined) {
     payload.client_probs = clientProbs;
+    if (clientModelId) payload.client_model_id = clientModelId;
   }
   return JSON.stringify(payload);
 }
@@ -269,8 +305,18 @@ export function usePoseStream(options: UsePoseStreamOptions = {}): UsePoseStream
   }, [url]);
 
   const sendLandmarks = useCallback(
-    (landmarks: PoseLandmark[], timestamp: number, clientProbs?: Record<string, number> | null) => {
-      const message = buildPoseMessage(landmarks, timestamp, clientProbs ?? null);
+    (
+      landmarks: PoseLandmark[],
+      timestamp: number,
+      clientProbs?: Record<string, number> | null,
+      clientModelId?: string | null,
+    ) => {
+      const message = buildPoseMessage(
+        landmarks,
+        timestamp,
+        clientProbs ?? null,
+        clientModelId ?? null,
+      );
 
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         wsRef.current.send(message);

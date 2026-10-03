@@ -5,13 +5,18 @@ from dataclasses import asdict
 from typing import Optional
 
 from schemas.action_report import (
+    ActionCapabilities,
     ActionMetrics,
     ActionReport,
     AgentContext,
     CandidateExercise,
+    RecognitionDetails,
     RecognitionEvent,
+    RoutingDetails,
     ViolationItem,
 )
+from recognition.routing import route_exercise
+from recognition.semantic import SemanticState
 
 
 _DISPLAY_ZH = {
@@ -37,7 +42,12 @@ class ActionReportBuilder:
         self._violation_streaks.clear()
         self._quality_history.clear()
 
-    def build(self, state, timestamp_ms: float) -> tuple[ActionReport, Optional[RecognitionEvent]]:
+    def build(
+        self,
+        state,
+        timestamp_ms: float,
+        semantic: Optional[SemanticState] = None,
+    ) -> tuple[ActionReport, Optional[RecognitionEvent]]:
         result = state.exercise_result
         current = state.current_exercise.value if state.current_exercise else None
         candidate = getattr(state, "candidate_exercise", None)
@@ -48,14 +58,45 @@ class ActionReportBuilder:
             recognition_status = "confirmed"
             exercise = current
             confidence = float(state.exercise_confidence)
+            recognition_source = state.exercise_source
+            semantic_profile_override = None
+        elif semantic and semantic.confirmed:
+            recognition_status = "confirmed"
+            exercise = semantic.profile.id
+            confidence = semantic.confidence
+            recognition_source = semantic.source
+            semantic_profile_override = semantic.profile
         elif candidate_name:
             recognition_status = "candidate"
             exercise = "unknown"
             confidence = candidate_confidence
+            recognition_source = state.exercise_source
+            semantic_profile_override = None
+        elif semantic:
+            recognition_status = "candidate"
+            exercise = "unknown"
+            confidence = semantic.confidence
+            recognition_source = semantic.source
+            semantic_profile_override = semantic.profile
         else:
             recognition_status = "unknown"
             exercise = "unknown"
             confidence = 0.0
+            recognition_source = "none"
+            semantic_profile_override = None
+
+        routing = route_exercise(
+            exercise if recognition_status == "confirmed" else "unknown",
+            display_name=(
+                semantic_profile_override.display_name_zh
+                if semantic_profile_override else None
+            ),
+            category=(
+                semantic_profile_override.category
+                if semantic_profile_override else "other"
+            ),
+        )
+        profile = semantic_profile_override or routing.profile
 
         candidates = []
         if candidate_name:
@@ -63,6 +104,12 @@ class ActionReportBuilder:
                 exercise=candidate_name,
                 confidence=candidate_confidence,
                 source=state.exercise_source,
+            ))
+        elif semantic:
+            candidates.append(CandidateExercise(
+                exercise=semantic.profile.id,
+                confidence=semantic.confidence,
+                source=semantic.source,
             ))
 
         violations = self._build_violations(state, result)
@@ -103,7 +150,7 @@ class ActionReportBuilder:
             recognized_exercise=exercise,
             recognition_confidence=max(0.0, min(1.0, confidence)),
             candidate_exercises=candidates,
-            specialist=f"{exercise}_specialist" if current else None,
+            specialist=routing.specialist,
             phase=result.rep_phase if result else "idle",
             repetition=result.rep_count if result else 0,
             pose_quality=self._pose_quality(state.signal_quality),
@@ -122,9 +169,38 @@ class ActionReportBuilder:
                 repeated_error_count=max_streak,
                 possible_fatigue=possible_fatigue,
             ),
+            recognition=RecognitionDetails(
+                exercise_id=exercise,
+                display_name=profile.display_name_zh if profile else "",
+                category=profile.category if profile else "other",
+                source=recognition_source,
+                uncertainty_reason=(
+                    getattr(state, "rejection_reason", None)
+                    if not current else None
+                ),
+            ),
+            routing=RoutingDetails(
+                mode=routing.mode,
+                specialist=routing.specialist,
+                fallback_specialist=routing.fallback_specialist,
+            ),
+            capabilities=ActionCapabilities(
+                semantic_recognition=bool(profile),
+                precise_rep_count=bool(profile and profile.precise_rep_count),
+                specialized_form_correction=bool(
+                    profile and profile.specialized_form_correction
+                ),
+                hold_timing=bool(profile and profile.hold_timing),
+                general_guidance=bool(profile),
+            ),
         )
 
-        event = self._recognition_event(current, confidence, timestamp_ms)
+        event = self._recognition_event(
+            exercise if recognition_status == "confirmed" else None,
+            confidence,
+            timestamp_ms,
+            profile=profile,
+        )
         return report, event
 
     def _build_violations(self, state, result) -> list[ViolationItem]:
@@ -171,20 +247,33 @@ class ActionReportBuilder:
         current: Optional[str],
         confidence: float,
         timestamp_ms: float,
+        profile=None,
     ) -> Optional[RecognitionEvent]:
         if not current or current == self._last_exercise:
             return None
         event_name = "exercise_confirmed" if self._last_exercise is None else "exercise_switched"
         self._last_exercise = current
-        display = _DISPLAY_ZH.get(current, current)
+        routing = route_exercise(
+            current,
+            display_name=profile.display_name_zh if profile else None,
+            category=profile.category if profile else "other",
+        )
+        if not routing.profile or not routing.specialist:
+            return None
+        display = routing.profile.display_name_zh or _DISPLAY_ZH.get(current, current)
+        if routing.mode == "verified_specialist":
+            message = f"小主，识别到您正在做{display}，我这就去找{display}专家带您锻炼哦。"
+        else:
+            message = f"小主，识别到您正在做{display}，我这就请通用训练专家带您锻炼哦。"
         return RecognitionEvent(
             event=event_name,
             session_id=self.session_id,
             timestamp_ms=timestamp_ms,
             exercise=current,
             confidence=max(0.0, min(1.0, float(confidence))),
-            specialist=f"{current}_specialist",
-            message=f"小主，识别到您正在做{display}，我这就去找{display}专家带您锻炼哦。",
+            specialist=routing.specialist,
+            message=message,
+            route_mode=routing.mode,
         )
 
     def _is_quality_declining(self) -> bool:

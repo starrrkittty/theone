@@ -17,6 +17,14 @@ describe('buildPoseMessage', () => {
     expect(msg.client_probs).toEqual(probs);
   });
 
+  it('couples client probabilities to their model id', () => {
+    const lms = [{ x: 0.1, y: 0.2, z: 0.0, visibility: 1.0 }];
+    const probs = { lunge: 0.98, unknown: 0.02 };
+    const msg = JSON.parse(buildPoseMessage(lms, 200, probs, 'mmfit-mediapipe-semantic-v1'));
+    expect(msg.client_probs).toEqual(probs);
+    expect(msg.client_model_id).toBe('mmfit-mediapipe-semantic-v1');
+  });
+
   it('omits client_probs key entirely when null', () => {
     const lms = [{ x: 0.5, y: 0.5, z: 0.0, visibility: 0.9 }];
     const msg = JSON.parse(buildPoseMessage(lms, 300, null));

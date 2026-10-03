@@ -1,0 +1,39 @@
+{
+  "model_id": "mmfit-mediapipe-semantic-v1",
+  "role": "local_long_tail_semantic_candidate",
+  "training_data": "MM-Fit RGB reprocessed with the bundled MediaPipe Pose Landmarker Lite",
+  "license_note": "MM-Fit RGB/Depth Zenodo record 7607736 is CC BY 4.0",
+  "input": {
+    "window_frames": 30,
+    "target_fps": 15,
+    "joint_count": 17,
+    "coordinate_mode": "xy",
+    "normalization_mode": "torso_xy"
+  },
+  "split": {
+    "train_subjects": ["p05", "p07", "p09"],
+    "validation_subjects": ["p06"],
+    "test_subjects": ["p08"]
+  },
+  "semantic_thresholds": {
+    "dumbbell_row": 0.75,
+    "jumping_jack": 0.72,
+    "lateral_raise": 0.995,
+    "lunge": 0.97,
+    "shoulder_press": 0.72,
+    "situp": 0.999,
+    "tricep_extension": 0.99
+  },
+  "held_out_semantic_metrics": {
+    "balanced_accuracy": 0.735,
+    "unknown_false_accept_rate": 0.048,
+    "note": "Single-window conservative estimate; runtime additionally requires two consecutive hits."
+  },
+  "limitations": [
+    "Core actions still require rule/HMM confirmation and do not gain specialist authority from this model.",
+    "MM-Fit does not provide plank or the product's regular bilateral curl label.",
+    "The held-out p08 workout contains no jumping-jack samples.",
+    "Lunge and lateral-raise recall remain lower than the other semantic classes.",
+    "Real video-call lighting, occlusion, multi-person scenes, and camera placement still need team-recorded evaluation."
+  ]
+}

@@ -34,8 +34,12 @@ def test_report_contains_compact_metrics_and_one_time_confirmation_event():
     second_report, second_event = builder.build(_state(), 1240.0)
 
     assert report.recognized_exercise == "squat"
+    assert report.schema_version == "v2"
     assert report.metrics.joint_angles["left_knee"] == 82.0
     assert report.specialist == "squat_specialist"
+    assert report.routing.mode == "verified_specialist"
+    assert report.capabilities.precise_rep_count is True
+    assert report.capabilities.specialized_form_correction is True
     assert event is not None
     assert event.event == "exercise_confirmed"
     assert "深蹲" in event.message

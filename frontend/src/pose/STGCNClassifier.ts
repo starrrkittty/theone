@@ -8,6 +8,7 @@ export const KEY_JOINT_INDICES = [11,12,13,14,15,16,23,24,25,26,27,28,0,7,8,9,10
 type ProbMap = Record<string, number> | null;
 
 interface WeightsJSON {
+  model_id?: string;
   gc1_W: number[][];   // (COORD_DIM, HIDDEN)
   gc1_b: number[][];   // (N_JOINTS, HIDDEN)
   gc2_W: number[][];   // (HIDDEN, HIDDEN)
@@ -16,6 +17,10 @@ interface WeightsJSON {
   fc_b:  number[];     // (N_CLASSES,)
   adjacency: number[][];
   labels: string[];
+  temporal_pooling?: 'mean_std_velocity_range';
+  input_coordinate_mode?: 'xy' | 'xyz';
+  normalization_mode?: 'torso_xy' | 'torso_xyz';
+  target_fps?: number;
 }
 
 interface ScalerJSON {
@@ -23,7 +28,12 @@ interface ScalerJSON {
   std:  number[];
 }
 
+interface ModelCardJSON {
+  model_id?: string;
+}
+
 interface LoadedWeights {
+  modelId: string | null;
   gc1_W: Float32Array;
   gc1_b: Float32Array;
   gc2_W: Float32Array;
@@ -32,6 +42,10 @@ interface LoadedWeights {
   fc_b:  Float32Array;
   A:     Float32Array;
   labels: string[];
+  temporalPooling: 'mean' | 'mean_std_velocity_range';
+  inputCoordinateMode: 'xy' | 'xyz';
+  normalizationMode: 'torso_xy' | 'torso_xyz';
+  targetFps: number;
   mean:  Float32Array;
   std:   Float32Array;
 }
@@ -43,25 +57,42 @@ export class STGCNClassifier {
     return this.weights !== null;
   }
 
-  async loadWeights(weightsUrl: string, scalerUrl?: string): Promise<void> {
-    const [wJson, sJson] = await Promise.all([
+  get targetFps(): number {
+    return this.weights?.targetFps ?? 15;
+  }
+
+  get modelId(): string | null {
+    return this.weights?.modelId ?? null;
+  }
+
+  get normalizationMode(): 'torso_xy' | 'torso_xyz' {
+    return this.weights?.normalizationMode ?? 'torso_xyz';
+  }
+
+  async loadWeights(weightsUrl: string, scalerUrl?: string, modelCardUrl?: string): Promise<void> {
+    const [wJson, sJson, modelCard] = await Promise.all([
       fetch(weightsUrl).then(r => r.json() as Promise<WeightsJSON & { mean?: number[]; std?: number[] }>),
       scalerUrl ? fetch(scalerUrl).then(r => r.json() as Promise<ScalerJSON>) : Promise.resolve(null),
+      modelCardUrl ? fetch(modelCardUrl).then(r => r.json() as Promise<ModelCardJSON>) : Promise.resolve(null),
     ]);
     const combined = {
       ...wJson,
       mean: sJson?.mean ?? wJson.mean ?? new Array(N_JOINTS * COORD_DIM).fill(0),
       std:  sJson?.std  ?? wJson.std  ?? new Array(N_JOINTS * COORD_DIM).fill(1),
     };
-    this._parseWeights(combined as WeightsJSON & ScalerJSON);
+    this._parseWeights(combined as WeightsJSON & ScalerJSON, modelCard?.model_id ?? wJson.model_id ?? null);
   }
 
   loadWeightsFromObject(obj: WeightsJSON & { mean: number[]; std: number[] }): void {
-    this._parseWeights(obj);
+    this._parseWeights(obj, obj.model_id ?? null);
   }
 
-  private _parseWeights(obj: WeightsJSON & { mean: number[]; std: number[] }): void {
+  private _parseWeights(
+    obj: WeightsJSON & { mean: number[]; std: number[] },
+    modelId: string | null,
+  ): void {
     this.weights = {
+      modelId,
       gc1_W: new Float32Array(obj.gc1_W.flat()),
       gc1_b: new Float32Array(obj.gc1_b.flat()),
       gc2_W: new Float32Array(obj.gc2_W.flat()),
@@ -70,6 +101,10 @@ export class STGCNClassifier {
       fc_b:  new Float32Array(obj.fc_b),
       A:     new Float32Array(obj.adjacency.flat()),
       labels: obj.labels,
+      temporalPooling: obj.temporal_pooling ?? 'mean',
+      inputCoordinateMode: obj.input_coordinate_mode ?? 'xyz',
+      normalizationMode: obj.normalization_mode ?? 'torso_xyz',
+      targetFps: obj.target_fps ?? 15,
       mean:  new Float32Array(obj.mean),
       std:   new Float32Array(obj.std),
     };
@@ -86,7 +121,8 @@ export class STGCNClassifier {
       const frame = frames[t];
       for (let f = 0; f < N_JOINTS * COORD_DIM; f++) {
         const s = W.std[f];
-        x[t * N_JOINTS * COORD_DIM + f] = s !== 0 ? (frame[f] - W.mean[f]) / s : 0;
+        const raw = W.inputCoordinateMode === 'xy' && f % COORD_DIM === 2 ? 0 : frame[f];
+        x[t * N_JOINTS * COORD_DIM + f] = s !== 0 ? (raw - W.mean[f]) / s : 0;
       }
     }
 
@@ -96,11 +132,36 @@ export class STGCNClassifier {
     // GC Layer 2: (WINDOW, N_JOINTS, HIDDEN) -> (WINDOW, N_JOINTS, HIDDEN)
     const H2 = this._gcLayer(H1, W.A, W.gc2_W, W.gc2_b, HIDDEN, HIDDEN);
 
-    // Global avg pool over time -> (N_JOINTS * HIDDEN,)
-    const pooled = new Float32Array(N_JOINTS * HIDDEN);
-    for (let t = 0; t < WINDOW; t++) {
-      for (let i = 0; i < N_JOINTS * HIDDEN; i++) {
-        pooled[i] += H2[t * N_JOINTS * HIDDEN + i] / WINDOW;
+    // Temporal summary. New weights preserve mean pose plus motion statistics;
+    // old curl-only weights omit temporal_pooling and remain mean-only.
+    const baseFeatures = N_JOINTS * HIDDEN;
+    const temporalStats = W.temporalPooling === 'mean_std_velocity_range' ? 4 : 1;
+    const pooled = new Float32Array(baseFeatures * temporalStats);
+    for (let i = 0; i < baseFeatures; i++) {
+      let sum = 0;
+      let min = Infinity;
+      let max = -Infinity;
+      let velocity = 0;
+      for (let t = 0; t < WINDOW; t++) {
+        const value = H2[t * baseFeatures + i];
+        sum += value;
+        if (value < min) min = value;
+        if (value > max) max = value;
+        if (t > 0) {
+          velocity += Math.abs(value - H2[(t - 1) * baseFeatures + i]);
+        }
+      }
+      const mean = sum / WINDOW;
+      pooled[i] = mean;
+      if (temporalStats === 4) {
+        let variance = 0;
+        for (let t = 0; t < WINDOW; t++) {
+          const delta = H2[t * baseFeatures + i] - mean;
+          variance += delta * delta;
+        }
+        pooled[baseFeatures + i] = Math.sqrt(variance / WINDOW);
+        pooled[baseFeatures * 2 + i] = velocity / (WINDOW - 1);
+        pooled[baseFeatures * 3 + i] = max - min;
       }
     }
 
@@ -109,7 +170,7 @@ export class STGCNClassifier {
     const logits = new Float32Array(nClasses);
     for (let c = 0; c < nClasses; c++) {
       let sum = W.fc_b[c];
-      for (let i = 0; i < N_JOINTS * HIDDEN; i++) {
+      for (let i = 0; i < pooled.length; i++) {
         sum += pooled[i] * W.fc_W[i * nClasses + c];
       }
       logits[c] = sum;

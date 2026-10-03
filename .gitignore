@@ -5,6 +5,7 @@ __pycache__/
 *.so
 .Python
 .venv/
+.training-venv/
 venv/
 ENV/
 env/

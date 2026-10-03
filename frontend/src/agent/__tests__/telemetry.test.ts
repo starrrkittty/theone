@@ -27,7 +27,7 @@ function response(
     form_confidence: 0.8,
     timestamp: 0,
     action_report: {
-      schema_version: 'v1',
+      schema_version: 'v2',
       session_id: 'test',
       timestamp_ms: 0,
       recognition_status: status,
@@ -52,6 +52,25 @@ function response(
         recommended_intent: 'observe',
         repeated_error_count: 0,
         possible_fatigue: false,
+      },
+      recognition: {
+        exercise_id: exercise,
+        display_name: exercise,
+        category: 'other',
+        source: 'test',
+        uncertainty_reason: null,
+      },
+      routing: {
+        mode: status === 'confirmed' ? 'verified_specialist' : 'observe_more',
+        specialist: status === 'confirmed' ? `${exercise}_specialist` : null,
+        fallback_specialist: null,
+      },
+      capabilities: {
+        semantic_recognition: status === 'confirmed',
+        precise_rep_count: status === 'confirmed',
+        specialized_form_correction: status === 'confirmed',
+        hold_timing: false,
+        general_guidance: status === 'confirmed',
       },
     },
   };

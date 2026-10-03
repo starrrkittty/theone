@@ -1,6 +1,6 @@
 # AI 智能健身私教：Agent A 运动感知服务
 
-这是团队 **Agent A（运动感知与数据底座）** 的第一版可运行实现。它从 App 视频通话画面中取得的 33 点 MediaPipe Pose 骨架出发，完成动作候选识别、时间稳定确认、动作阶段/次数/姿态问题分析，并输出一个稳定、紧凑的 `ActionReport v1` 给 Agent B。
+这是团队 **Agent A（运动感知与数据底座）** 的第一版可运行实现。它从 App 视频通话画面中取得的 33 点 MediaPipe Pose 骨架出发，完成动作候选识别、时间稳定确认、动作阶段/次数/姿态问题分析，并输出一个稳定、紧凑的 `ActionReport v2` 给 Agent B。
 
 > 这里的前端只是开发与联调控制台。最终产品由 App 端建立用户与 AI 私教的视频通话，再把通话画面中的骨架帧发送给本服务；用户不需要先选择运动类型。
 
@@ -11,21 +11,22 @@
   “小主，识别到您正在做深蹲，我这就去找深蹲专家带您锻炼哦。”
 - 输出动作阶段、次数或静态保持时长、关节角度、置信度、画面质量、错误和纠正建议。
 - 用 Kalman、HMM、规则门控和滞回机制降低单帧抖动与误切换。
-- 支持浏览器 ST-GCN 或后续 ActionCLIP 服务通过 `client_probs` 提供第二路动作分类证据。
+- 浏览器内置在 MM-Fit 官方 RGB 视频上微调的轻量 ST-GCN，为 7 个长尾动作提供经过逐类阈值校准的第二路语义证据。
+- 40+ 动作目录统一中英文别名和路由；无专项验证的动作只进入通用指导，不伪造精确计数或纠错能力。
 - 读取标准 URDF 的关节树、轴、原点和上下限，并校验 MediaPipe 到 URDF 的映射。
 - 将连续错误、疲劳迹象和指导优先级压缩为 `agent_context`，供 Agent B 决定何时说话、说什么。
 - 保留既有瑜伽姿势、视频上传和开发前端能力，方便扩展及回放测试。
 
-第一版不声称解决多人跟踪、医学诊断或任意运动识别。平板支撑目前是前臂平板支撑 beta；动作集合之外的输入应保持 `unknown`，而不是强行猜测。
+第一版不声称解决稳定多人跟踪、医学诊断或任意运动的精确识别。平板支撑目前是前臂平板支撑 beta；证据不足的输入应保持 `unknown`，而不是强行猜测。
 
 ## 架构边界
 
 ```text
 App 视频通话
   -> 端侧 MediaPipe（只提取 33 点骨架，不上传原始视频）
-  -> 可选 ST-GCN / ActionCLIP 动作概率
+  -> 本地 ST-GCN 长尾语义候选 / 后续 Video LLM 开放词汇补充
   -> Agent A：校验、平滑、识别、阶段、计数、纠错
-  -> ActionReport v1 + recognition_event
+  -> ActionReport v2 + recognition_event
   -> Agent B：专项教练、主动话术、阶段计划、训练总结、饮食建议
 ```
 
@@ -36,13 +37,14 @@ App 视频通话
 | 能力 | 第一版实现 | 是否需要云端 API Key |
 | --- | --- | --- |
 | 人体关键点 | 浏览器 MediaPipe Tasks Vision | 否 |
-| 基础动作识别 | HMM + 姿态规则；浏览器 ST-GCN 可选 | 否 |
-| ActionCLIP/更强视频分类 | 预留 `client_probs` 适配口，尚未捆绑权重与推理服务 | 取决于部署方式；本地开源模型不需要 |
+| 核心动作识别 | HMM + 姿态规则 + 专项模块 | 否 |
+| 长尾动作识别 | MM-Fit RGB 同域微调的浏览器 ST-GCN + 逐类阈值 + 连续确认 | 否 |
+| Video LLM/开放词汇补充 | 预留结构化 `semantic_result` 入口，尚未配置供应商 API | 是；密钥必须由服务端保管 |
 | URDF 读取 | Python XML 确定性解析器 | 否 |
 | 动作计数与纠错 | 几何特征、状态机和专项模块 | 否 |
 | 对话、计划、饮食建议 | 由 Agent B 调用 LLM | 是；密钥必须由服务端保管 |
 
-本项目第一版**不训练或微调模型**。当前目标是把成熟开源感知组件和清晰接口组合成稳定原型，先验证识别—纠错—指导闭环。
+本项目不从零训练大模型，也不训练人体关键点模型；MediaPipe 使用公开预训练模型。项目已经在 MM-Fit 公开数据上完成轻量 ST-GCN 预训练、RGB→MediaPipe 同域微调和按人员独立测试，用于长尾动作语义候选。完整数据、指标、阈值和限制见 [训练状态](docs/TRAINING_STATUS.md)，GitHub 仓库采用决策见 [公开数据与开源仓库](docs/OPEN_SOURCE_BASELINE.md)。
 
 ## 快速启动
 
@@ -87,11 +89,12 @@ WS /api/ws/pose/{client_id}
     "pushup": 0.04,
     "plank": 0.03,
     "unknown": 0.02
-  }
+  },
+  "client_model_id": "mmfit-mediapipe-semantic-v1"
 }
 ```
 
-`landmarks` 应包含 33 个 MediaPipe Pose 点。`client_probs` 可选，用来接入浏览器 ST-GCN 或独立 ActionCLIP 服务；服务端会过滤未知标签、非法分数和置信差不足的结果。
+`landmarks` 应包含 33 个 MediaPipe Pose 点。`client_probs` 可选，用来接入浏览器 ST-GCN；`client_model_id` 必须与后端已校准阈值对应，否则这些概率不能触发长尾语义路由。服务端同时过滤未知标签、非法分数和低于逐类阈值的结果。
 
 ### 给 Agent B 的关键输出
 
@@ -105,7 +108,7 @@ WS /api/ws/pose/{client_id}
     "message": "小主，识别到您正在做深蹲，我这就去找深蹲专家带您锻炼哦。"
   },
   "action_report": {
-    "schema_version": "v1",
+    "schema_version": "v2",
     "session_id": "demo-user",
     "recognition_status": "confirmed",
     "recognized_exercise": "squat",

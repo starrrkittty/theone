@@ -4,7 +4,7 @@
 
 ## 推荐数据顺序
 
-1. MM-Fit：先覆盖 `squat`、`pushup`、`alternate_bicep_curl` 和动作间歇的 `unknown`。
+1. MM-Fit：覆盖其 10 种公开健身动作与动作间歇 `unknown`，其中三类进入当前专项链路，其余作为语义识别和通用专家路由基线。
 2. Fit3D：用于更多机位、极端健身姿态和高质量 3D 姿态评测，不直接假设它覆盖本项目的全部动作标签。
 3. UI-PRMD：可用于深蹲等康复动作的轨迹/动作质量研究，不适合作为本项目五类动作的唯一分类训练集。
 4. 团队自录视频通话数据：补充 `plank`、普通弯举、低光、遮挡、多人和非运动负样本。
@@ -17,20 +17,52 @@ MM-Fit 官方入口：https://mmfit.github.io/
 - MM-Fit 姿态/传感器压缩包约 1.66 GB，下载更轻，但其公开下载页未清楚声明数据许可，而且 Human3.6M 17 点定义与本项目 MediaPipe 17 点子集不同，只建议做预训练或研究对照。
 - Fit3D 训练集约 18 GB、测试集约 1.4 GB，需要注册，并受非商业研究许可限制。
 
-脚本不会自动下载这些数据。先确认团队可用磁盘空间和许可，再把数据放入被 `.gitignore` 忽略的 `training/data/`，不要提交原视频到 Git 仓库。
+本机数据统一放在 `D:\datasets`，模型输出统一放在 `D:\datasets\ai-fitness-runs`，不要把原视频、窗口文件或训练权重提交到 Git 仓库。
 
 公开数据不要直接使用其现成骨架格式训练后就宣称可部署。当前应用输入是 MediaPipe Pose Landmarker 的坐标，因此推荐把公开 RGB 视频重新通过同一套 `pose_landmarker_lite.task` 提取，以减少关键点定义和坐标分布差异。
 
+本项目提供按字节分块、断点保留、最终核对 Zenodo 官方 MD5 的下载器。例如只下载 5 个独立受试者对应的较小 RGB 文件：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\download_zenodo_files.py `
+  --record 7607736 `
+  --output D:\datasets\mmfit\rgb `
+  --files w16_rgb.mp4 w17_rgb.mp4 w18_rgb.mp4 w19_rgb.mp4 w20_rgb.mp4 `
+  --connections 8
+```
+
+这里的 8 路并发只用于网络流式下载，每路按 1MB 缓冲，不会把视频读入内存。
+
+若 RGB 尚未下载，可先使用官方 2D COCO 骨架训练公开数据预训练基线：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\build_mmfit_pose_windows.py `
+  --dataset-root D:\datasets\mmfit\extracted\mm-fit `
+  --output D:\datasets\mmfit\pose2d-pretrain-v1
+```
+
+该输出会写入 `provenance.json`，明确标记 `deployable_without_rgb_finetune=false`。它适合验证类别可分性和训练管线，不能替代 RGB→MediaPipe 同域微调与真实视频验收。
+
 ## 1. 准备环境
 
-建议使用 Python 3.11 的独立环境：
+使用仓库内被 Git 忽略的独立环境；仓库本身位于 D 盘，因此依赖不会写进 C 盘项目目录：
 
 ```powershell
 python -m venv .training-venv
 .\.training-venv\Scripts\python.exe -m pip install -r training\requirements.txt
 ```
 
-## 2. 建立片段清单
+## 2. 从 MM-Fit 官方标注建立片段清单
+
+官方标签格式为 `(Start Frame, End Frame, Repetition Count, Activity)`。下载并解压 RGB 视频和标签后运行：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\prepare_mmfit_manifest.py `
+  --dataset-root D:\datasets\mmfit\extracted `
+  --output D:\datasets\mmfit\manifest.json
+```
+
+脚本会映射 MM-Fit 的 10 类动作，并从动作间隙自动抽取 `unknown`。也可以手工建立 manifest：
 
 复制 `training/example_manifest.json`，给每个运动区间填写：
 
@@ -39,7 +71,7 @@ python -m venv .training-venv
 - `subject`：受试者或 workout session ID。
 - `start_sec`、`end_sec`：该动作在原始视频中的时间区间。
 
-统一标签建议为：
+当前训练管线允许的公开集标签为：
 
 ```text
 squat
@@ -47,6 +79,13 @@ pushup
 plank
 bicep_curl
 alternate_bicep_curl
+lunge
+situp
+tricep_extension
+dumbbell_row
+jumping_jack
+shoulder_press
+lateral_raise
 unknown
 ```
 
@@ -54,23 +93,57 @@ unknown
 
 ## 3. 用与产品一致的 MediaPipe 模型提取窗口
 
+对 MM-Fit 原始帧号标注，优先使用专用脚本；它会保留官方 participant 身份，按视频逐段处理并写分片：
+
 ```powershell
-.\.training-venv\Scripts\python.exe training\build_windows.py `
-  --manifest training\data\manifest.json `
-  --model frontend\public\models\pose_landmarker_lite.task `
-  --output training\data\mmfit_windows.npz
+.\.training-venv\Scripts\python.exe training\build_mmfit_rgb_windows.py `
+  --dataset-root D:\datasets\mmfit\extracted\mm-fit `
+  --rgb-root D:\datasets\mmfit\rgb `
+  --pose-model frontend\public\models\pose_landmarker_lite.task `
+  --output D:\datasets\mmfit\mediapipe-rgb-v1 `
+  --workouts w16 w17 w18 w19 w20 `
+  --target-fps 15
 ```
 
-每个样本是连续 30 帧、17 个关键关节、3 个坐标，归一化方法与浏览器一致。输出还保留 `subject`，训练脚本会按人员/session划分数据。
+对团队自录或其他按秒标注的视频，使用通用 manifest 脚本：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\build_windows.py `
+  --manifest D:\datasets\mmfit\manifest.json `
+  --model frontend\public\models\pose_landmarker_lite.task `
+  --output D:\datasets\mmfit\pose-windows-v1 `
+  --workers 0 `
+  --memory-reserve-gb 6 `
+  --max-windows-per-segment 160
+```
+
+`--workers 0` 会根据当前可用物理内存自动选择并发数，上限为 4；每个 worker 按 1.5 GB 估算并预留指定内存。任务队列最多保留 `2×worker` 个片段。每个片段先写临时分片，最终合并为 `.npy` 内存映射文件，不会在 RAM 中堆积整个数据集。
+
+每个样本是连续 30 帧、17 个关键关节、3 个坐标，归一化方法与浏览器一致。输出保留 `subject`，训练脚本按人员/session划分数据。
 
 ## 4. 训练并导出浏览器可读权重
 
 ```powershell
 .\.training-venv\Scripts\python.exe training\train_stgcn.py `
-  --dataset training\data\mmfit_windows.npz `
-  --output-dir training\runs\mmfit-v1 `
-  --epochs 40
+  --dataset D:\datasets\mmfit\pose-windows-v1 `
+  --output-dir D:\datasets\ai-fitness-runs\mmfit-v1 `
+  --epochs 40 `
+  --patience 6 `
+  --coordinate-mode xy `
+  --target-fps 15 `
+  --train-subjects p05 p07 p09 `
+  --validation-subjects p06 `
+  --test-subjects p08 `
+  --init-checkpoint D:\datasets\ai-fitness-runs\mmfit-pose2d-15fps-temporal-xy\stgcn_checkpoint.pt `
+  --batch-size 64 `
+  --dataloader-workers 0
 ```
+
+Windows 上默认 `dataloader-workers=0`，避免多进程复制内存映射数组。均值和方差按块计算，训练样本在 `Dataset.__getitem__` 中逐批归一化。
+
+MM-Fit 的公开预提取骨架只有 2D 坐标，因此该预训练模型使用 `--coordinate-mode xy`，并在导出权重中记录这个契约；浏览器会自动忽略 z。不要让一个从未见过 z 分布的模型直接读取 MediaPipe z。前端也按导出的 `target_fps` 采样，避免不同设备帧率改变速度特征。训练连续若干轮不提升时会早停，并恢复验证集最优权重。
+
+`--init-checkpoint` 用于公开骨架预训练后的 RGB 同域微调；不传该参数就是从头训练。二者必须使用完全相同的人员划分再比较，避免把“换了测试人”误当成模型提升。
 
 训练输出：
 
@@ -79,6 +152,18 @@ unknown
 - `confusion_matrix.png`：独立测试人员上的混淆矩阵。
 - `confusion_matrix_normalized.png`：按真实类别归一化的混淆矩阵，更容易发现某一类被系统性误判。
 - `stgcn_weights.json`、`stgcn_scaler.json`：与前端推理器兼容的权重。
+- `stgcn_checkpoint.pt`：用于跨输入域复评和后续微调的 PyTorch 检查点，不提交 Git。
+
+在 RGB→MediaPipe 数据上复评预训练模型：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\evaluate_stgcn.py `
+  --dataset D:\datasets\mmfit\mediapipe-rgb-v1 `
+  --checkpoint D:\datasets\ai-fitness-runs\mmfit-pose2d-temporal-xy\stgcn_checkpoint.pt `
+  --output-dir D:\datasets\ai-fitness-runs\mmfit-rgb-domain-eval
+```
+
+该复评会单独输出 `evaluation_report.json` 和两张混淆矩阵。若跨域指标明显下降，应先做 RGB 同域适配，不能直接覆盖前端权重。
 
 只有满足以下条件后才替换当前权重：
 
@@ -90,17 +175,54 @@ unknown
 替换前先备份并对比：
 
 ```powershell
-Copy-Item training\runs\mmfit-v1\stgcn_weights.json frontend\public\stgcn_weights.json
-Copy-Item training\runs\mmfit-v1\stgcn_scaler.json frontend\public\stgcn_scaler.json
+Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_weights.json frontend\public\stgcn_weights.json
+Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public\stgcn_scaler.json
 ```
+
+## 5. 校准长尾语义识别
+
+不要把 11 类 argmax 直接当作产品最终识别结果。核心动作由规则/HMM 专项模块确认；本地 ST-GCN 仅对没有专项模块的长尾动作产生语义候选，并按验证人员校准每类阈值：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\calibrate_semantic_threshold.py `
+  --dataset D:\datasets\mmfit\mediapipe-rgb-p05-p09 `
+  --checkpoint D:\datasets\ai-fitness-runs\mmfit-rgb-finetuned-balanced\stgcn_checkpoint.pt `
+  --validation-subjects p06 `
+  --test-subjects p08 `
+  --output-dir D:\datasets\ai-fitness-runs\mmfit-rgb-finetuned-semantic-calibration `
+  --max-validation-unknown-far 0.10 `
+  --per-class-min-precision 0.85 `
+  --per-class-max-unknown-far 0.03 `
+  --minimum-runtime-threshold 0.72
+```
+
+脚本只使用验证人员选择阈值，最后一次才报告未见测试人员。输出包括：
+
+- `semantic_calibration_report.json`：全局阈值、逐类阈值、验证集和测试集指标。
+- `semantic_threshold_curve.png`：阈值、balanced accuracy 和 unknown false accept rate 的关系。
+
+运行时还要连续命中 2 次才确认。阈值应同步到 `backend/recognition/semantic.py` 和 `frontend/public/stgcn_model_card.json`，并在模型卡中保留模型、数据和阈值的对应关系。
+
+若要检查一个完整分类报告是否满足统一门槛，可运行：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\check_model_gate.py `
+  --report D:\datasets\ai-fitness-runs\mmfit-v1\training_report.json `
+  --min-accuracy 0.80 `
+  --min-balanced-accuracy 0.75 `
+  --min-class-recall 0.55 `
+  --max-unknown-false-accept 0.10
+```
+
+这条门槛适合“完整分类器”候选。当前部署模型的直接 argmax 不通过 unknown 误接收门槛，因此实际产品采用“核心规则确认 + 长尾逐类阈值 + 连续确认”的混合方案，不应对外声称已有一个万能全动作分类器。
 
 ## 怎么看可视化
 
 训练阶段直接打开：
 
-- `training/runs/mmfit-v1/training_curves.png`
-- `training/runs/mmfit-v1/confusion_matrix.png`
-- `training/runs/mmfit-v1/confusion_matrix_normalized.png`
+- `D:\datasets\ai-fitness-runs\mmfit-v1\training_curves.png`
+- `D:\datasets\ai-fitness-runs\mmfit-v1\confusion_matrix.png`
+- `D:\datasets\ai-fitness-runs\mmfit-v1\confusion_matrix_normalized.png`
 
 部署权重后打开 `http://127.0.0.1:3000/`：
 

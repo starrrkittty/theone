@@ -91,6 +91,46 @@ describe('STGCNClassifier', () => {
       .toBeCloseTo(1.0, 5);
   });
 
+  it('supports temporal summary pooling exported by the new trainer', () => {
+    const labels = ['squat', 'unknown'];
+    const weights = makeTestWeights(labels);
+    weights.fc_W = Array.from({ length: N_JOINTS * HIDDEN * 4 }, () =>
+      Array.from({ length: labels.length }, () => 0.01)
+    );
+    const temporal = new STGCNClassifier();
+    temporal.loadWeightsFromObject({
+      ...weights,
+      temporal_pooling: 'mean_std_velocity_range',
+    });
+    const probs = temporal.infer(makeRandomWindow());
+    expect(Object.keys(probs as Record<string, number>)).toEqual(labels);
+    expect(Object.values(probs as Record<string, number>).reduce((sum, value) => sum + value, 0))
+      .toBeCloseTo(1.0, 5);
+  });
+
+  it('uses the exported sampling rate and accepts an xy-only model contract', () => {
+    const xy = new STGCNClassifier();
+    xy.loadWeightsFromObject({
+      ...makeTestWeights(['squat', 'unknown']),
+      input_coordinate_mode: 'xy',
+      normalization_mode: 'torso_xy',
+      target_fps: 12,
+    });
+    expect(xy.targetFps).toBe(12);
+    expect(xy.normalizationMode).toBe('torso_xy');
+    const probs = xy.infer(makeRandomWindow());
+    expect(Object.keys(probs as Record<string, number>)).toEqual(['squat', 'unknown']);
+  });
+
+  it('exposes the model id used to calibrate backend semantic thresholds', () => {
+    const versioned = new STGCNClassifier();
+    versioned.loadWeightsFromObject({
+      ...makeTestWeights(['lunge', 'unknown']),
+      model_id: 'mmfit-mediapipe-semantic-v1',
+    });
+    expect(versioned.modelId).toBe('mmfit-mediapipe-semantic-v1');
+  });
+
   it('infer returns null-like object before weights loaded', () => {
     const empty = new STGCNClassifier();
     expect(empty.isReady).toBe(false);

@@ -40,8 +40,30 @@ class AgentContext(BaseModel):
     possible_fatigue: bool = False
 
 
+class RecognitionDetails(BaseModel):
+    exercise_id: str = "unknown"
+    display_name: str = ""
+    category: str = "other"
+    source: str = "none"
+    uncertainty_reason: Optional[str] = None
+
+
+class RoutingDetails(BaseModel):
+    mode: Literal["verified_specialist", "general_coaching", "observe_more"] = "observe_more"
+    specialist: Optional[str] = None
+    fallback_specialist: Optional[str] = None
+
+
+class ActionCapabilities(BaseModel):
+    semantic_recognition: bool = False
+    precise_rep_count: bool = False
+    specialized_form_correction: bool = False
+    hold_timing: bool = False
+    general_guidance: bool = False
+
+
 class ActionReport(BaseModel):
-    schema_version: Literal["v1"] = "v1"
+    schema_version: Literal["v2"] = "v2"
     session_id: str
     timestamp_ms: float
     recognition_status: Literal["unknown", "candidate", "confirmed"]
@@ -56,6 +78,9 @@ class ActionReport(BaseModel):
     metrics: ActionMetrics = Field(default_factory=ActionMetrics)
     violations: list[ViolationItem] = Field(default_factory=list)
     agent_context: AgentContext = Field(default_factory=AgentContext)
+    recognition: RecognitionDetails = Field(default_factory=RecognitionDetails)
+    routing: RoutingDetails = Field(default_factory=RoutingDetails)
+    capabilities: ActionCapabilities = Field(default_factory=ActionCapabilities)
 
 
 class RecognitionEvent(BaseModel):
@@ -66,3 +91,4 @@ class RecognitionEvent(BaseModel):
     confidence: float = Field(ge=0.0, le=1.0)
     specialist: str
     message: str
+    route_mode: Literal["verified_specialist", "general_coaching"] = "verified_specialist"

@@ -38,6 +38,7 @@ type PoseLibraryFrame = {
 
 function extractNormalisedFrame(
   landmarks: { x: number; y: number; z: number; visibility: number }[],
+  normalizationMode: 'torso_xy' | 'torso_xyz' = 'torso_xyz',
 ): Float32Array | null {
   if (landmarks.length < 33) return null;
   const lHip = landmarks[23];
@@ -50,9 +51,8 @@ function extractNormalisedFrame(
   const shoX = (lSho.x + rSho.x) / 2;
   const shoY = (lSho.y + rSho.y) / 2;
   const shoZ = (lSho.z + rSho.z) / 2;
-  const torso = Math.sqrt(
-    (shoX - hipX) ** 2 + (shoY - hipY) ** 2 + (shoZ - hipZ) ** 2,
-  ) || 1e-6;
+  const torsoZ = normalizationMode === 'torso_xyz' ? (shoZ - hipZ) ** 2 : 0;
+  const torso = Math.sqrt((shoX - hipX) ** 2 + (shoY - hipY) ** 2 + torsoZ) || 1e-6;
 
   const frame = new Float32Array(STGCN_N_JOINTS * STGCN_COORD_DIM);
   for (let i = 0; i < STGCN_N_JOINTS; i++) {
@@ -97,6 +97,7 @@ function App() {
   const stgcnWindowRef = useRef<Float32Array[]>([]);
   const clientProbsRef = useRef<Record<string, number> | null>(null);
   const stgcnLastInferRef = useRef<number>(0);
+  const stgcnLastCaptureRef = useRef<number>(0);
 
   // Video processor hook
   const {
@@ -194,6 +195,7 @@ function App() {
       clientProbsRef.current = null;
       setStgcnProbabilities(null);
       stgcnLastInferRef.current = 0;
+      stgcnLastCaptureRef.current = 0;
       disconnect();
     }
   }, [isProcessing, isConnected, isConnecting, connect, disconnect]);
@@ -201,7 +203,11 @@ function App() {
   useEffect(() => {
     const clf = new STGCNClassifier();
     stgcnRef.current = clf;
-    clf.loadWeights('/stgcn_weights.json', '/stgcn_scaler.json').catch(err => {
+    clf.loadWeights(
+      '/stgcn_weights.json',
+      '/stgcn_scaler.json',
+      '/stgcn_model_card.json',
+    ).catch(err => {
       console.warn('ST-GCN weights failed to load:', err);
     });
   }, []);
@@ -213,8 +219,10 @@ function App() {
     const now = performance.now();
     const clf = stgcnRef.current;
     if (clf?.isReady) {
-      const frame = extractNormalisedFrame(currentLandmarks);
-      if (frame) {
+      const frame = extractNormalisedFrame(currentLandmarks, clf.normalizationMode);
+      const captureIntervalMs = 1000 / clf.targetFps;
+      if (frame && now - stgcnLastCaptureRef.current >= captureIntervalMs) {
+        stgcnLastCaptureRef.current = now;
         stgcnWindowRef.current.push(frame);
         if (stgcnWindowRef.current.length > STGCN_WINDOW) {
           stgcnWindowRef.current.shift();
@@ -236,7 +244,7 @@ function App() {
     // Do not update counters from an ambiguous multi-person frame.  The
     // selected skeleton remains visible so the developer can fix framing.
     if (poseTracking && !poseTracking.subjectLocked) return;
-    sendLandmarks(currentLandmarks, now, clientProbsRef.current);
+    sendLandmarks(currentLandmarks, now, clientProbsRef.current, clf?.modelId ?? null);
   }, [currentLandmarks, isConnected, isProcessing, poseTracking, sendLandmarks]);
 
   const updatePoseLibraryStats = useCallback(() => {
@@ -379,6 +387,7 @@ function App() {
     stgcnWindowRef.current = [];
     clientProbsRef.current = null;
     stgcnLastInferRef.current = 0;
+    stgcnLastCaptureRef.current = 0;
     setCurrentLandmarks(null);
     setFormResponse(null);
   }, [stopSource]);
