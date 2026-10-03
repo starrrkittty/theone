@@ -182,3 +182,26 @@
 - 录制协议和默认门禁见 `docs/REAL_VIDEO_ACCEPTANCE.md`。
 
 这表示评测工具链已具备，但尚未产生 5 人、30 段真实视频证据，因此当前仍不能宣称通过参赛现场验收。
+
+### 8. unknown-aware checkpoint 选择实验（当前最佳候选，未部署）
+
+在相同合并数据、相同 split、相同初始化 checkpoint 和相同轻量增强下，只把早停/最佳轮次准则从 balanced accuracy 改为：
+
+```text
+balanced accuracy - 1.0 × validation unknown false accept rate
+```
+
+训练产物：`D:\datasets\ai-fitness-runs\mmfit-haa500-hard-negatives-v4-unknown-aware`。阈值校准产物：`D:\datasets\ai-fitness-runs\mmfit-haa500-hard-negatives-v4-unknown-aware-calibration`。
+
+固定测试结果：
+
+| 测试域 | 样本数 | balanced accuracy | unknown false accept rate | acceptance rate |
+|---|---:|---:|---:|---:|
+| MM-Fit `p08` | 846 | 0.906 | 0.053 | 0.713 |
+| HAA500 全部独立片段 | 84 | 0.761 | 0.015 | 0.155 |
+| HAA500 原始动作与负样本 | 33 | 0.750 | 0.062 | 0.394 |
+| HAA500 新增 15 类负样本 | 51 | 1.000 | 0.000 | 0.000 |
+
+在含 `p08` 与 HAA500 的合并固定测试划分上，逐类阈值 balanced accuracy 为 0.874，unknown false accept rate 为 0.044。相较 v3，该候选改善了原先最差的 HAA500 域，同时没有牺牲 `p08`。
+
+仍不部署，原因是 jumping jack 和 plank 的 HAA500 测试支持量都只有 3 个窗口，而且尚未通过 `docs/REAL_VIDEO_ACCEPTANCE.md` 的 5 人/30 段真实视频门禁。该候选是下一轮真实视频验收的优先对象，不是已经批准的生产模型。

@@ -174,6 +174,8 @@ MM-Fit 的公开预提取骨架只有 2D 坐标，因此该预训练模型使用
 
 可使用 `--augmentation light` 仅对训练窗口做保守骨架增强：左右镜像时同步交换左右关节，并加入小角度旋转、缩放与关键点抖动。验证集和测试集始终保持原样；增强候选仍必须通过同人员划分的独立门禁，不因增加了技术名词就默认更好。
 
+含 `unknown` 负样本时，可用 `--selection-metric balanced_accuracy_minus_unknown_far --unknown-far-penalty 1.0` 让早停同时考虑类别均衡准确率和验证集 unknown 误接收。惩罚系数必须预先固定，不能看测试集后反复调整；最终仍要运行逐类阈值校准和跨来源测试。
+
 若新增数据带来新类别（例如在现有 MM-Fit 数据上新增 HAA500 `plank`），先进行内存映射合并：
 
 ```powershell

@@ -290,6 +290,24 @@ def class_weights(y: np.ndarray, indices: np.ndarray, n_classes: int, mode: str)
     return weights.astype(np.float32)
 
 
+def checkpoint_selection_score(
+    metric: str,
+    accuracy: float,
+    balanced_accuracy: float,
+    unknown_false_accept_rate: float | None,
+    unknown_far_penalty: float,
+) -> float:
+    if metric == "accuracy":
+        return accuracy
+    if metric == "balanced_accuracy":
+        return balanced_accuracy
+    if unknown_false_accept_rate is None:
+        raise ValueError(
+            "balanced_accuracy_minus_unknown_far requires validation unknown samples"
+        )
+    return balanced_accuracy - unknown_far_penalty * unknown_false_accept_rate
+
+
 def plot_history(history, confusion, labels, output_dir):
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
     axes[0].plot(history["train_loss"], label="train")
@@ -469,8 +487,21 @@ def main():
     parser.add_argument(
         "--selection-metric",
         default="balanced_accuracy",
-        choices=["accuracy", "balanced_accuracy"],
+        choices=[
+            "accuracy",
+            "balanced_accuracy",
+            "balanced_accuracy_minus_unknown_far",
+        ],
         help="Metric used for best-checkpoint selection and early stopping.",
+    )
+    parser.add_argument(
+        "--unknown-far-penalty",
+        type=float,
+        default=1.0,
+        help=(
+            "Penalty multiplier used only by "
+            "balanced_accuracy_minus_unknown_far checkpoint selection."
+        ),
     )
     parser.add_argument(
         "--augmentation",
@@ -555,6 +586,7 @@ def main():
         "val_accuracy": [],
         "val_balanced_accuracy": [],
         "val_unknown_false_accept_rate": [],
+        "val_selection_score": [],
     }
     best_state = None
     best_selection_value = -1.0
@@ -582,10 +614,12 @@ def main():
         val_metrics = classification_metrics(val_confusion, labels)
         val_balanced_accuracy = float(val_metrics["balanced_accuracy"])
         val_unknown_far = val_metrics.get("unknown_false_accept_rate")
-        selection_value = (
-            val_accuracy
-            if args.selection_metric == "accuracy"
-            else val_balanced_accuracy
+        selection_value = checkpoint_selection_score(
+            args.selection_metric,
+            val_accuracy,
+            val_balanced_accuracy,
+            val_unknown_far,
+            args.unknown_far_penalty,
         )
         history["train_loss"].append(total_loss / max(total, 1))
         history["train_accuracy"].append(correct / max(total, 1))
@@ -593,6 +627,7 @@ def main():
         history["val_accuracy"].append(val_accuracy)
         history["val_balanced_accuracy"].append(val_balanced_accuracy)
         history["val_unknown_false_accept_rate"].append(val_unknown_far)
+        history["val_selection_score"].append(selection_value)
         if selection_value > best_selection_value:
             best_selection_value = selection_value
             best_val_accuracy = val_accuracy
@@ -636,6 +671,7 @@ def main():
         "split_file": str(args.split_file.resolve()) if args.split_file else None,
         "history": history,
         "selection_metric": args.selection_metric,
+        "unknown_far_penalty": args.unknown_far_penalty,
         "best_selection_value": best_selection_value,
         "best_validation_accuracy": best_val_accuracy,
         "best_validation_balanced_accuracy": best_val_balanced_accuracy,
