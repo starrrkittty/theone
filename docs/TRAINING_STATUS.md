@@ -126,6 +126,32 @@
 
 另外审计了 652 段、22 类的 Workout/Exercises Video 镜像。其 Hugging Face 卡片没有填写许可，原 Kaggle/第三方视频的权利链也不清楚，因此没有把其中的 plank 或 barbell curl 混进正式训练集。
 
+### 6. 骨架增强、跨域阈值复评与 HAA500 hard negatives（未部署）
+
+先在 MM-Fit RGB 同域训练中加入左右镜像、关节身份交换、±8° 旋转、0.92–1.08 缩放和轻微关键点抖动。候选模型在未见人员 `p08` 上的逐类阈值 balanced accuracy 从当前部署模型的 0.7349 提升到 0.8919，但在独立 HAA500 负样本上的 unknown 误接纳率达到 0.9375，因此否决直接部署。
+
+随后从已下载的 HAA500 官方压缩包中增加 15 类、300 段视频通话常见非健身动作作为 hard negatives，并保持原视频编号隔离：
+
+- 标签映射：`training/data/haa500-hard-negative-label-map.json`。
+- 原视频：`D:\datasets\haa500\hard-negatives\video`。
+- MediaPipe 窗口：`D:\datasets\haa500\hard-negatives-mediapipe-15fps-v1`，351 个窗口。
+- 合并数据：`D:\datasets\combined\mmfit-haa500-hard-negatives-15fps-v2`，7,373 个窗口。
+- 训练候选：`D:\datasets\ai-fitness-runs\mmfit-haa500-hard-negatives-v3`。
+- 校准产物：`D:\datasets\ai-fitness-runs\mmfit-haa500-hard-negatives-v3-calibration`。
+
+标准逐类阈值的分域结果：
+
+| 独立测试域 | 样本数 | balanced accuracy | unknown false accept rate |
+|---|---:|---:|---:|
+| MM-Fit `p08` | 846 | 0.906 | 0.053 |
+| HAA500 新增 15 类负样本 | 51 | 0.902 | 0.098 |
+| HAA500 原三类负样本与重叠动作 | 33 | 0.427 | 0.688 |
+| HAA500 全部独立片段 | 84 | 0.539 | 0.239 |
+
+提高阈值可把 HAA500 全部片段 unknown 误接纳率压到 0.015，但会把 MM-Fit `p08` balanced accuracy 降到 0.710，并几乎拒绝全部 HAA500 正动作，不满足“既能识别又能拒识”的要求。结论是：hard-negative 训练有效，但极短 HAA500 原片经过 30 帧重采样后与真实视频通话仍有明显时序域差异。候选权重保留在 `D:` 作为实验记录，不覆盖 `mmfit-mediapipe-semantic-v1`。
+
+跨域报告由 `training/evaluate_semantic_thresholds.py` 生成，会按标签名安全映射并应用真实运行时逐类阈值；普通 argmax 指标不再作为部署依据。
+
 ## 已部署内容
 
 - `frontend/public/stgcn_weights.json`：RGB 同域微调权重。

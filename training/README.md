@@ -172,6 +172,8 @@ MM-Fit 的公开预提取骨架只有 2D 坐标，因此该预训练模型使用
 
 `--init-checkpoint` 用于公开骨架预训练后的 RGB 同域微调；不传该参数就是从头训练。二者必须使用完全相同的人员划分再比较，避免把“换了测试人”误当成模型提升。
 
+可使用 `--augmentation light` 仅对训练窗口做保守骨架增强：左右镜像时同步交换左右关节，并加入小角度旋转、缩放与关键点抖动。验证集和测试集始终保持原样；增强候选仍必须通过同人员划分的独立门禁，不因增加了技术名词就默认更好。
+
 若新增数据带来新类别（例如在现有 MM-Fit 数据上新增 HAA500 `plank`），先进行内存映射合并：
 
 ```powershell
@@ -250,6 +252,21 @@ Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public
 - `semantic_threshold_curve.png`：阈值、balanced accuracy 和 unknown false accept rate 的关系。
 
 运行时还要连续命中 2 次才确认。阈值应同步到 `backend/recognition/semantic.py` 和 `frontend/public/stgcn_model_card.json`，并在模型卡中保留模型、数据和阈值的对应关系。
+
+普通 argmax 复评不能代表产品运行时的拒识逻辑。候选模型还应在独立来源的视频数据上应用相同的逐类阈值：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\evaluate_semantic_thresholds.py `
+  --dataset D:\datasets\combined\mmfit-haa500-15fps-v1 `
+  --checkpoint D:\datasets\ai-fitness-runs\mmfit-rgb-augmented-v1\stgcn_checkpoint.pt `
+  --thresholds-json D:\datasets\ai-fitness-runs\mmfit-rgb-augmented-v1-calibration\semantic_calibration_report.json `
+  --output-dir D:\datasets\ai-fitness-runs\haa500-semantic-augmented-v1 `
+  --subjects <held-out HAA500 clip ids> `
+  --cpu-threads 4 `
+  --dataloader-workers 0
+```
+
+脚本按标签名映射不同数据集的标签表，只评估阈值文件中的语义动作与 `unknown`。它模拟单窗口阈值门控，但不会把运行时“连续两次命中”带来的额外保护算进去。
 
 若要检查一个完整分类报告是否满足统一门槛，可运行：
 

@@ -24,6 +24,33 @@ N_JOINTS = 17
 COORD_DIM = 3
 TEMPORAL_POOLING = "mean_std_velocity_range"
 TEMPORAL_STATS = 4
+LEFT_RIGHT_PAIRS = (
+    (0, 1), (2, 3), (4, 5), (6, 7), (8, 9), (10, 11),
+    (13, 14), (15, 16),
+)
+
+
+def augment_window(sample: np.ndarray, rng=np.random) -> np.ndarray:
+    """Apply conservative image-plane augmentation to a torso-normalized pose."""
+    result = sample.copy()
+    if float(rng.random()) < 0.5:
+        result[..., 0] *= -1.0
+        for left, right in LEFT_RIGHT_PAIRS:
+            swapped = result[:, left].copy()
+            result[:, left] = result[:, right]
+            result[:, right] = swapped
+
+    angle = np.deg2rad(float(rng.uniform(-8.0, 8.0)))
+    scale = float(rng.uniform(0.92, 1.08))
+    cosine, sine = np.cos(angle) * scale, np.sin(angle) * scale
+    x_values = result[..., 0].copy()
+    y_values = result[..., 1].copy()
+    result[..., 0] = cosine * x_values - sine * y_values
+    result[..., 1] = sine * x_values + cosine * y_values
+    result[..., :2] += rng.normal(0.0, 0.008, size=result[..., :2].shape).astype(
+        np.float32
+    )
+    return result.astype(np.float32)
 
 
 class WindowDataset(Dataset):
@@ -37,6 +64,7 @@ class WindowDataset(Dataset):
         mean: np.ndarray,
         std: np.ndarray,
         coordinate_mode: str,
+        augmentation: str = "none",
     ):
         self.x = x
         self.y = y
@@ -44,6 +72,7 @@ class WindowDataset(Dataset):
         self.mean = mean.astype(np.float32)
         self.std = std.astype(np.float32)
         self.coordinate_mode = coordinate_mode
+        self.augmentation = augmentation
 
     def __len__(self):
         return len(self.indices)
@@ -51,6 +80,8 @@ class WindowDataset(Dataset):
     def __getitem__(self, item):
         index = int(self.indices[item])
         sample = np.asarray(self.x[index], dtype=np.float32).copy()
+        if self.augmentation == "light":
+            sample = augment_window(sample)
         if self.coordinate_mode == "xy":
             sample[..., 2] = 0.0
         sample = (sample - self.mean) / self.std
@@ -441,6 +472,12 @@ def main():
         choices=["accuracy", "balanced_accuracy"],
         help="Metric used for best-checkpoint selection and early stopping.",
     )
+    parser.add_argument(
+        "--augmentation",
+        default="none",
+        choices=["none", "light"],
+        help="Apply conservative pose augmentation to training windows only.",
+    )
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -472,7 +509,15 @@ def main():
     weights = class_weights(y, train_idx, len(labels), args.class_balance)
 
     def loader(indices, shuffle):
-        dataset = WindowDataset(x, y, indices, mean, std, args.coordinate_mode)
+        dataset = WindowDataset(
+            x,
+            y,
+            indices,
+            mean,
+            std,
+            args.coordinate_mode,
+            augmentation=args.augmentation if shuffle else "none",
+        )
         return DataLoader(
             dataset,
             batch_size=args.batch_size,
@@ -577,6 +622,7 @@ def main():
         "device": device.type,
         "memory_mapped_dataset": args.dataset.is_dir(),
         "class_balance": args.class_balance,
+        "augmentation": args.augmentation,
         "coordinate_mode": args.coordinate_mode,
         "target_fps": args.target_fps,
         "initial_checkpoint": str(args.init_checkpoint.resolve()) if args.init_checkpoint else None,
