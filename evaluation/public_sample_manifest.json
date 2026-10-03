@@ -1,0 +1,143 @@
+{
+  "evidence_type": "public_skeleton_derived",
+  "dataset": "UI-PRMD mirror subset",
+  "unique_subjects": 1,
+  "unique_trials": 10,
+  "fps": 30,
+  "label_granularity": "clip labels propagated to frames; not phase-level ground truth",
+  "provenance": {
+    "original_url": "https://webpages.uidaho.edu/ui_prmd/",
+    "mirror_revision": "d69141abc6743644bc2fcc12e42ca7825587c3c6",
+    "license_status": "Mirror has no explicit dataset license; local research sample, not a redistributed training dataset",
+    "files": [
+      {
+        "file": "m01_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m01_s01_e01_positions.txt",
+        "sha256": "e9b5ee265542bda8c25ebe300eb58b9f5a09f72c0aab7dfacd7f4ccbbaefa7ff",
+        "bytes": 46157
+      },
+      {
+        "file": "m01_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m01_s01_e01_angles.txt",
+        "sha256": "ea7c092e06c1efc5bfacf989547d703e6a85cf2e0c4b94bd1327138f229b4d7e",
+        "bytes": 47611
+      },
+      {
+        "file": "m02_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m02_s01_e01_positions.txt",
+        "sha256": "31f9f250ab00db148920ab2de04a37a88ab36328962407d27a7a7891b142376f",
+        "bytes": 39309
+      },
+      {
+        "file": "m02_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m02_s01_e01_angles.txt",
+        "sha256": "ee7303e46b34b0b640b5a3bd81ca1dbaefe1d837b26131d8b66ed0979b2abab0",
+        "bytes": 39799
+      },
+      {
+        "file": "m03_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m03_s01_e01_positions.txt",
+        "sha256": "d6a9989b823e863ba17d7fdb9f135e6cd920a19d970d914ace05e50aa8e5af18",
+        "bytes": 35857
+      },
+      {
+        "file": "m03_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m03_s01_e01_angles.txt",
+        "sha256": "662bd859c87a05e0ef7deefe1b7f6609a2228b8a4a7e5a7da6e3dc327366e65f",
+        "bytes": 36430
+      },
+      {
+        "file": "m04_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m04_s01_e01_positions.txt",
+        "sha256": "3a522cc05150c65075ce7c2f91a59753b0e4d6731123dcf2051eb95afd1dfacc",
+        "bytes": 35340
+      },
+      {
+        "file": "m04_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m04_s01_e01_angles.txt",
+        "sha256": "713b14b29a41b5ccef3e1ed38978e2f73c5df734f980958226aff24db7050d1b",
+        "bytes": 36750
+      },
+      {
+        "file": "m05_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m05_s01_e01_positions.txt",
+        "sha256": "ea30bbd49eae06fe3934254b01c9f45418b178cc64c4f302ca878151f4bbff10",
+        "bytes": 50615
+      },
+      {
+        "file": "m05_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m05_s01_e01_angles.txt",
+        "sha256": "1f5eeee29f8afeac2fb37739c91b91de162cbe3a135e19bd74e9d4619a332c9d",
+        "bytes": 52447
+      },
+      {
+        "file": "m06_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m06_s01_e01_positions.txt",
+        "sha256": "599ae88a3f36dfbf459d1777371f7e02ffc825c36ec82f9215773ab45ceab2c5",
+        "bytes": 30399
+      },
+      {
+        "file": "m06_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m06_s01_e01_angles.txt",
+        "sha256": "c1ae3237405e5555a401b768e02b60e302e31545b5d328013580854a852758cd",
+        "bytes": 30765
+      },
+      {
+        "file": "m07_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m07_s01_e01_positions.txt",
+        "sha256": "c5024a5b6739e9808d9c703b796af378e37786abb06f48ce3959611f3213cc4f",
+        "bytes": 39838
+      },
+      {
+        "file": "m07_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m07_s01_e01_angles.txt",
+        "sha256": "56fcaac3202e07d444499c44f55268ffd42020e3f0e61e2f488dee3ed8479b43",
+        "bytes": 39612
+      },
+      {
+        "file": "m08_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m08_s01_e01_positions.txt",
+        "sha256": "0c9cc6da94313609ca3ec57f0d81c90c3ac4fd5860afa89019f68878d871800b",
+        "bytes": 24799
+      },
+      {
+        "file": "m08_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m08_s01_e01_angles.txt",
+        "sha256": "46f9d925ed54dec0e1b2e1462bc8df65eec90df2de80580df53bbc1f49bf56f6",
+        "bytes": 25022
+      },
+      {
+        "file": "m09_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m09_s01_e01_positions.txt",
+        "sha256": "69ad569b0aebad30fdd06e20079f02b359514481f0bd32d51b65f2adccc79b2c",
+        "bytes": 48812
+      },
+      {
+        "file": "m09_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m09_s01_e01_angles.txt",
+        "sha256": "758147f81871160653aa1ddf1d6cb8fe7f01da4cf1d0abf8b5eafa3337861890",
+        "bytes": 48472
+      },
+      {
+        "file": "m10_s01_e01_positions.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m10_s01_e01_positions.txt",
+        "sha256": "c4e20e0b159def4a5da0d6f859c554c11e438cb5a8487d61a6651b18c78ddae1",
+        "bytes": 39383
+      },
+      {
+        "file": "m10_s01_e01_angles.txt",
+        "url": "https://raw.githubusercontent.com/tejas1904/UI-PRMD-Visualize-python-port/d69141abc6743644bc2fcc12e42ca7825587c3c6/data/m10_s01_e01_angles.txt",
+        "sha256": "01a11c2d518ddbf78157f4b522938a942d685909d7bc0145bd24d080e218b483",
+        "bytes": 39235
+      }
+    ]
+  },
+  "limitations": [
+    "No RGB/video-to-pose validation",
+    "Visibility=1 is an adapter assumption, not a measured confidence",
+    "22-joint relative offsets reconstructed with xyz Euler hierarchy; conversion not verified against official loader",
+    "Fixed image framing derived across this sample; missing MediaPipe landmarks remain invisible",
+    "Nine unsupported classes test abstention, not exercise form correctness",
+    "One subject and one trial per action are not independent generalization evidence"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "session_id": "session-001",
+  "started_at": "2026-10-01T10:00:00+08:00",
+  "ended_at": "2026-10-01T10:34:00+08:00",
+  "sets": [
+    {"exercise_id": "bodyweight_squat", "reps": 10, "target_reps": 10, "perceived_effort": 6},
+    {"exercise_id": "push_up", "reps": 8, "target_reps": 10, "perceived_effort": 7}
+  ],
+  "movement_observations": [
+    {"status": "caution", "summary": "Push-up trunk angle estimate needs a better side view", "confidence": 0.63}
+  ],
+  "recovery_check": "usual",
+  "reported_symptoms": [],
+  "user_feedback": ["第二组俯卧撑比较吃力"]
+}

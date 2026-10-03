@@ -1,0 +1,8 @@
+{
+  "left_hip": "left_hip_joint",
+  "left_knee": "left_knee_joint",
+  "left_ankle": "left_ankle_joint",
+  "right_hip": "right_hip_joint",
+  "right_knee": "right_knee_joint",
+  "right_ankle": "right_ankle_joint"
+}

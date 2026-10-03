@@ -1,0 +1,129 @@
+import type { FormCorrectionResponse } from '../hooks/usePoseStream';
+
+export const EVALUATION_EXERCISES = [
+  'unknown',
+  'squat',
+  'pushup',
+  'plank',
+  'bicep_curl',
+  'alternate_bicep_curl',
+] as const;
+
+export type EvaluationExercise = (typeof EVALUATION_EXERCISES)[number];
+
+export interface AgentTelemetry {
+  startedAtMs: number | null;
+  frames: number;
+  confirmedFrames: number;
+  candidateFrames: number;
+  unknownFrames: number;
+  unreliableFrames: number;
+  recognitionEvents: number;
+  exerciseSwitches: number;
+  recognitionConfidenceSum: number;
+  formConfidenceSum: number;
+  firstConfirmedLatencyMs: number | null;
+  evaluatedConfirmedFrames: number;
+  correctConfirmedFrames: number;
+  incorrectConfirmedFrames: number;
+  evaluatedFrames: number;
+  correctEvaluatedFrames: number;
+}
+
+export interface AgentTelemetrySummary {
+  averageRecognitionConfidence: number;
+  averageFormConfidence: number;
+  unknownRate: number;
+  unreliableRate: number;
+  confirmedAccuracy: number | null;
+  overallAccuracy: number | null;
+  recognitionCoverage: number;
+  firstConfirmedLatencyMs: number | null;
+}
+
+export function createAgentTelemetry(): AgentTelemetry {
+  return {
+    startedAtMs: null,
+    frames: 0,
+    confirmedFrames: 0,
+    candidateFrames: 0,
+    unknownFrames: 0,
+    unreliableFrames: 0,
+    recognitionEvents: 0,
+    exerciseSwitches: 0,
+    recognitionConfidenceSum: 0,
+    formConfidenceSum: 0,
+    firstConfirmedLatencyMs: null,
+    evaluatedConfirmedFrames: 0,
+    correctConfirmedFrames: 0,
+    incorrectConfirmedFrames: 0,
+    evaluatedFrames: 0,
+    correctEvaluatedFrames: 0,
+  };
+}
+
+export function accumulateAgentTelemetry(
+  previous: AgentTelemetry,
+  response: FormCorrectionResponse,
+  observedAtMs: number,
+  expectedExercise: EvaluationExercise | null,
+): AgentTelemetry {
+  const report = response.action_report;
+  const status = report?.recognition_status ?? (
+    response.current_exercise ? 'confirmed' : 'unknown'
+  );
+  const recognizedExercise = report?.recognized_exercise ?? response.current_exercise ?? 'unknown';
+  const recognitionConfidence = report?.recognition_confidence
+    ?? response.exercise_confidence
+    ?? 0;
+  const formConfidence = response.form_confidence ?? response.confidence ?? 0;
+  const startedAtMs = previous.startedAtMs ?? observedAtMs;
+  const newlyConfirmed = status === 'confirmed';
+  const shouldEvaluate = newlyConfirmed && expectedExercise !== null;
+  const isCorrect = shouldEvaluate && recognizedExercise === expectedExercise;
+
+  return {
+    startedAtMs,
+    frames: previous.frames + 1,
+    confirmedFrames: previous.confirmedFrames + (newlyConfirmed ? 1 : 0),
+    candidateFrames: previous.candidateFrames + (status === 'candidate' ? 1 : 0),
+    unknownFrames: previous.unknownFrames + (status === 'unknown' ? 1 : 0),
+    unreliableFrames: previous.unreliableFrames + (
+      report?.pose_quality === 'unreliable' || response.signal_quality === 'unreliable' ? 1 : 0
+    ),
+    recognitionEvents: previous.recognitionEvents + (response.recognition_event ? 1 : 0),
+    exerciseSwitches: previous.exerciseSwitches + (
+      response.recognition_event?.event === 'exercise_switched' ? 1 : 0
+    ),
+    recognitionConfidenceSum: previous.recognitionConfidenceSum + recognitionConfidence,
+    formConfidenceSum: previous.formConfidenceSum + formConfidence,
+    firstConfirmedLatencyMs: previous.firstConfirmedLatencyMs ?? (
+      newlyConfirmed ? Math.max(0, observedAtMs - startedAtMs) : null
+    ),
+    evaluatedConfirmedFrames: previous.evaluatedConfirmedFrames + (shouldEvaluate ? 1 : 0),
+    correctConfirmedFrames: previous.correctConfirmedFrames + (isCorrect ? 1 : 0),
+    incorrectConfirmedFrames: previous.incorrectConfirmedFrames + (
+      shouldEvaluate && !isCorrect ? 1 : 0
+    ),
+    evaluatedFrames: previous.evaluatedFrames + (expectedExercise !== null ? 1 : 0),
+    correctEvaluatedFrames: previous.correctEvaluatedFrames + (expectedExercise !== null && (newlyConfirmed ? recognizedExercise : 'unknown') === expectedExercise ? 1 : 0),
+  };
+}
+
+export function summarizeAgentTelemetry(
+  telemetry: AgentTelemetry,
+): AgentTelemetrySummary {
+  const frameDivisor = Math.max(1, telemetry.frames);
+  return {
+    averageRecognitionConfidence: telemetry.recognitionConfidenceSum / frameDivisor,
+    averageFormConfidence: telemetry.formConfidenceSum / frameDivisor,
+    unknownRate: telemetry.unknownFrames / frameDivisor,
+    unreliableRate: telemetry.unreliableFrames / frameDivisor,
+    confirmedAccuracy: telemetry.evaluatedConfirmedFrames > 0
+      ? telemetry.correctConfirmedFrames / telemetry.evaluatedConfirmedFrames
+      : null,
+    overallAccuracy: telemetry.evaluatedFrames > 0 ? telemetry.correctEvaluatedFrames / telemetry.evaluatedFrames : null,
+    recognitionCoverage: telemetry.confirmedFrames / frameDivisor,
+    firstConfirmedLatencyMs: telemetry.firstConfirmedLatencyMs,
+  };
+}

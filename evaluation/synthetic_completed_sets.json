@@ -1,0 +1,197 @@
+{
+  "evaluation_mode": "completed_set_development_diagnostic",
+  "dataset": "Engineered skeleton fixtures",
+  "evidence_type": "synthetic",
+  "model_called": false,
+  "clips": 10,
+  "correct_clip_decisions": 10,
+  "limitations": [
+    "Not captured people or RGB videos; not recognition accuracy evidence.",
+    "Alternate curl reference counts complete left/right pairs, not individual arm repetitions.",
+    "Same development clips used during recognition changes; not held-out validation.",
+    "Retrospective segment labels are not real-time frame recall.",
+    "Clip decisions cannot establish real-video generalization accuracy."
+  ],
+  "results": [
+    {
+      "id": "static_standing",
+      "original_label": null,
+      "expected": "unknown",
+      "predicted": [
+        "unknown"
+      ],
+      "correct": true,
+      "repetitions": {},
+      "reference_repetitions": null,
+      "hold_seconds": 0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 0,
+      "retrospectively_resolved_frames": 0,
+      "analysis_ms": 780.3723000106402
+    },
+    {
+      "id": "static_bent_arms",
+      "original_label": null,
+      "expected": "unknown",
+      "predicted": [
+        "unknown"
+      ],
+      "correct": true,
+      "repetitions": {},
+      "reference_repetitions": null,
+      "hold_seconds": 0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 0,
+      "retrospectively_resolved_frames": 0,
+      "analysis_ms": 1252.4390000035055
+    },
+    {
+      "id": "moving_curl",
+      "original_label": null,
+      "expected": "bicep_curl",
+      "predicted": [
+        "bicep_curl"
+      ],
+      "correct": true,
+      "repetitions": {
+        "bicep_curl": 2
+      },
+      "reference_repetitions": {
+        "bicep_curl": 2
+      },
+      "hold_seconds": 0.0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 150,
+      "retrospectively_resolved_frames": 180,
+      "analysis_ms": 2927.933300001314
+    },
+    {
+      "id": "alternating_curl",
+      "original_label": null,
+      "expected": "alternate_bicep_curl",
+      "predicted": [
+        "alternate_bicep_curl"
+      ],
+      "correct": true,
+      "repetitions": {
+        "alternate_bicep_curl": 1
+      },
+      "reference_repetitions": {
+        "alternate_bicep_curl": 1
+      },
+      "hold_seconds": 0.0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 154,
+      "retrospectively_resolved_frames": 180,
+      "analysis_ms": 2963.7609999917913
+    },
+    {
+      "id": "moving_pushup",
+      "original_label": null,
+      "expected": "pushup",
+      "predicted": [
+        "pushup"
+      ],
+      "correct": true,
+      "repetitions": {
+        "pushup": 2
+      },
+      "reference_repetitions": {
+        "pushup": 2
+      },
+      "hold_seconds": 0.0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 154,
+      "retrospectively_resolved_frames": 180,
+      "analysis_ms": 3041.428700002143
+    },
+    {
+      "id": "forearm_plank",
+      "original_label": null,
+      "expected": "plank",
+      "predicted": [
+        "plank"
+      ],
+      "correct": true,
+      "repetitions": {
+        "plank": 0
+      },
+      "reference_repetitions": {
+        "plank": 0
+      },
+      "hold_seconds": 5.9666666984558105,
+      "reference_hold_seconds": 5.966666666666667,
+      "online_confirmed_frames": 136,
+      "retrospectively_resolved_frames": 180,
+      "analysis_ms": 2820.4706000105944
+    },
+    {
+      "id": "static_pushup_bottom",
+      "original_label": null,
+      "expected": "unknown",
+      "predicted": [
+        "unknown"
+      ],
+      "correct": true,
+      "repetitions": {},
+      "reference_repetitions": null,
+      "hold_seconds": 0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 0,
+      "retrospectively_resolved_frames": 0,
+      "analysis_ms": 1207.7120000030845
+    },
+    {
+      "id": "squat_hands_bent_low_crop",
+      "original_label": null,
+      "expected": "squat",
+      "predicted": [
+        "squat"
+      ],
+      "correct": true,
+      "repetitions": {
+        "squat": 1
+      },
+      "reference_repetitions": null,
+      "hold_seconds": 0.0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 144,
+      "retrospectively_resolved_frames": 180,
+      "analysis_ms": 3061.9143999938387
+    },
+    {
+      "id": "squat_hands_bent_high_crop",
+      "original_label": null,
+      "expected": "squat",
+      "predicted": [
+        "squat"
+      ],
+      "correct": true,
+      "repetitions": {
+        "squat": 1
+      },
+      "reference_repetitions": null,
+      "hold_seconds": 0.0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 144,
+      "retrospectively_resolved_frames": 180,
+      "analysis_ms": 3004.120800003875
+    },
+    {
+      "id": "person_disappears",
+      "original_label": null,
+      "expected": "unknown",
+      "predicted": [
+        "unknown"
+      ],
+      "correct": true,
+      "repetitions": {},
+      "reference_repetitions": null,
+      "hold_seconds": 0,
+      "reference_hold_seconds": null,
+      "online_confirmed_frames": 0,
+      "retrospectively_resolved_frames": 0,
+      "analysis_ms": 77.3988000000827
+    }
+  ]
+}

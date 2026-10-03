@@ -1,0 +1,1 @@
+video_id,participant_id,split,annotator_id,event_type,exercise,side,start_ms,bottom_ms,end_ms,occlusion_start_ms,occlusion_end_ms,joint_indices,reference_count,decision,adjudicator_id,notes

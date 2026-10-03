@@ -1,0 +1,5814 @@
+{
+  "evidence_type": "public_skeleton_derived",
+  "dataset": "UI-PRMD mirror subset",
+  "limitations": [
+    "No RGB/video-to-pose validation",
+    "Visibility=1 is an adapter assumption, not a measured confidence",
+    "22-joint relative offsets reconstructed with xyz Euler hierarchy; conversion not verified against official loader",
+    "Fixed image framing derived across this sample; missing MediaPipe landmarks remain invisible",
+    "Nine unsupported classes test abstention, not exercise form correctness",
+    "One subject and one trial per action are not independent generalization evidence"
+  ],
+  "label_granularity": "clip labels propagated to frames; not phase-level ground truth",
+  "pipeline_mode": "full_measured_chain",
+  "processing_latency": {
+    "p50_ms": 6.221999996341765,
+    "p95_ms": 12.362699999357574,
+    "p99_ms": 14.43019999715034
+  },
+  "model_called": false,
+  "handoff_frames": 28,
+  "validated_b_inputs": 28,
+  "prompt_evidence": {
+    "mean_full_report_chars": 2206.7305194805194,
+    "mean_compact_evidence_chars": 1129.5357142857142,
+    "unit": "characters, not tokens"
+  },
+  "scope": "Labelled landmark replay; does not evaluate video-to-pose quality or AI coaching quality",
+  "total_frames": 616,
+  "overall_accuracy": 0.926948051948052,
+  "confirmed_accuracy": 1.0,
+  "recognition_coverage": 0.045454545454545456,
+  "negative_false_positive_rate": 0.0,
+  "per_class": {
+    "unknown": {
+      "support": 543,
+      "precision": 0.923469387755102,
+      "recall": 1.0,
+      "f1": 0.9602122015915119
+    },
+    "squat": {
+      "support": 73,
+      "precision": 1.0,
+      "recall": 0.3835616438356164,
+      "f1": 0.5544554455445545
+    },
+    "pushup": {
+      "support": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null
+    },
+    "plank": {
+      "support": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null
+    },
+    "bicep_curl": {
+      "support": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null
+    },
+    "alternate_bicep_curl": {
+      "support": 0,
+      "precision": null,
+      "recall": null,
+      "f1": null
+    }
+  },
+  "confusion_matrix": {
+    "unknown": {
+      "unknown": 543,
+      "squat": 0,
+      "pushup": 0,
+      "plank": 0,
+      "bicep_curl": 0,
+      "alternate_bicep_curl": 0
+    },
+    "squat": {
+      "unknown": 45,
+      "squat": 28,
+      "pushup": 0,
+      "plank": 0,
+      "bicep_curl": 0,
+      "alternate_bicep_curl": 0
+    },
+    "pushup": {
+      "unknown": 0,
+      "squat": 0,
+      "pushup": 0,
+      "plank": 0,
+      "bicep_curl": 0,
+      "alternate_bicep_curl": 0
+    },
+    "plank": {
+      "unknown": 0,
+      "squat": 0,
+      "pushup": 0,
+      "plank": 0,
+      "bicep_curl": 0,
+      "alternate_bicep_curl": 0
+    },
+    "bicep_curl": {
+      "unknown": 0,
+      "squat": 0,
+      "pushup": 0,
+      "plank": 0,
+      "bicep_curl": 0,
+      "alternate_bicep_curl": 0
+    },
+    "alternate_bicep_curl": {
+      "unknown": 0,
+      "squat": 0,
+      "pushup": 0,
+      "plank": 0,
+      "bicep_curl": 0,
+      "alternate_bicep_curl": 0
+    }
+  },
+  "sequences": [
+    {
+      "id": "m01_s01_e01",
+      "subject_id": "s01",
+      "original_label": "deep_squat",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": {
+        "squat": 1
+      },
+      "frames": 73,
+      "first_confirmed_latency_ms": 1500.0,
+      "exercise_switches": 0,
+      "repetition_counts": {
+        "squat": 0
+      },
+      "reference_repetitions": {
+        "squat": 1
+      },
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7215312721946022,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9997841279643013,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.999999981269294,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999812909095,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999802222612,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999781462471,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.999999976963909,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999769530764,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999541356714,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999519701904,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999282403854,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999087970348,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999999011158109,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998919160592,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998758796892,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998702863668,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998720643382,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998718654329,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998618576562,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998628125947,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998463854096,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999998194710351,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999997823268038,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.999999732172916,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "squat",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999997756111749,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.999999807585805,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999998411684317,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.999999885532251,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999998917445679,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.99999988947147,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999998920548849,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999998956572321,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999998850128153,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999999370292555,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999999454497429,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999999526199059,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1866.6666666666667,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999999591393557,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1900.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.9999999595487274,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1933.3333333333333,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.7520043279474431,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1966.6666666666667,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.7309873712713068,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2000.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2033.3333333333333,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2066.6666666666665,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2100.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2133.3333333333335,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2166.6666666666665,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2200.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2233.3333333333335,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2266.6666666666665,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2300.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2333.3333333333335,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2366.6666666666665,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2400.0,
+          "expected": "squat",
+          "predicted": "squat",
+          "status": "confirmed",
+          "recognition_score": 0.65,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m02_s01_e01",
+      "subject_id": "s01",
+      "original_label": "hurdle_step",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 62,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1866.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1933.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1966.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m03_s01_e01",
+      "subject_id": "s01",
+      "original_label": "inline_lunge",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 56,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.73221533203125,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7492453058416193,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7542943115234375,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7599220192649148,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9923470037687062,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7578830122514204,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7481070445667614,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7320008101029829,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m04_s01_e01",
+      "subject_id": "s01",
+      "original_label": "side_lunge",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 56,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m05_s01_e01",
+      "subject_id": "s01",
+      "original_label": "sit_to_stand",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 80,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7294212091619318,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9995076723075591,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999954546697869,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999963342971306,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999970053903363,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999982671067449,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999985739991675,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999986689148123,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999985961023659,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999983123351391,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.999997600644788,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999968048621882,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999972292022492,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999978078404134,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999980551710224,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999995741241153,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999994954377446,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999994216851742,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.88,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.88,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.88,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.88,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999991380808446,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999989225461127,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999988857540695,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999987205548213,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999987661098093,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999989082665166,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1866.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999989440854871,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999989651931342,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1933.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999990518851377,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1966.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999986640514438,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999997482349616,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.9999997662794996,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2066.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7450089555220171,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7322829256924716,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2133.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "candidate",
+          "recognition_score": 0.7209618474786932,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2166.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2233.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2266.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2333.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2366.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2433.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2466.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2533.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2566.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2633.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m06_s01_e01",
+      "subject_id": "s01",
+      "original_label": "straight_leg_raise",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 48,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m07_s01_e01",
+      "subject_id": "s01",
+      "original_label": "shoulder_abduction",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 63,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1866.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1933.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1966.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2066.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m08_s01_e01",
+      "subject_id": "s01",
+      "original_label": "shoulder_extension",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 39,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m09_s01_e01",
+      "subject_id": "s01",
+      "original_label": "shoulder_rotation",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 77,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1866.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1933.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1966.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2066.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2133.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2166.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2233.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2266.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2333.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2366.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2433.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2466.6666666666665,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2533.3333333333335,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    },
+    {
+      "id": "m10_s01_e01",
+      "subject_id": "s01",
+      "original_label": "shoulder_scaption",
+      "majority_prediction": "unknown",
+      "repetition_absolute_errors": null,
+      "frames": 62,
+      "first_confirmed_latency_ms": null,
+      "exercise_switches": 0,
+      "repetition_counts": {},
+      "reference_repetitions": null,
+      "predictions": [
+        {
+          "timestamp_ms": 0.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 33.333333333333336,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 66.66666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 133.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 166.66666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 233.33333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 533.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 566.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 633.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 666.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 733.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 766.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 833.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 866.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 933.3333333333334,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 966.6666666666666,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1066.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1100.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1133.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1166.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1200.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1233.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1266.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1300.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1333.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1366.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1400.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1433.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1466.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1500.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1533.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1566.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1600.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1633.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1666.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1700.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1733.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1766.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1800.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1833.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1866.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1900.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1933.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 1966.6666666666667,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2000.0,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        },
+        {
+          "timestamp_ms": 2033.3333333333333,
+          "expected": "unknown",
+          "predicted": "unknown",
+          "status": "unknown",
+          "recognition_score": 0.0,
+          "repetition": 0,
+          "source": "hmm"
+        }
+      ]
+    }
+  ],
+  "backend_root": "C:\\Users\\woshi\\Documents\\Codex\\2026-10-01\\kan-y\\outputs\\fitness_ab\\backend"
+}
