@@ -132,7 +132,7 @@
 
 随后从已下载的 HAA500 官方压缩包中增加 15 类、300 段视频通话常见非健身动作作为 hard negatives，并保持原视频编号隔离：
 
-- 标签映射：`training/data/haa500-hard-negative-label-map.json`。
+- 标签映射：`training/configs/haa500-hard-negative-label-map.json`。
 - 原视频：`D:\datasets\haa500\hard-negatives\video`。
 - MediaPipe 窗口：`D:\datasets\haa500\hard-negatives-mediapipe-15fps-v1`，351 个窗口。
 - 合并数据：`D:\datasets\combined\mmfit-haa500-hard-negatives-15fps-v2`，7,373 个窗口。
