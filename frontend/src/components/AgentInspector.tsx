@@ -35,8 +35,17 @@ interface AgentInspectorProps {
   expectedExercise: EvaluationExercise | null;
   recognitionHistory: RecognitionEvent[];
   voiceEnabled: boolean;
+  modelOptions: readonly {
+    id: string;
+    label: string;
+    description: string;
+  }[];
+  selectedModelId: string;
+  modelLoadStatus: 'loading' | 'ready' | 'error';
+  modelLoadError: string;
   onExpectedExerciseChange: (value: EvaluationExercise | null) => void;
   onVoiceEnabledChange: (value: boolean) => void;
+  onModelChange: (value: string) => void;
   onResetTelemetry: () => void;
 }
 
@@ -46,6 +55,12 @@ const DISPLAY_NAMES: Record<string, string> = {
   plank: '前臂平板支撑',
   bicep_curl: '哑铃弯举',
   alternate_bicep_curl: '交替哑铃弯举',
+  burpee: '波比跳',
+  jump_rope: '跳绳',
+  pullup: '引体向上',
+  running_in_place: '原地跑',
+  yoga_tree: '树式',
+  yoga_triangle: '三角式',
   unknown: '非支持/未知动作',
 };
 
@@ -101,8 +116,13 @@ export function AgentInspector({
   expectedExercise,
   recognitionHistory,
   voiceEnabled,
+  modelOptions,
+  selectedModelId,
+  modelLoadStatus,
+  modelLoadError,
   onExpectedExerciseChange,
   onVoiceEnabledChange,
+  onModelChange,
   onResetTelemetry,
 }: AgentInspectorProps) {
   const [evaluationMetadata, setEvaluationMetadata] = useState<Omit<
@@ -178,6 +198,36 @@ export function AgentInspector({
             {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
             {voiceEnabled ? '播报开启' : '播报关闭'}
           </button>
+        </div>
+
+        <div className="mb-4 rounded-lg border border-gray-700 bg-gray-900/60 p-3">
+          <label htmlFor="stgcn-model" className="block text-xs font-medium text-gray-400">
+            本地动作模型
+          </label>
+          <select
+            id="stgcn-model"
+            value={selectedModelId}
+            onChange={(event) => onModelChange(event.target.value)}
+            className="mt-1 w-full rounded-md border border-gray-600 bg-gray-800 px-2.5 py-2 text-sm text-gray-100"
+          >
+            {modelOptions.map((model) => (
+              <option key={model.id} value={model.id}>{model.label}</option>
+            ))}
+          </select>
+          <div className="mt-2 flex items-center justify-between gap-3 text-xs">
+            <span className="text-gray-400">
+              {modelOptions.find((model) => model.id === selectedModelId)?.description}
+            </span>
+            <span className={modelLoadStatus === 'ready'
+              ? 'shrink-0 text-green-300'
+              : modelLoadStatus === 'error'
+              ? 'shrink-0 text-red-300'
+              : 'shrink-0 text-yellow-300'}>
+              {modelLoadStatus === 'ready' ? '已加载' : modelLoadStatus === 'error' ? '加载失败' : '加载中'}
+            </span>
+          </div>
+          <div className="mt-1 break-all font-mono text-[11px] text-gray-500">{selectedModelId}</div>
+          {modelLoadError && <div className="mt-2 text-xs text-red-300">{modelLoadError}</div>}
         </div>
 
         <div className="flex items-center justify-between mb-4">

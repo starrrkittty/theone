@@ -16,18 +16,15 @@ import numpy as np
 
 try:
     from .dataset_io import create_dataset
+    from .labels import SUPPORTED_LABELS
 except ImportError:  # Direct script execution: python training/build_windows.py
     from dataset_io import create_dataset
+    from labels import SUPPORTED_LABELS
 
 
 WINDOW = 30
 STRIDE = 10
 KEY_JOINT_INDICES = [11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28, 0, 7, 8, 9, 10]
-SUPPORTED_LABELS = {
-    "squat", "pushup", "plank", "bicep_curl", "alternate_bicep_curl",
-    "lunge", "situp", "tricep_extension", "dumbbell_row",
-    "jumping_jack", "shoulder_press", "lateral_raise", "unknown",
-}
 
 
 def resolve_video_path(root: Path, value: str) -> Path:

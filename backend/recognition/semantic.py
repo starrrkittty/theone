@@ -10,6 +10,7 @@ from exercises.catalog import ExerciseProfile, get_exercise_profile, semantic_pr
 
 
 LOCAL_STGCN_MODEL_ID = "mmfit-mediapipe-semantic-v1"
+CANDIDATE_STGCN_MODEL_ID = "mmfit-haa500-semantic-pose-families-v9"
 
 
 # Calibrated on MM-Fit participant p06 after product-domain MediaPipe
@@ -24,6 +25,37 @@ LOCAL_STGCN_THRESHOLDS = {
     "situp": 0.999,
     "tricep_extension": 0.99,
 }
+
+
+# Candidate thresholds were selected on the v9 validation split with unknown
+# rejection enabled.  The candidate stays opt-in until it passes the real-video
+# acceptance gate; keeping thresholds keyed by model prevents a client from
+# loading one model while claiming the calibration of another.
+CANDIDATE_STGCN_THRESHOLDS = {
+    "dumbbell_row": 0.72,
+    "jumping_jack": 0.72,
+    "lateral_raise": 0.72,
+    "lunge": 0.72,
+    "shoulder_press": 0.72,
+    "situp": 0.72,
+    "tricep_extension": 0.83,
+    "burpee": 0.72,
+    "jump_rope": 0.72,
+    "pullup": 0.92,
+    "running_in_place": 0.72,
+    "yoga_tree": 0.72,
+    "yoga_triangle": 0.72,
+}
+
+
+LOCAL_STGCN_THRESHOLDS_BY_MODEL = {
+    LOCAL_STGCN_MODEL_ID: LOCAL_STGCN_THRESHOLDS,
+    CANDIDATE_STGCN_MODEL_ID: CANDIDATE_STGCN_THRESHOLDS,
+}
+
+
+def is_supported_local_model(model_id: object) -> bool:
+    return isinstance(model_id, str) and model_id in LOCAL_STGCN_THRESHOLDS_BY_MODEL
 
 
 @dataclass(frozen=True)
@@ -77,13 +109,17 @@ def parse_semantic_result(raw: object) -> Optional[SemanticEvidence]:
     )
 
 
-def parse_semantic_probabilities(raw: object) -> Optional[SemanticEvidence]:
+def parse_semantic_probabilities(
+    raw: object,
+    model_id: str = LOCAL_STGCN_MODEL_ID,
+) -> Optional[SemanticEvidence]:
     """Take the strongest catalogued long-tail class from a local model.
 
     Verified core labels are intentionally ignored here; they must still pass
     the geometric/state-machine guards before gaining specialist capabilities.
     """
-    if not isinstance(raw, Mapping):
+    thresholds = LOCAL_STGCN_THRESHOLDS_BY_MODEL.get(model_id)
+    if thresholds is None or not isinstance(raw, Mapping):
         return None
     candidates: list[tuple[float, ExerciseProfile]] = []
     for raw_label, raw_score in raw.items():
@@ -101,7 +137,7 @@ def parse_semantic_probabilities(raw: object) -> Optional[SemanticEvidence]:
     if not candidates:
         return None
     confidence, profile = max(candidates, key=lambda item: item[0])
-    required_confidence = LOCAL_STGCN_THRESHOLDS.get(profile.id, 1.0)
+    required_confidence = thresholds.get(profile.id, 1.0)
     if confidence < required_confidence:
         return None
     return SemanticEvidence(profile=profile, confidence=confidence, source="local_stgcn")

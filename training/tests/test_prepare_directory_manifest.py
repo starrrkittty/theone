@@ -59,6 +59,12 @@ class PrepareDirectoryManifestTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Unsupported target label"):
                 load_label_map(path)
 
+    def test_semantic_expansion_target_label_is_accepted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "labels.json"
+            path.write_text(json.dumps({"burpee": "burpee"}), encoding="utf-8")
+            self.assertEqual(load_label_map(path), {"burpee": "burpee"})
+
 
 if __name__ == "__main__":
     unittest.main()

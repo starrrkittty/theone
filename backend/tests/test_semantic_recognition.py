@@ -1,7 +1,9 @@
 from types import SimpleNamespace
 
 from recognition.semantic import (
+    CANDIDATE_STGCN_MODEL_ID,
     SemanticRecognitionTracker,
+    is_supported_local_model,
     parse_semantic_probabilities,
     parse_semantic_result,
 )
@@ -57,6 +59,32 @@ def test_local_semantic_probabilities_use_calibrated_class_thresholds():
     assert parse_semantic_probabilities({"lunge": 0.96, "unknown": 0.04}) is None
     evidence = parse_semantic_probabilities({"lunge": 0.98, "unknown": 0.02})
     assert evidence.profile.id == "lunge"
+
+
+def test_candidate_model_uses_its_own_calibrated_thresholds():
+    evidence = parse_semantic_probabilities(
+        {"burpee": 0.74, "unknown": 0.26},
+        CANDIDATE_STGCN_MODEL_ID,
+    )
+    assert evidence.profile.id == "burpee"
+    assert parse_semantic_probabilities(
+        {"pullup": 0.91, "unknown": 0.09},
+        CANDIDATE_STGCN_MODEL_ID,
+    ) is None
+    evidence = parse_semantic_probabilities(
+        {"pullup": 0.93, "unknown": 0.07},
+        CANDIDATE_STGCN_MODEL_ID,
+    )
+    assert evidence.profile.id == "pullup"
+
+
+def test_unregistered_local_model_is_never_trusted():
+    assert is_supported_local_model(CANDIDATE_STGCN_MODEL_ID) is True
+    assert is_supported_local_model("forged-model") is False
+    assert parse_semantic_probabilities(
+        {"burpee": 0.99},
+        "forged-model",
+    ) is None
 
 
 def test_semantic_tracker_requires_temporal_confirmation():

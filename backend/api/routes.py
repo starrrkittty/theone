@@ -15,8 +15,8 @@ from reporting.builder import ActionReportBuilder
 from schemas.action_report import ActionReport, RecognitionEvent
 from state_machine.manager import FormManager, SystemState
 from recognition.semantic import (
-    LOCAL_STGCN_MODEL_ID,
     SemanticRecognitionTracker,
+    is_supported_local_model,
     parse_semantic_probabilities,
     parse_semantic_result,
 )
@@ -142,9 +142,12 @@ async def pose_websocket(websocket: WebSocket, client_id: str):
             timestamp_ms = float(timestamp or (time.time() * 1000.0))
             semantic_evidence = parse_semantic_result(data.get("semantic_result"))
             client_model_id = data.get("client_model_id")
-            local_model_accepted = client_model_id == LOCAL_STGCN_MODEL_ID
+            local_model_accepted = is_supported_local_model(client_model_id)
             if semantic_evidence is None and local_model_accepted:
-                semantic_evidence = parse_semantic_probabilities(data.get("client_probs"))
+                semantic_evidence = parse_semantic_probabilities(
+                    data.get("client_probs"),
+                    client_model_id,
+                )
             semantic_state = semantic_tracker.update(
                 semantic_evidence,
                 timestamp_ms,

@@ -23,6 +23,22 @@ def test_semantic_only_action_routes_to_category_generalist():
     assert decision.profile.precise_rep_count is False
 
 
+def test_public_dataset_expansion_labels_route_without_fake_precision():
+    expected_specialists = {
+        "side_lunge": "lower_body_general",
+        "one_arm_pushup": "upper_body_push_general",
+        "running_in_place": "cardio_general",
+        "yoga_tree": "yoga_general",
+        "yoga_triangle": "yoga_general",
+    }
+    for label, specialist in expected_specialists.items():
+        decision = route_exercise(label)
+        assert decision.mode == "general_coaching"
+        assert decision.specialist == specialist
+        assert decision.profile.precise_rep_count is False
+        assert decision.profile.specialized_form_correction is False
+
+
 def test_safe_dynamic_semantic_label_never_gains_precise_capabilities():
     profile = semantic_profile(
         "single_arm_cable_press",

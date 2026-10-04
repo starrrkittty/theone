@@ -6,6 +6,7 @@ from pathlib import Path
 from training.evaluate_semantic_thresholds import (
     apply_threshold_overrides,
     load_threshold_configuration,
+    select_threshold_labels,
 )
 
 
@@ -48,6 +49,17 @@ class EvaluateSemanticThresholdsTests(unittest.TestCase):
     def test_rejects_unknown_override_label(self):
         with self.assertRaisesRegex(ValueError, "not configured"):
             apply_threshold_overrides({"lunge": 0.8}, ["situp=0.99"])
+
+    def test_selects_explicit_cross_domain_subset_in_requested_order(self):
+        result = select_threshold_labels(
+            {"lunge": 0.8, "situp": 0.82, "burpee": 0.9},
+            ["situp", "lunge"],
+        )
+        self.assertEqual(result, {"situp": 0.82, "lunge": 0.8})
+
+    def test_rejects_unconfigured_cross_domain_label(self):
+        with self.assertRaisesRegex(ValueError, "not configured"):
+            select_threshold_labels({"lunge": 0.8}, ["burpee"])
 
 
 if __name__ == "__main__":

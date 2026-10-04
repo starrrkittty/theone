@@ -1,0 +1,52 @@
+{
+  "model_id": "mmfit-haa500-semantic-pose-families-v9",
+  "role": "opt_in_acceptance_candidate",
+  "default_enabled": false,
+  "training_data": [
+    "MM-Fit RGB reprocessed with MediaPipe Pose Landmarker Lite",
+    "HAA500 selected fitness and hard-negative clips reprocessed with MediaPipe Pose Landmarker Lite"
+  ],
+  "license_note": "MM-Fit Zenodo record 7607736 is CC BY 4.0. HAA500 retains its upstream research-use terms; verify redistribution terms before shipping these derived weights outside the competition prototype.",
+  "input": {
+    "window_frames": 30,
+    "target_fps": 15,
+    "joint_count": 17,
+    "coordinate_mode": "xy",
+    "normalization_mode": "torso_xy"
+  },
+  "semantic_thresholds": {
+    "dumbbell_row": 0.72,
+    "jumping_jack": 0.72,
+    "lateral_raise": 0.72,
+    "lunge": 0.72,
+    "shoulder_press": 0.72,
+    "situp": 0.72,
+    "tricep_extension": 0.83,
+    "burpee": 0.72,
+    "jump_rope": 0.72,
+    "pullup": 0.92,
+    "running_in_place": 0.72,
+    "yoga_tree": 0.72,
+    "yoga_triangle": 0.72
+  },
+  "cross_domain_metrics": {
+    "mmfit_p08": {
+      "balanced_accuracy": 0.950,
+      "unknown_false_accept_rate": 0.053,
+      "acceptance_rate": 0.742
+    },
+    "haa500_all": {
+      "balanced_accuracy": 0.774,
+      "unknown_false_accept_rate": 0.015,
+      "acceptance_rate": 0.352
+    }
+  },
+  "limitations": [
+    "This model is a candidate and must not replace the stable default before the real-video acceptance gate passes.",
+    "HAA500 evaluation clips are short and several added classes have low test support.",
+    "Jump-rope and running-in-place validation recall are still weak.",
+    "Pose-only input cannot reliably distinguish equipment-dependent actions such as battle rope; RGB or Video LLM evidence is required.",
+    "Fine-grained one-arm push-up, side-lunge and crunch labels are intentionally mapped to broader pose families.",
+    "Real video-call lighting, occlusion, camera placement and multi-person scenes still require team-recorded evaluation."
+  ]
+}

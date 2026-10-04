@@ -13,6 +13,8 @@
 
 部署模型编号为 `mmfit-mediapipe-semantic-v1`，模型卡见 `frontend/public/stgcn_model_card.json`。
 
+扩类候选 `mmfit-haa500-semantic-pose-families-v9` 已作为显式可选模型接入开发者面板，但默认仍是稳定模型；候选模型卡见 `frontend/public/models/stgcn/v9/model_card.json`。
+
 ## 数据来源与许可
 
 - 数据：MM-Fit workout sessions。
@@ -205,3 +207,20 @@ balanced accuracy - 1.0 × validation unknown false accept rate
 在含 `p08` 与 HAA500 的合并固定测试划分上，逐类阈值 balanced accuracy 为 0.874，unknown false accept rate 为 0.044。相较 v3，该候选改善了原先最差的 HAA500 域，同时没有牺牲 `p08`。
 
 仍不部署，原因是 jumping jack 和 plank 的 HAA500 测试支持量都只有 3 个窗口，而且尚未通过 `docs/REAL_VIDEO_ACCEPTANCE.md` 的 5 人/30 段真实视频门禁。该候选是下一轮真实视频验收的优先对象，不是已经批准的生产模型。
+
+### 9. HAA500 语义扩类与姿态家族 v9（已接入候选，不是默认）
+
+为覆盖用户无需手选动作后的更多常见运动，从 HAA500 提取 16 个源类别、320 个独立短视频，经产品同款 MediaPipe 得到 511 个窗口。实验首先确认了一个重要边界：仅靠 17 点姿态无法看到绳子，因此把 `battle_rope` 与深蹲类动作一起训练会显著拉低深蹲召回。最终方案删除该姿态标签，并把 `crunch`、`one_arm_pushup`、`side_lunge` 映射为 `situp`、`pushup`、`lunge` 三个运动家族；器械和细粒度变体留给 RGB/Video LLM 二次判断。
+
+最终候选：
+
+- 数据集：`D:\datasets\combined\mmfit-haa500-semantic-pose-families-15fps-v1`，7,736 个窗口。
+- 训练产物：`D:\datasets\ai-fitness-runs\mmfit-haa500-semantic-expansion-v9-pose-families`。
+- 校准产物：`D:\datasets\ai-fitness-runs\mmfit-haa500-semantic-expansion-v9-pose-families-calibration`。
+- 新增独立语义类别：`burpee`、`jump_rope`、`pullup`、`running_in_place`、`yoga_tree`、`yoga_triangle`。
+- MM-Fit `p08` 固定测试：balanced accuracy 0.950、unknown FAR 0.053、acceptance rate 0.742。
+- HAA500 全部独立测试：balanced accuracy 0.774、unknown FAR 0.015、acceptance rate 0.352。
+
+相比 v4，v9 在 MM-Fit `p08` 的 balanced accuracy 从 0.906 提升到 0.950，在 HAA500 全部测试从 0.761 提升到 0.774，同时保持 unknown FAR 基本不变。它仍不能直接成为默认模型：新增类别测试支持量较小，`jump_rope` 与 `running_in_place` 的验证召回偏低，而且尚无 5 人/30 段真实视频通话证据。
+
+仓库已保留稳定/候选双模型切换、模型 ID 校验和各自阈值表。未知模型 ID 不被后端采信，切换模型时会清空 30 帧窗口与后端会话状态，防止跨模型状态污染。

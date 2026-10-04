@@ -86,6 +86,7 @@ EXERCISE_CATALOG: tuple[ExerciseProfile, ...] = (
        specialist="squat_specialist", count=True, form=True),
     _p("pushup", "俯卧撑", "Push-up", "upper_body_push", "push up", "push-up",
        specialist="pushup_specialist", count=True, form=True),
+    _p("one_arm_pushup", "单臂俯卧撑", "One-arm Push-up", "upper_body_push", "单手俯卧撑", "one arm push up"),
     _p("plank", "前臂平板支撑", "Forearm Plank", "core", "平板支撑", "forearm plank",
        specialist="plank_specialist", form=True, hold=True, views=("side",)),
     _p("bicep_curl", "哑铃弯举", "Bicep Curl", "arms", "二头弯举", "dumbbell curl", "biceps curl",
@@ -93,6 +94,7 @@ EXERCISE_CATALOG: tuple[ExerciseProfile, ...] = (
     _p("alternate_bicep_curl", "交替哑铃弯举", "Alternate Bicep Curl", "arms", "交替弯举", "alternating curl",
        specialist="alternate_bicep_curl_specialist", count=True, form=True),
     _p("lunge", "弓步蹲", "Lunge", "lower_body", "弓箭步", "forward lunge"),
+    _p("side_lunge", "侧弓步", "Side Lunge", "lower_body", "侧向弓步", "lateral lunge"),
     _p("reverse_lunge", "反向弓步蹲", "Reverse Lunge", "lower_body", "后撤弓步"),
     _p("bulgarian_split_squat", "保加利亚分腿蹲", "Bulgarian Split Squat", "lower_body", "保加利亚蹲", "后脚抬高分腿蹲"),
     _p("goblet_squat", "高脚杯深蹲", "Goblet Squat", "lower_body", "壶铃深蹲"),
@@ -125,9 +127,12 @@ EXERCISE_CATALOG: tuple[ExerciseProfile, ...] = (
     _p("high_knees", "高抬腿", "High Knees", "cardio", "原地高抬腿"),
     _p("jump_rope", "跳绳", "Jump Rope", "cardio", "skipping rope"),
     _p("running", "跑步", "Running", "cardio", "慢跑", "jogging"),
+    _p("running_in_place", "原地跑", "Running in Place", "cardio", "原地慢跑", "jogging in place"),
     _p("cycling", "骑行", "Cycling", "cardio", "动感单车"),
     _p("kettlebell_swing", "壶铃摆动", "Kettlebell Swing", "full_body", "壶铃摇摆"),
     _p("battle_rope", "战绳", "Battle Rope", "full_body", "battle ropes"),
+    _p("yoga_tree", "树式", "Tree Pose", "yoga", "瑜伽树式", "vrksasana", views=("front",)),
+    _p("yoga_triangle", "三角式", "Triangle Pose", "yoga", "瑜伽三角式", "trikonasana", views=("front",)),
 )
 
 

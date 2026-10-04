@@ -31,6 +31,27 @@ import { API_BASE_URL, IS_DEVELOPMENT } from './config';
 
 const STGCN_INFER_INTERVAL_MS = 150;
 
+const STGCN_MODELS = [
+  {
+    id: 'mmfit-mediapipe-semantic-v1',
+    label: '稳定模型（默认）',
+    description: 'MM-Fit 校准版本，适合正式演示与回退。',
+    weightsUrl: '/stgcn_weights.json',
+    scalerUrl: '/stgcn_scaler.json',
+    modelCardUrl: '/stgcn_model_card.json',
+  },
+  {
+    id: 'mmfit-haa500-semantic-pose-families-v9',
+    label: 'v9 扩类候选（仅验收）',
+    description: '增加波比跳、跳绳、引体向上、原地跑和瑜伽动作，尚未通过真实视频门槛。',
+    weightsUrl: '/models/stgcn/v9/weights.json',
+    scalerUrl: '/models/stgcn/v9/scaler.json',
+    modelCardUrl: '/models/stgcn/v9/model_card.json',
+  },
+] as const;
+
+type STGCNLoadStatus = 'loading' | 'ready' | 'error';
+
 type PoseLibraryFrame = {
   landmarks: PoseLandmark[];
   timestamp: number;
@@ -74,6 +95,9 @@ function App() {
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [poseTracking, setPoseTracking] = useState<PoseTrackingInfo | null>(null);
   const [stgcnProbabilities, setStgcnProbabilities] = useState<Record<string, number> | null>(null);
+  const [selectedStgcnModelId, setSelectedStgcnModelId] = useState<string>(STGCN_MODELS[0].id);
+  const [stgcnLoadStatus, setStgcnLoadStatus] = useState<STGCNLoadStatus>('loading');
+  const [stgcnLoadError, setStgcnLoadError] = useState('');
   const seenRecognitionEventsRef = useRef<Set<string>>(new Set());
 
   const [poseLibraryExercise, setPoseLibraryExercise] = useState('squat');
@@ -203,16 +227,41 @@ function App() {
   }, [isProcessing, isConnected, isConnecting, connect, disconnect]);
 
   useEffect(() => {
+    const model = STGCN_MODELS.find((item) => item.id === selectedStgcnModelId)
+      ?? STGCN_MODELS[0];
+    let active = true;
     const clf = new STGCNClassifier();
-    stgcnRef.current = clf;
+    stgcnRef.current = null;
+    stgcnWindowRef.current = [];
+    clientProbsRef.current = null;
+    setStgcnProbabilities(null);
+    stgcnLastInferRef.current = 0;
+    stgcnLastCaptureRef.current = 0;
+    setStgcnLoadStatus('loading');
+    setStgcnLoadError('');
+    resetAgentTelemetry();
     clf.loadWeights(
-      '/stgcn_weights.json',
-      '/stgcn_scaler.json',
-      '/stgcn_model_card.json',
-    ).catch(err => {
-      console.warn('ST-GCN weights failed to load:', err);
+      model.weightsUrl,
+      model.scalerUrl,
+      model.modelCardUrl,
+    ).then(() => {
+      if (!active) return;
+      if (clf.modelId !== model.id) {
+        throw new Error(`模型标识不匹配：期望 ${model.id}，实际 ${clf.modelId ?? '缺失'}`);
+      }
+      stgcnRef.current = clf;
+      setStgcnLoadStatus('ready');
+    }).catch((error: unknown) => {
+      if (!active) return;
+      const message = error instanceof Error ? error.message : String(error);
+      setStgcnLoadStatus('error');
+      setStgcnLoadError(message);
+      console.warn('ST-GCN weights failed to load:', error);
     });
-  }, []);
+    return () => {
+      active = false;
+    };
+  }, [selectedStgcnModelId, resetAgentTelemetry]);
 
   // Send landmarks to backend when they update — run ST-GCN first
   useEffect(() => {
@@ -495,8 +544,13 @@ function App() {
               expectedExercise={expectedExercise}
               recognitionHistory={recognitionHistory}
               voiceEnabled={voiceEnabled}
+              modelOptions={STGCN_MODELS}
+              selectedModelId={selectedStgcnModelId}
+              modelLoadStatus={stgcnLoadStatus}
+              modelLoadError={stgcnLoadError}
               onExpectedExerciseChange={handleExpectedExerciseChange}
               onVoiceEnabledChange={setVoiceEnabled}
+              onModelChange={setSelectedStgcnModelId}
               onResetTelemetry={resetAgentTelemetry}
             />
 

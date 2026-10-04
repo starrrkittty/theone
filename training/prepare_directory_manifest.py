@@ -16,13 +16,13 @@ from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from .labels import SUPPORTED_LABELS
+except ImportError:  # Direct script execution: python training/prepare_directory_manifest.py
+    from labels import SUPPORTED_LABELS
+
 
 VIDEO_EXTENSIONS = {".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v"}
-SUPPORTED_LABELS = {
-    "squat", "pushup", "plank", "bicep_curl", "alternate_bicep_curl",
-    "lunge", "situp", "tricep_extension", "dumbbell_row",
-    "jumping_jack", "shoulder_press", "lateral_raise", "unknown",
-}
 
 
 def load_label_map(path: Path) -> dict[str, str | None]:

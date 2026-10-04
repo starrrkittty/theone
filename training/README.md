@@ -88,6 +88,16 @@ dumbbell_row
 jumping_jack
 shoulder_press
 lateral_raise
+burpee
+jump_rope
+pullup
+running_in_place
+crunch
+side_lunge
+one_arm_pushup
+battle_rope
+yoga_tree
+yoga_triangle
 unknown
 ```
 
@@ -197,6 +207,22 @@ MM-Fit 的公开预提取骨架只有 2D 坐标，因此该预训练模型使用
 
 新增类别后必须重新做独立人员/源视频测试和阈值校准，不能仅因训练 loss 下降就覆盖部署权重。
 
+若某一标签在姿态域不可辨认，或只是已有动作的细粒度变体，应在合并前先筛选或映射，而不是强迫姿态模型学习视觉上不存在的信息：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\filter_dataset_labels.py `
+  --dataset D:\datasets\haa500\semantic-expansion-mediapipe-15fps-v1 `
+  --output D:\datasets\haa500\semantic-expansion-no-battle-rope-15fps-v1 `
+  --exclude-labels battle_rope
+
+.\.training-venv\Scripts\python.exe training\remap_dataset_labels.py `
+  --dataset D:\datasets\haa500\semantic-expansion-no-battle-rope-15fps-v1 `
+  --output D:\datasets\haa500\semantic-expansion-pose-families-15fps-v1 `
+  --label-map training\configs\pose-family-label-map.json
+```
+
+当前映射把 `crunch → situp`、`one_arm_pushup → pushup`、`side_lunge → lunge`；`battle_rope` 不进入姿态分类器，必须由 RGB/Video LLM 看到器械后再细化。两个工具都使用内存映射分块写入，避免在 RAM 中复制整个数据集。
+
 训练输出：
 
 - `training_report.json`：数据划分、每轮 loss/accuracy、测试准确率和混淆矩阵。
@@ -300,6 +326,8 @@ Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public
 3. 在“识别证据与拒识原因”查看 ST-GCN 四/多类概率、原始 Top-1、标签映射、规则候选和模型是否被融合。
 4. 查看首次确认、确认准确率、未知帧率、不可靠画面率和误识别帧。
 5. 导出 JSON，保存本次测试结果。
+
+开发者面板中的“本地动作模型”默认使用稳定模型。`v9 扩类候选（仅验收）` 可用于同一视频的 A/B 对比，但在真实视频门禁通过前不得改为默认。
 
 训练曲线只能说明优化过程，不能证明产品质量；最终结论以独立人员、真实视频通话场景的回放测试为准。
 

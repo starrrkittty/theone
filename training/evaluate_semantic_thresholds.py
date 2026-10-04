@@ -63,6 +63,19 @@ def apply_threshold_overrides(
     return result
 
 
+def select_threshold_labels(
+    thresholds: dict[str, float], requested_labels: list[str]
+) -> dict[str, float]:
+    """Select an explicit shared-label subset for cross-domain evaluation."""
+    if not requested_labels:
+        return dict(thresholds)
+    requested = list(dict.fromkeys(requested_labels))
+    missing = sorted(set(requested).difference(thresholds))
+    if missing:
+        raise ValueError(f"Included labels are not configured in thresholds: {missing}")
+    return {label: thresholds[label] for label in requested}
+
+
 def probabilities_for_indices(
     data: dict[str, np.ndarray],
     targets: np.ndarray,
@@ -113,6 +126,15 @@ def main() -> None:
     parser.add_argument("--cpu-threads", type=int, default=0)
     parser.add_argument("--dataloader-workers", type=int, default=0)
     parser.add_argument(
+        "--include-labels",
+        nargs="*",
+        default=[],
+        help=(
+            "Evaluate only this configured semantic-label subset. Useful when an "
+            "older cross-domain dataset does not contain newly added labels."
+        ),
+    )
+    parser.add_argument(
         "--override-threshold",
         action="append",
         default=[],
@@ -127,6 +149,7 @@ def main() -> None:
     model_labels = [str(label) for label in checkpoint["labels"]]
     thresholds, threshold_source_key = load_threshold_configuration(args.thresholds_json)
     thresholds = apply_threshold_overrides(thresholds, args.override_threshold)
+    thresholds = select_threshold_labels(thresholds, args.include_labels)
     semantic_labels = list(thresholds)
     missing_model = sorted(set(semantic_labels) - set(model_labels))
     if missing_model:
