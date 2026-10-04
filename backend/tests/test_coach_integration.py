@@ -76,6 +76,18 @@ def test_bridge_waits_instead_of_calling_model_for_unconfirmed_report():
     assert result["agent"]["model_called"] is False
 
 
+def test_bridge_skips_model_when_report_has_no_new_coach_trigger():
+    payload = _report()
+    payload["action_report"]["coach_trigger"]["triggered"] = False
+    payload["action_report"]["coach_trigger"]["reason"] = "none"
+
+    result = asyncio.run(coach_report(payload))
+
+    assert result["status"] == "no_coach_trigger"
+    assert result["report_id"] == "integration-session:1:7"
+    assert result["agent"]["model_called"] is False
+
+
 def test_bridge_reports_missing_b_expert_without_calling_model():
     result = asyncio.run(coach_report(_report(exercise="running")))
 

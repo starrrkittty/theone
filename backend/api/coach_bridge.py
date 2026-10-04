@@ -55,6 +55,19 @@ async def coach_report(payload: dict):
                 "message": "等待 A 端稳定确认动作。",
                 "agent": {"model_called": False},
             }
+        trigger = report.get("coach_trigger")
+        user_initiated = payload.get("user_initiated") is True
+        if (
+            isinstance(trigger, dict)
+            and trigger.get("triggered") is False
+            and not user_initiated
+        ):
+            return {
+                "status": "no_coach_trigger",
+                "report_id": report.get("report_id"),
+                "message": "本帧没有新的教练事件；不重复调用模型。",
+                "agent": {"model_called": False},
+            }
         try:
             movement = _normalized(payload)
         except InputError as exc:

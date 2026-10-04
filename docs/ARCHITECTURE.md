@@ -34,7 +34,7 @@ unknown
   -> switched（另一动作持续占优且位于安全切换窗口）
 ```
 
-只有 `confirmed` 或 `switched` 才产生一次 `recognition_event`。App 可直接播放事件中的文案，随后保持安静。`agent_context.should_coach_now` 是连续错误状态，`coach_trigger.triggered` 才是去抖和冷却后的跨端调用信号；B 不应逐帧调用模型。
+只有 `confirmed` 或 `switched` 才产生一次 `recognition_event`。App 可直接播放事件中的文案，随后保持安静。`agent_context.should_coach_now` 是连续错误状态，`coach_trigger.triggered` 才是去抖和冷却后的跨端调用信号；B 网关会拒绝无新触发的自动请求。用户主动提问通过顶层 `user_initiated=true` 明确旁路主动播报冷却。
 
 ## 外部模型适配协议
 

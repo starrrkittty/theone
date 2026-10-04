@@ -156,7 +156,7 @@ WS /api/ws/pose/{client_id}
 B 的教练 Agent 已放在 `coach/`，统一后端启动后可直接使用：
 
 - `POST /api/agent-a/normalize`：把 A 的 `ActionReport v1/v2` 映射为 B 的动作观测并检查证据，不调用模型。
-- `POST /api/agent-a/coach`：只在动作已确认且 B 有对应专家时调用动作 Agent。
+- `POST /api/agent-a/coach`：只在动作已确认、`coach_trigger.triggered=true` 且 B 有对应专家时调用动作 Agent；用户主动提问可在请求顶层设置 `user_initiated=true`，不受主动播报冷却限制。
 - `POST /api/plans/phase`、`POST /api/workouts/summary`、`POST /api/nutrition/advice`：阶段计划、训练总结和饮食建议。
 - `GET /api/app/v1/capabilities`：最终 App 的精简接口能力声明；完整契约见 `docs/contracts/app_coach_v1.md`。
 - `/coach`：B 的本地联调控制台。
