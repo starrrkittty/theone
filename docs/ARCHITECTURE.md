@@ -12,8 +12,8 @@ Agent A 的职责是把连续、嘈杂的视频感知结果转换成可验证的
 4. A 端校验、Kalman 平滑、特征提取，并融合 HMM、人体几何规则和外部概率。
 5. 候选动作必须满足置信度、概率间隔、持续帧数和安全切换窗口，才能确认为当前运动。
 6. 对应专项模块计算阶段、次数/保持时长、关节角和姿态问题。
-7. 报告构建器聚合连续错误、质量下降和指导优先级，输出 `ActionReport v1`。
-8. B 端根据 `specialist` 路由到专项教练，用 LLM 处理对话、语境、计划、饮食与主动关怀。
+7. 报告构建器聚合连续错误、质量下降和指导优先级，输出 `ActionReport v2`；每份报告带 `report_id/session_generation/sequence`，角度附带本帧关键点可见度证据。
+8. A 只在动作确认/切换、持续错误、疲劳趋势或安全事件达到门槛时发出 `coach_trigger`；B 端据此路由专项教练，用 LLM 处理对话、语境、计划、饮食与主动关怀。
 
 ## 为什么不让 LLM 直接读 URDF
 
@@ -34,7 +34,7 @@ unknown
   -> switched（另一动作持续占优且位于安全切换窗口）
 ```
 
-只有 `confirmed` 或 `switched` 才产生一次 `recognition_event`。App 可直接播放事件中的文案，随后保持安静，由 B 根据 `agent_context.should_coach_now` 决定是否指导。
+只有 `confirmed` 或 `switched` 才产生一次 `recognition_event`。App 可直接播放事件中的文案，随后保持安静。`agent_context.should_coach_now` 是连续错误状态，`coach_trigger.triggered` 才是去抖和冷却后的跨端调用信号；B 不应逐帧调用模型。
 
 ## 外部模型适配协议
 
@@ -57,6 +57,8 @@ unknown
 
 - `schema_version` 必须随破坏性字段变化升级。
 - B 只依赖 `ActionReport` 和事件，不依赖 A 内部 HMM、MediaPipe 序号或 URDF 格式。
+- `report_id` 是请求、回复和日志关联键；B 回复必须原样回传，App 可据此丢弃迟到的旧回复。
+- `joint_angles` 缺失表示本帧没有可靠测量，不能按 0 度解释；`joint_confidences` 是贡献关键点 visibility 的最小值，不是角度误差标定结果。
 - A 可以更换姿态模型或增加分类器，只要保持协议兼容。
 - B 不得用 LLM 重新计算角度或覆盖高优先级安全信号。
 

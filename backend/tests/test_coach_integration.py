@@ -10,6 +10,9 @@ def _report(exercise="squat", status="confirmed"):
         "action_report": {
             "schema_version": "v2",
             "session_id": "integration-session",
+            "report_id": "integration-session:1:7",
+            "session_generation": 1,
+            "sequence": 7,
             "timestamp_ms": 1_791_043_200_000,
             "recognition_status": status,
             "recognized_exercise": exercise if status == "confirmed" else "unknown",
@@ -24,6 +27,12 @@ def _report(exercise="squat", status="confirmed"):
                     "right_knee": 95.8,
                     "torso_angle": 22.0,
                 },
+                "joint_confidences": {
+                    "left_knee": 0.91,
+                    "right_knee": 0.89,
+                    "torso_angle": 0.87,
+                },
+                "confidence_method": "landmark_visibility_min",
                 "hold_seconds": 0.0,
                 "rep_quality": 0.86,
                 "partial_reps": 0,
@@ -33,6 +42,14 @@ def _report(exercise="squat", status="confirmed"):
             "recognition": {"exercise_id": exercise, "source": "semantic_model"},
             "routing": {"mode": "verified_specialist", "specialist": "squat_specialist"},
             "capabilities": {"specialized_form_correction": True},
+            "coach_trigger": {
+                "triggered": True,
+                "reason": "persistent_form_error",
+                "priority": "form_correction",
+                "recommended_intent": "correct_knees_caving",
+                "report_id": "integration-session:1:7",
+                "cooldown_ms": 8000,
+            },
         },
     }
 
@@ -45,9 +62,11 @@ def test_v2_action_report_normalizes_without_model_call():
     assert movement["exercise_id"] == "bodyweight_squat"
     assert movement["phase"] == "descent"
     assert movement["joints"]["left_knee_flexion"]["angle_deg"] == 96.4
-    assert movement["joints"]["left_knee_flexion"]["confidence"] == 0.84
+    assert movement["joints"]["left_knee_flexion"]["confidence"] == 0.91
     assert movement["metadata"]["measurement_space"] == "2d"
     assert movement["metadata"]["upstream_schema"] == "agent-a/v2"
+    assert result["report_id"] == "integration-session:1:7"
+    assert result["session_generation"] == 1
 
 
 def test_bridge_waits_instead_of_calling_model_for_unconfirmed_report():

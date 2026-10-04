@@ -33,6 +33,15 @@ class PushupModule(BaseExercise):
     HIP_PIKE_THRESHOLD = 0.05  # Normalized Y difference for hip pike
     HORIZONTAL_THRESHOLD = 0.15  # How horizontal body should be
 
+    ANGLE_LANDMARKS = {
+        "left_elbow": (JointName.LEFT_SHOULDER, JointName.LEFT_ELBOW, JointName.LEFT_WRIST),
+        "right_elbow": (JointName.RIGHT_SHOULDER, JointName.RIGHT_ELBOW, JointName.RIGHT_WRIST),
+        "left_shoulder": (JointName.LEFT_ELBOW, JointName.LEFT_SHOULDER, JointName.LEFT_HIP),
+        "right_shoulder": (JointName.RIGHT_ELBOW, JointName.RIGHT_SHOULDER, JointName.RIGHT_HIP),
+        # Internal torso_angle is a normalized line-deviation magnitude, not
+        # degrees, so it deliberately stays out of ActionReport.joint_angles.
+    }
+
     def __init__(self):
         super().__init__()
         self._lowest_elbow_angle = 180.0

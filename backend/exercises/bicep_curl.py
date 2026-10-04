@@ -50,6 +50,12 @@ class BicepCurlModule(BaseExercise):
 
     MIN_VISIBILITY = 0.3
     MIN_FRAMES_TO_CONFIRM = 3
+    ANGLE_LANDMARKS = {
+        "left_elbow": (JointName.LEFT_SHOULDER, JointName.LEFT_ELBOW, JointName.LEFT_WRIST),
+        "right_elbow": (JointName.RIGHT_SHOULDER, JointName.RIGHT_ELBOW, JointName.RIGHT_WRIST),
+        "left_shoulder": (JointName.LEFT_ELBOW, JointName.LEFT_SHOULDER, JointName.LEFT_HIP),
+        "right_shoulder": (JointName.RIGHT_ELBOW, JointName.RIGHT_SHOULDER, JointName.RIGHT_HIP),
+    }
     # Rep counter ROM gate. The previous 140°/130° (10° band) accepted
     # micro-movements as reps; the briefly-tried 160°/60° required near-
     # perfect ROM. 150°/80° = 70° band — achievable for normal curls and

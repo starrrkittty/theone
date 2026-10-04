@@ -16,11 +16,15 @@
 
 ### 给 B 的接口
 
-A 不把原始视频、完整关键点流或 URDF XML 直接交给大模型。统一输出 `ActionReport v1`：
+A 不把原始视频、完整关键点流或 URDF XML 直接交给大模型。统一输出 `ActionReport v2`：
 
 ```json
 {
-  "schema_version": "v1",
+  "schema_version": "v2",
+  "session_id": "demo-user",
+  "report_id": "demo-user:1:42",
+  "session_generation": 1,
+  "sequence": 42,
   "recognition_status": "confirmed",
   "recognized_exercise": "squat",
   "recognition_confidence": 0.92,
@@ -28,15 +32,30 @@ A 不把原始视频、完整关键点流或 URDF XML 直接交给大模型。�
   "phase": "bottom",
   "repetition": 8,
   "pose_quality": "good",
-  "metrics": {"joint_angles": {}, "hold_seconds": 0.0},
+  "metrics": {
+    "joint_angles": {"left_knee": 96.4},
+    "joint_confidences": {"left_knee": 0.91},
+    "confidence_method": "landmark_visibility_min",
+    "hold_seconds": 0.0
+  },
   "violations": [],
   "agent_context": {
     "should_coach_now": false,
     "priority": "none",
     "recommended_intent": "observe"
+  },
+  "coach_trigger": {
+    "triggered": false,
+    "reason": "none",
+    "priority": "none",
+    "recommended_intent": "observe",
+    "report_id": "demo-user:1:42",
+    "cooldown_ms": 8000
   }
 }
 ```
+
+`joint_angles` 不补默认 0，只发送本帧真实计算且贡献关键点可见度达标的角度。`joint_confidences` 是贡献关键点 visibility 的最小值，不代表经过标定的角度准确率。B 只在 `coach_trigger.triggered=true` 或用户主动提问时进入实时生成链路。
 
 ## B：智能教练、阶段规划与饮食规划
 
@@ -51,7 +70,7 @@ A 不把原始视频、完整关键点流或 URDF XML 直接交给大模型。�
 ### 输入
 
 - 用户画像和目标，由 App 提供。
-- A 的 `ActionReport v1` 与识别事件。
+- A 的 `ActionReport v2`、稀疏 `coach_trigger` 与识别事件。
 - 训练历史和当前阶段计划。
 
 ### 输出
@@ -83,7 +102,7 @@ A 不把原始视频、完整关键点流或 URDF XML 直接交给大模型。�
 | 深蹲、俯卧撑、弯举专项分析 | 已有并经过测试 |
 | 前臂平板支撑 | beta |
 | URDF 读取和映射校验 | 已实现 |
-| ActionReport v1 和一次性识别播报 | 已实现 |
+| ActionReport v2、逐角度证据、稀疏教练触发和一次性识别播报 | 已实现 |
 | 外部 ST-GCN / ActionCLIP 概率融合接口 | 已实现接口，未捆绑重模型 |
 | 多人持续跟踪与主体锁定 | 已实现保守锁定；歧义帧暂停上传，主体离开后需连续帧重新锁定 |
 | 视频通话、LLM 专项 Agent、阶段计划与饮食 | 分属 App/B，不在本次提交 |

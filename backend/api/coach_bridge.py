@@ -30,9 +30,12 @@ def _normalized(payload: dict) -> dict:
 def normalized_report(payload: dict):
     """Inspect the deterministic v1/v2 mapping without calling a model."""
     try:
+        report = report_from(payload)
         movement = _normalized(payload)
         return {
             "status": "ready",
+            "report_id": report.get("report_id"),
+            "session_generation": report.get("session_generation"),
             "movement": movement,
             "measurement_review": measurement_review(movement),
         }
@@ -48,6 +51,7 @@ async def coach_report(payload: dict):
         if report.get("recognition_status") != "confirmed":
             return {
                 "status": "awaiting_recognition",
+                "report_id": report.get("report_id"),
                 "message": "等待 A 端稳定确认动作。",
                 "agent": {"model_called": False},
             }
@@ -57,6 +61,7 @@ async def coach_report(payload: dict):
             if str(exc).startswith("B 组暂不支持动作专家："):
                 return {
                     "status": "expert_unavailable",
+                    "report_id": report.get("report_id"),
                     "recognized_exercise": report.get("recognized_exercise"),
                     "message": str(exc),
                     "agent": {"model_called": False},
@@ -65,6 +70,8 @@ async def coach_report(payload: dict):
         result = await asyncio.to_thread(run, "movement", movement)
         return {
             "status": "completed",
+            "report_id": report.get("report_id"),
+            "session_generation": report.get("session_generation"),
             "normalized_movement": movement,
             "analysis": result,
         }

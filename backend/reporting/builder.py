@@ -1,7 +1,7 @@
 """Convert the perception pipeline state into the stable Agent-A contract."""
 
 from collections import deque
-from dataclasses import asdict
+from itertools import count
 from typing import Optional
 
 from schemas.action_report import (
@@ -10,6 +10,7 @@ from schemas.action_report import (
     ActionReport,
     AgentContext,
     CandidateExercise,
+    CoachTrigger,
     RecognitionDetails,
     RecognitionEvent,
     RoutingDetails,
@@ -27,20 +28,32 @@ _DISPLAY_ZH = {
     "alternate_bicep_curl": "交替哑铃弯举",
 }
 
+_SESSION_GENERATIONS = count(1)
+
 
 class ActionReportBuilder:
     """Maintain the small amount of temporal context needed by Agent B."""
 
     def __init__(self, session_id: str):
         self.session_id = session_id
+        self._session_generation = next(_SESSION_GENERATIONS)
+        self._sequence = 0
         self._last_exercise: Optional[str] = None
         self._violation_streaks: dict[str, int] = {}
         self._quality_history: deque[float] = deque(maxlen=10)
+        self._last_coach_at_ms: Optional[float] = None
+        self._last_coach_signature: tuple[str, ...] = ()
+        self._last_possible_fatigue = False
 
     def reset(self) -> None:
+        self._session_generation = next(_SESSION_GENERATIONS)
+        self._sequence = 0
         self._last_exercise = None
         self._violation_streaks.clear()
         self._quality_history.clear()
+        self._last_coach_at_ms = None
+        self._last_coach_signature = ()
+        self._last_possible_fatigue = False
 
     def build(
         self,
@@ -136,15 +149,46 @@ class ActionReportBuilder:
         elif priority == "encouragement":
             intent = "reinforce_good_form"
 
-        angles = {}
-        if result and result.angles:
-            angles = {
-                key: round(float(value), 2)
-                for key, value in asdict(result.angles).items()
-            }
+        angles = {
+            key: round(float(value), 2)
+            for key, value in (result.measured_angles if result else {}).items()
+        }
+        angle_confidences = {
+            key: round(float(value), 4)
+            for key, value in (result.angle_confidences if result else {}).items()
+            if key in angles
+        }
+
+        agent_context = AgentContext(
+            should_coach_now=should_coach,
+            priority=priority,
+            recommended_intent=intent,
+            repeated_error_count=max_streak,
+            possible_fatigue=possible_fatigue,
+        )
+        self._sequence += 1
+        report_id = (
+            f"{self.session_id}:{self._session_generation}:{self._sequence}"
+        )
+        event = self._recognition_event(
+            exercise if recognition_status == "confirmed" else None,
+            confidence,
+            timestamp_ms,
+            profile=profile,
+        )
+        coach_trigger = self._coach_trigger(
+            report_id=report_id,
+            timestamp_ms=timestamp_ms,
+            recognition_event=event,
+            context=agent_context,
+            violations=violations,
+        )
 
         report = ActionReport(
             session_id=self.session_id,
+            report_id=report_id,
+            session_generation=self._session_generation,
+            sequence=self._sequence,
             timestamp_ms=timestamp_ms,
             recognition_status=recognition_status,
             recognized_exercise=exercise,
@@ -157,18 +201,16 @@ class ActionReportBuilder:
             camera_view=state.camera_view,
             metrics=ActionMetrics(
                 joint_angles=angles,
+                joint_confidences=angle_confidences,
+                confidence_method=(
+                    result.confidence_method if result else "missing"
+                ),
                 hold_seconds=float(getattr(result, "hold_seconds", 0.0)) if result else 0.0,
                 rep_quality=result.rep_quality if result else None,
                 partial_reps=result.partial_reps if result else 0,
             ),
             violations=violations,
-            agent_context=AgentContext(
-                should_coach_now=should_coach,
-                priority=priority,
-                recommended_intent=intent,
-                repeated_error_count=max_streak,
-                possible_fatigue=possible_fatigue,
-            ),
+            agent_context=agent_context,
             recognition=RecognitionDetails(
                 exercise_id=exercise,
                 display_name=profile.display_name_zh if profile else "",
@@ -193,13 +235,7 @@ class ActionReportBuilder:
                 hold_timing=bool(profile and profile.hold_timing),
                 general_guidance=bool(profile),
             ),
-        )
-
-        event = self._recognition_event(
-            exercise if recognition_status == "confirmed" else None,
-            confidence,
-            timestamp_ms,
-            profile=profile,
+            coach_trigger=coach_trigger,
         )
         return report, event
 
@@ -274,6 +310,87 @@ class ActionReportBuilder:
             specialist=routing.specialist,
             message=message,
             route_mode=routing.mode,
+        )
+
+    def _coach_trigger(
+        self,
+        *,
+        report_id: str,
+        timestamp_ms: float,
+        recognition_event: Optional[RecognitionEvent],
+        context: AgentContext,
+        violations: list[ViolationItem],
+    ) -> CoachTrigger:
+        """Emit sparse model-worthy events instead of triggering B per frame."""
+        regular_cooldown_ms = 8000
+        fatigue_cooldown_ms = 15000
+        safety_cooldown_ms = 3000
+        elapsed = (
+            float("inf")
+            if self._last_coach_at_ms is None
+            else max(0.0, float(timestamp_ms) - self._last_coach_at_ms)
+        )
+        high_signature = tuple(sorted(
+            item.type for item in violations if item.severity == "high"
+        ))
+        issue_signature = tuple(sorted(item.type for item in violations))
+
+        triggered = False
+        reason = "none"
+        priority = "none"
+        intent = "observe"
+        cooldown_ms = regular_cooldown_ms
+        signature: tuple[str, ...] = ()
+
+        if recognition_event is not None:
+            triggered = True
+            reason = recognition_event.event
+            priority = "encouragement"
+            intent = "announce_exercise"
+            signature = (reason, recognition_event.exercise)
+        elif high_signature and (
+            high_signature != self._last_coach_signature
+            or elapsed >= safety_cooldown_ms
+        ):
+            triggered = True
+            reason = "safety"
+            priority = "safety"
+            intent = context.recommended_intent
+            cooldown_ms = safety_cooldown_ms
+            signature = high_signature
+        elif (
+            context.should_coach_now
+            and issue_signature
+            and elapsed >= regular_cooldown_ms
+        ):
+            triggered = True
+            reason = "persistent_form_error"
+            priority = "form_correction"
+            intent = context.recommended_intent
+            signature = issue_signature
+        elif (
+            context.possible_fatigue
+            and not self._last_possible_fatigue
+            and elapsed >= fatigue_cooldown_ms
+        ):
+            triggered = True
+            reason = "possible_fatigue"
+            priority = "form_correction"
+            intent = "check_fatigue_context"
+            cooldown_ms = fatigue_cooldown_ms
+            signature = (reason,)
+
+        if triggered:
+            self._last_coach_at_ms = float(timestamp_ms)
+            self._last_coach_signature = signature
+        self._last_possible_fatigue = context.possible_fatigue
+        return CoachTrigger(
+            triggered=triggered,
+            reason=reason,
+            priority=priority,
+            recommended_intent=intent,
+            report_id=report_id,
+            cooldown_ms=cooldown_ms,
         )
 
     def _is_quality_declining(self) -> bool:

@@ -27,6 +27,11 @@ class PlankModule(BaseExercise):
 
     HIP_DEVIATION_THRESHOLD = 0.055
 
+    ANGLE_LANDMARKS = {
+        "left_elbow": (JointName.LEFT_SHOULDER, JointName.LEFT_ELBOW, JointName.LEFT_WRIST),
+        "right_elbow": (JointName.RIGHT_SHOULDER, JointName.RIGHT_ELBOW, JointName.RIGHT_WRIST),
+    }
+
     def __init__(self):
         super().__init__()
         self._hold_started_at: float | None = None

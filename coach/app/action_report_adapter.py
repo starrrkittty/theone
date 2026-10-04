@@ -111,6 +111,7 @@ def normalize(payload):
             "context":{**context, "agent_a_observations":{"violations":report.get("violations",[]), "agent_context":report.get("agent_context",{}), "metrics":metrics,
                        "recognition":report.get("recognition",{}), "routing":report.get("routing",{}),
                        "capabilities":report.get("capabilities",{}), "kinematics":report.get("kinematics",{}),
-                       "perception_agent":report.get("perception_agent",{})},
+                       "perception_agent":report.get("perception_agent",{}), "report_id":report.get("report_id"),
+                       "session_generation":report.get("session_generation"), "coach_trigger":report.get("coach_trigger",{})},
                        "evidence_boundary":"A 的姿势阈值、rep_quality、疲劳代理指标是上游算法观察，不是临床结论。不得将肩骨段夹角改称肩屈曲。"},
             **({"user_id":payload["user_id"]} if payload.get("user_id") else {})}

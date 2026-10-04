@@ -33,6 +33,19 @@ class SquatModule(BaseExercise):
     # Hysteresis thresholds
     ANGLE_HYSTERESIS = 12  # Degrees of buffer to prevent flickering
 
+    ANGLE_LANDMARKS = {
+        "left_knee": (JointName.LEFT_HIP, JointName.LEFT_KNEE, JointName.LEFT_ANKLE),
+        "right_knee": (JointName.RIGHT_HIP, JointName.RIGHT_KNEE, JointName.RIGHT_ANKLE),
+        "left_hip": (JointName.LEFT_SHOULDER, JointName.LEFT_HIP, JointName.LEFT_KNEE),
+        "right_hip": (JointName.RIGHT_SHOULDER, JointName.RIGHT_HIP, JointName.RIGHT_KNEE),
+        "torso_angle": (
+            JointName.LEFT_SHOULDER,
+            JointName.RIGHT_SHOULDER,
+            JointName.LEFT_HIP,
+            JointName.RIGHT_HIP,
+        ),
+    }
+
     def __init__(self):
         super().__init__()
         self._lowest_knee_angle = 180.0

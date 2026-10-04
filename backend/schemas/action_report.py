@@ -27,6 +27,8 @@ class ViolationItem(BaseModel):
 
 class ActionMetrics(BaseModel):
     joint_angles: dict[str, float] = Field(default_factory=dict)
+    joint_confidences: dict[str, float] = Field(default_factory=dict)
+    confidence_method: Literal["landmark_visibility_min", "missing"] = "missing"
     hold_seconds: float = Field(default=0.0, ge=0.0)
     rep_quality: Optional[float] = None
     partial_reps: int = Field(default=0, ge=0)
@@ -62,9 +64,28 @@ class ActionCapabilities(BaseModel):
     general_guidance: bool = False
 
 
+class CoachTrigger(BaseModel):
+    triggered: bool = False
+    reason: Literal[
+        "none",
+        "exercise_confirmed",
+        "exercise_switched",
+        "persistent_form_error",
+        "possible_fatigue",
+        "safety",
+    ] = "none"
+    priority: Literal["none", "encouragement", "form_correction", "safety"] = "none"
+    recommended_intent: str = "observe"
+    report_id: str = ""
+    cooldown_ms: int = Field(default=8000, ge=0)
+
+
 class ActionReport(BaseModel):
     schema_version: Literal["v2"] = "v2"
     session_id: str
+    report_id: str
+    session_generation: int = Field(ge=1)
+    sequence: int = Field(ge=1)
     timestamp_ms: float
     recognition_status: Literal["unknown", "candidate", "confirmed"]
     recognized_exercise: str = "unknown"
@@ -81,6 +102,7 @@ class ActionReport(BaseModel):
     recognition: RecognitionDetails = Field(default_factory=RecognitionDetails)
     routing: RoutingDetails = Field(default_factory=RoutingDetails)
     capabilities: ActionCapabilities = Field(default_factory=ActionCapabilities)
+    coach_trigger: CoachTrigger = Field(default_factory=CoachTrigger)
 
 
 class RecognitionEvent(BaseModel):

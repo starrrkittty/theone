@@ -129,6 +129,9 @@ class ExerciseResult:
     joint_colors: dict[str, str] = field(default_factory=dict)
     confidence: float = 0.0
     angles: Optional[JointAngles] = None
+    measured_angles: dict[str, float] = field(default_factory=dict)
+    angle_confidences: dict[str, float] = field(default_factory=dict)
+    confidence_method: str = "missing"
     rep_quality: Optional[float] = None
     partial_reps: int = 0
     hold_seconds: float = 0.0
@@ -211,6 +214,12 @@ class BaseExercise(ABC):
         "concentric": "Lifting",
         "hold": "Hold",
     }
+
+    # Each subclass lists only the numeric angles it actually computes.  The
+    # corresponding confidence is the minimum MediaPipe visibility of the
+    # landmarks that contributed to that measurement.
+    ANGLE_LANDMARKS: dict[str, tuple[JointName, ...]] = {}
+    ANGLE_VISIBILITY_THRESHOLD = 0.3
 
     def __init__(self):
         self.rep_count = 0
@@ -371,6 +380,7 @@ class BaseExercise(ABC):
 
         # Check form
         result = self.check_form(landmark_dict)
+        self._attach_angle_evidence(result, landmark_dict)
         result.rep_count = self.rep_count
         result.rep_phase = current_phase
         result.phase_display = self._phase_display(current_phase)
@@ -388,6 +398,38 @@ class BaseExercise(ABC):
                     counter.record_violations(result.violations)
 
         return result
+
+    def _attach_angle_evidence(
+        self,
+        result: ExerciseResult,
+        landmarks: dict[JointName, Landmark],
+    ) -> None:
+        """Expose only real, sufficiently visible degree measurements."""
+        if result.angles is None:
+            return
+        measured: dict[str, float] = {}
+        confidences: dict[str, float] = {}
+        for name, contributing_joints in self.ANGLE_LANDMARKS.items():
+            if not contributing_joints or any(
+                joint not in landmarks for joint in contributing_joints
+            ):
+                continue
+            confidence = min(
+                float(landmarks[joint].visibility)
+                for joint in contributing_joints
+            )
+            if confidence < self.ANGLE_VISIBILITY_THRESHOLD:
+                continue
+            value = getattr(result.angles, name, None)
+            if value is None or not np.isfinite(value):
+                continue
+            measured[name] = float(value)
+            confidences[name] = float(np.clip(confidence, 0.0, 1.0))
+        result.measured_angles = measured
+        result.angle_confidences = confidences
+        result.confidence_method = (
+            "landmark_visibility_min" if measured else "missing"
+        )
 
     def _is_rep_complete(self, last_phase: str, current_phase: str) -> bool:
         """Check if a rep was completed based on phase transition."""

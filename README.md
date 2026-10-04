@@ -110,6 +110,9 @@ WS /api/ws/pose/{client_id}
   "action_report": {
     "schema_version": "v2",
     "session_id": "demo-user",
+    "report_id": "demo-user:1:42",
+    "session_generation": 1,
+    "sequence": 42,
     "recognition_status": "confirmed",
     "recognized_exercise": "squat",
     "recognition_confidence": 0.91,
@@ -120,6 +123,8 @@ WS /api/ws/pose/{client_id}
     "camera_view": "side",
     "metrics": {
       "joint_angles": {"left_knee": 96.4},
+      "joint_confidences": {"left_knee": 0.91},
+      "confidence_method": "landmark_visibility_min",
       "hold_seconds": 0.0,
       "rep_quality": 0.86,
       "partial_reps": 0
@@ -131,12 +136,20 @@ WS /api/ws/pose/{client_id}
       "recommended_intent": "reinforce_good_form",
       "repeated_error_count": 0,
       "possible_fatigue": false
+    },
+    "coach_trigger": {
+      "triggered": false,
+      "reason": "none",
+      "priority": "none",
+      "recommended_intent": "observe",
+      "report_id": "demo-user:1:42",
+      "cooldown_ms": 8000
     }
   }
 }
 ```
 
-`recognition_event` 只在首次确认或运动切换时出现，避免每帧重复播报。完整响应还保留旧版字段，方便现有前端兼容。
+`recognition_event` 只在首次确认或运动切换时出现，避免每帧重复播报。`coach_trigger` 只在动作确认/切换、持续错误、疲劳趋势或安全事件达到门槛时触发，B 不应逐帧调用大模型。`joint_angles` 只包含本帧实际测得且关键点可见度达标的角度；缺失角度不会用 0 填充。完整响应还保留旧版字段，方便现有前端兼容。
 
 ### A 与 B 的合并联调
 

@@ -26,6 +26,9 @@ export interface ActionViolation {
 export interface ActionReport {
   schema_version: 'v2';
   session_id: string;
+  report_id: string;
+  session_generation: number;
+  sequence: number;
   timestamp_ms: number;
   recognition_status: 'unknown' | 'candidate' | 'confirmed';
   recognized_exercise: string;
@@ -38,6 +41,8 @@ export interface ActionReport {
   camera_view: string;
   metrics: {
     joint_angles: Record<string, number>;
+    joint_confidences: Record<string, number>;
+    confidence_method: 'landmark_visibility_min' | 'missing';
     hold_seconds: number;
     rep_quality: number | null;
     partial_reps: number;
@@ -68,6 +73,15 @@ export interface ActionReport {
     specialized_form_correction: boolean;
     hold_timing: boolean;
     general_guidance: boolean;
+  };
+  coach_trigger: {
+    triggered: boolean;
+    reason: 'none' | 'exercise_confirmed' | 'exercise_switched'
+      | 'persistent_form_error' | 'possible_fatigue' | 'safety';
+    priority: 'none' | 'encouragement' | 'form_correction' | 'safety';
+    recommended_intent: string;
+    report_id: string;
+    cooldown_ms: number;
   };
 }
 

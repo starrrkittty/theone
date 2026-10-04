@@ -29,6 +29,9 @@ function response(
     action_report: {
       schema_version: 'v2',
       session_id: 'test',
+      report_id: 'test:1:1',
+      session_generation: 1,
+      sequence: 1,
       timestamp_ms: 0,
       recognition_status: status,
       recognized_exercise: exercise,
@@ -41,6 +44,8 @@ function response(
       camera_view: 'front',
       metrics: {
         joint_angles: {},
+        joint_confidences: {},
+        confidence_method: 'missing',
         hold_seconds: 0,
         rep_quality: null,
         partial_reps: 0,
@@ -71,6 +76,14 @@ function response(
         specialized_form_correction: status === 'confirmed',
         hold_timing: false,
         general_guidance: status === 'confirmed',
+      },
+      coach_trigger: {
+        triggered: status === 'confirmed',
+        reason: status === 'confirmed' ? 'exercise_confirmed' : 'none',
+        priority: status === 'confirmed' ? 'encouragement' : 'none',
+        recommended_intent: status === 'confirmed' ? 'announce_exercise' : 'observe',
+        report_id: 'test:1:1',
+        cooldown_ms: 8000,
       },
     },
   };
