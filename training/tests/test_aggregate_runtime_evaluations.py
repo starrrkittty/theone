@@ -5,7 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from training.aggregate_runtime_evaluations import aggregate, load_export
+from training.aggregate_runtime_evaluations import (
+    ACCEPTANCE_PROFILES,
+    aggregate,
+    load_export,
+)
 
 
 def _payload(expected: str, predicted: str, participant: str, clip: str) -> dict:
@@ -140,3 +144,35 @@ def test_gate_rejects_mixed_model_versions(tmp_path: Path) -> None:
 
     assert report["passed"] is False
     assert any("mixed model ids" in failure for failure in report["failures"])
+
+
+def test_semantic_v9_profile_covers_every_exported_model_label() -> None:
+    profile = ACCEPTANCE_PROFILES["semantic-v9"]
+
+    assert profile["expected_model_id"] == "mmfit-haa500-semantic-pose-families-v9"
+    assert set(profile["required_labels"]) == {
+        "squat", "pushup", "plank", "bicep_curl", "alternate_bicep_curl",
+        "dumbbell_row", "jumping_jack", "lateral_raise", "lunge",
+        "shoulder_press", "situp", "tricep_extension", "burpee",
+        "jump_rope", "pullup", "running_in_place", "yoga_tree",
+        "yoga_triangle", "unknown",
+    }
+
+
+def test_gate_rejects_wrong_model_for_named_profile(tmp_path: Path) -> None:
+    rows = []
+    for expected, predicted, clip in (
+        ("squat", "squat", "known"),
+        ("unknown", "unknown", "negative"),
+    ):
+        path = tmp_path / f"agent-a-evaluation-{clip}.json"
+        path.write_text(
+            json.dumps(_payload(expected, predicted, "p01", clip)),
+            encoding="utf-8",
+        )
+        rows.append(load_export(path))
+
+    report = _aggregate(rows, expected_model_id="different-model")
+
+    assert report["passed"] is False
+    assert any("do not match required" in failure for failure in report["failures"])

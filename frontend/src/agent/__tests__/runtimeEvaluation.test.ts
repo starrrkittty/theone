@@ -61,4 +61,42 @@ describe('runtime evaluation export', () => {
     expect(payload.duration_ms).toBe(1250);
     expect(payload.model.client_model_id).toBe('model-v1');
   });
+
+  it('supports semantic-v9 ground-truth labels', () => {
+    const telemetry = createAgentTelemetry();
+    telemetry.trace.push({
+      elapsedMs: 1800,
+      expectedExercise: 'burpee',
+      recognitionStatus: 'confirmed',
+      recognizedExercise: 'burpee',
+      recognitionConfidence: 0.88,
+      formConfidence: 0,
+      poseQuality: 'good',
+      cameraView: 'front',
+      rejectionReason: null,
+      recognitionEvent: 'exercise_confirmed',
+      clientModelId: 'mmfit-haa500-semantic-pose-families-v9',
+    });
+
+    const payload = buildRuntimeEvaluationExport(
+      {
+        participantId: 'p02',
+        clipId: 'p02-burpee-front-01',
+        sourceType: 'uploaded_video',
+        expectedExercise: 'burpee',
+        cameraView: 'front',
+        lighting: 'normal',
+        occlusion: 'none',
+        multiPerson: false,
+        notes: '',
+      },
+      telemetry,
+      summarizeAgentTelemetry(telemetry),
+      [],
+      null,
+    );
+
+    expect(payload.clip.expected_exercise).toBe('burpee');
+    expect(payload.model.client_model_id).toBe('mmfit-haa500-semantic-pose-families-v9');
+  });
 });

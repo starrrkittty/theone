@@ -21,6 +21,37 @@ DEFAULT_REQUIRED_LABELS = (
     "unknown",
 )
 
+V9_SEMANTIC_LABELS = (
+    "dumbbell_row",
+    "jumping_jack",
+    "lateral_raise",
+    "lunge",
+    "shoulder_press",
+    "situp",
+    "tricep_extension",
+    "burpee",
+    "jump_rope",
+    "pullup",
+    "running_in_place",
+    "yoga_tree",
+    "yoga_triangle",
+)
+
+ACCEPTANCE_PROFILES = {
+    "core-v1": {
+        "required_labels": DEFAULT_REQUIRED_LABELS,
+        "expected_model_id": "mmfit-mediapipe-semantic-v1",
+    },
+    "semantic-v9": {
+        "required_labels": (
+            *DEFAULT_REQUIRED_LABELS[:-1],
+            *V9_SEMANTIC_LABELS,
+            "unknown",
+        ),
+        "expected_model_id": "mmfit-haa500-semantic-pose-families-v9",
+    },
+}
+
 
 def discover_exports(inputs: Iterable[Path]) -> list[Path]:
     files: list[Path] = []
@@ -148,6 +179,7 @@ def aggregate(
     max_p90_latency_ms: float,
     max_switch_clip_rate: float,
     max_unreliable_rate: float,
+    expected_model_id: str | None = None,
 ) -> dict[str, Any]:
     if not rows:
         raise ValueError("no evaluation exports found")
@@ -199,6 +231,10 @@ def aggregate(
         failures.append(f"model id missing in {missing_model_ids} clip(s)")
     if len(model_ids) > 1:
         failures.append(f"mixed model ids in one report: {sorted(model_ids)}")
+    if expected_model_id is not None and model_ids != {expected_model_id}:
+        failures.append(
+            f"model ids {sorted(model_ids)} do not match required {expected_model_id!r}"
+        )
     if participant_count < min_participants:
         failures.append(f"participants {participant_count} < {min_participants}")
     if len(rows) < min_clips:
@@ -247,6 +283,8 @@ def aggregate(
             "participants": participant_count,
             "clips": len(rows),
             "model_ids": sorted(str(model_id) for model_id in model_ids),
+            "required_model_id": expected_model_id,
+            "required_labels": required,
             "action_report_schemas": sorted({
                 str(row["action_report_schema"])
                 for row in rows
@@ -309,9 +347,16 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", type=Path, action="append", required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--profile",
+        choices=sorted(ACCEPTANCE_PROFILES),
+        default="core-v1",
+        help="Named acceptance matrix; --required-label can override its labels.",
+    )
     parser.add_argument("--required-label", action="append", default=[])
+    parser.add_argument("--expected-model-id")
     parser.add_argument("--min-participants", type=int, default=5)
-    parser.add_argument("--min-clips", type=int, default=30)
+    parser.add_argument("--min-clips", type=int)
     parser.add_argument("--min-clips-per-label", type=int, default=5)
     parser.add_argument("--min-accuracy", type=float, default=0.80)
     parser.add_argument("--min-known-recall", type=float, default=0.70)
@@ -323,13 +368,20 @@ def main() -> None:
     parser.add_argument("--no-fail", action="store_true")
     args = parser.parse_args()
 
+    profile = ACCEPTANCE_PROFILES[args.profile]
+    required_labels = args.required_label or profile["required_labels"]
+    expected_model_id = args.expected_model_id or profile["expected_model_id"]
+    min_clips = args.min_clips
+    if min_clips is None:
+        min_clips = max(30, len(required_labels) * args.min_clips_per_label)
+
     files = discover_exports(args.input)
     rows = [load_export(path) for path in files]
     report = aggregate(
         rows,
-        required_labels=args.required_label or DEFAULT_REQUIRED_LABELS,
+        required_labels=required_labels,
         min_participants=args.min_participants,
-        min_clips=args.min_clips,
+        min_clips=min_clips,
         min_clips_per_label=args.min_clips_per_label,
         min_accuracy=args.min_accuracy,
         min_known_recall=args.min_known_recall,
@@ -338,6 +390,7 @@ def main() -> None:
         max_p90_latency_ms=args.max_p90_latency_ms,
         max_switch_clip_rate=args.max_switch_clip_rate,
         max_unreliable_rate=args.max_unreliable_rate,
+        expected_model_id=expected_model_id,
     )
     write_outputs(report, args.output_dir)
     print(json.dumps(report, ensure_ascii=False, indent=2))

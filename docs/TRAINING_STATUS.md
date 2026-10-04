@@ -224,3 +224,5 @@ balanced accuracy - 1.0 × validation unknown false accept rate
 相比 v4，v9 在 MM-Fit `p08` 的 balanced accuracy 从 0.906 提升到 0.950，在 HAA500 全部测试从 0.761 提升到 0.774，同时保持 unknown FAR 基本不变。它仍不能直接成为默认模型：新增类别测试支持量较小，`jump_rope` 与 `running_in_place` 的验证召回偏低，而且尚无 5 人/30 段真实视频通话证据。
 
 仓库已保留稳定/候选双模型切换、模型 ID 校验和各自阈值表。未知模型 ID 不被后端采信，切换模型时会清空 30 帧窗口与后端会话状态，防止跨模型状态污染。
+
+开发者评测 Ground Truth 已覆盖 v9 的全部 18 个模型动作与 `unknown`。批量验收脚本提供 `core-v1` 和 `semantic-v9` 两个命名 profile，并同时校验模型 ID：核心门禁最低 30 段，v9 全标签门禁最低 95 段，两个模型的导出不能混在同一报告中。

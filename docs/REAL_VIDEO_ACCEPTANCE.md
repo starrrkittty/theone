@@ -20,6 +20,18 @@
 - 动作切换、组间休息、错误动作和半程动作；
 - 不同手机、笔记本摄像头、网络卡顿和不同房间背景。
 
+### v9 扩类候选门禁
+
+上面的 30 段是五类核心专项能力的 `core-v1` 门禁，不能证明 v9 新增语义类别已经可用。候选模型升为默认前，还必须运行 `semantic-v9` 门禁：
+
+- 覆盖五类核心动作、13 类长尾语义动作和 `unknown`，共 19 类；
+- 每类至少 5 段，因此最低为 95 段；
+- 每名参与者都应覆盖多个类别，且同一个人的全部片段不能跨训练与验收；
+- `jump_rope`、`running_in_place`、`lateral_raise` 和不同弓步形式应优先增加侧面/斜侧机位；
+- 器械依赖的战绳不属于 v9 姿态模型门禁，等 Video LLM 链路接通后单独验收。
+
+这两个门禁不能混为一个报告：`core-v1` 保护已验证的专项能力，`semantic-v9` 决定扩类模型是否有资格成为默认模型。
+
 ## 2. 录制和目录约定
 
 原始视频及导出的 JSON 不进 Git。建议保存在：
@@ -58,8 +70,20 @@ p01-unknown-wave-front-normal-01.mp4
 Set-Location D:\OneDrive\文档\ChatGPT\小有可为\ai-fitness-agent-a
 .\.training-venv\Scripts\python.exe training\aggregate_runtime_evaluations.py `
   --input D:\datasets\agent-a-runtime-eval\exports `
-  --output-dir D:\datasets\agent-a-runtime-eval\reports
+  --output-dir D:\datasets\agent-a-runtime-eval\reports\core-v1 `
+  --profile core-v1
 ```
+
+v9 扩类候选使用独立导出目录和报告目录，避免稳定模型与候选模型混入同一报告：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\aggregate_runtime_evaluations.py `
+  --input D:\datasets\agent-a-runtime-eval\exports-v9 `
+  --output-dir D:\datasets\agent-a-runtime-eval\reports\semantic-v9 `
+  --profile semantic-v9
+```
+
+命名 profile 会同时锁定要求标签和模型 ID；如果导出文件混入稳定模型或缺少模型 ID，脚本会 fail closed。`core-v1` 自动要求至少 30 段，`semantic-v9` 自动要求至少 95 段。
 
 默认门禁：
 

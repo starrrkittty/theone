@@ -340,7 +340,8 @@ Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public
 ```powershell
 .\.training-venv\Scripts\python.exe training\aggregate_runtime_evaluations.py `
   --input D:\datasets\agent-a-runtime-eval\exports `
-  --output-dir D:\datasets\agent-a-runtime-eval\reports
+  --output-dir D:\datasets\agent-a-runtime-eval\reports\core-v1 `
+  --profile core-v1
 ```
 
-脚本按片段而非按高度相关的连续帧评分，并检查人数、类别覆盖、已支持动作召回率、unknown 误接收、首次确认延迟、错误切换和不可靠关键点比例。完整录制矩阵与默认门槛见 `docs/REAL_VIDEO_ACCEPTANCE.md`。
+脚本按片段而非按高度相关的连续帧评分，并检查人数、类别覆盖、已支持动作召回率、unknown 误接收、首次确认延迟、错误切换和不可靠关键点比例。`core-v1` 锁定稳定模型与 30 段核心门禁；`semantic-v9` 锁定 v9 模型并要求 19 类各至少 5 段，即至少 95 段。完整录制矩阵与默认门槛见 `docs/REAL_VIDEO_ACCEPTANCE.md`。
