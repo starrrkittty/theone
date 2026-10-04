@@ -335,6 +335,8 @@ Copy-Item D:\datasets\ai-fitness-runs\mmfit-v1\stgcn_scaler.json frontend\public
 
 开发者评测模式现在会导出 `agent-a-runtime-evaluation/v1` 证据包，包含匿名参与者/片段 ID、场景条件、逐响应识别轨迹、确认事件和模型 ID。非支持动作必须标为 `unknown`，不能只测系统已支持的五类动作。
 
+录制前可用 `training/create_runtime_evaluation_plan.py` 生成 `core-v1` 的 30 段或 `semantic-v9` 的 95 段匿名拍摄清单；默认输出应放在 `D:\datasets\agent-a-runtime-eval\plans`，不进入 Git。
+
 收集完成后运行：
 
 ```powershell

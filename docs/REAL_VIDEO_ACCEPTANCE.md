@@ -53,6 +53,20 @@ p01-unknown-wave-front-normal-01.mp4
 
 不要在文件名、备注或导出 JSON 中填写真实姓名。参赛者应明确知道视频用于项目测试；没有授权的视频不能拿来训练或公开展示。
 
+先生成逐人逐动作的拍摄清单，避免漏类、重名或重复计数：
+
+```powershell
+.\.training-venv\Scripts\python.exe training\create_runtime_evaluation_plan.py `
+  --profile core-v1 `
+  --output D:\datasets\agent-a-runtime-eval\plans\core-v1.csv
+
+.\.training-venv\Scripts\python.exe training\create_runtime_evaluation_plan.py `
+  --profile semantic-v9 `
+  --output D:\datasets\agent-a-runtime-eval\plans\semantic-v9.csv
+```
+
+生成器默认使用匿名 ID `p01`–`p05`，核心计划得到 30 行，v9 计划得到 95 行。CSV 同时记录推荐机位、目标模型 ID、建议视频路径、导出路径和 `todo` 状态；完成一段后把状态改为 `done`。脚本拒绝真实姓名式的非 ASCII ID、重复 ID 和少于 5 人的计划。
+
 ## 3. 单段采集步骤
 
 1. 打开 `http://127.0.0.1:3000/`，上传片段或进入实时视频通话模式。
