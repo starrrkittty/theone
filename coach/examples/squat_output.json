@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "session_id": "session-001",
+  "rep_index": 4,
+  "exercise_id": "bodyweight_squat",
+  "routed_to": ["squat_form"],
+  "status": "assessed",
+  "overall_score": 80,
+  "findings": [
+    {
+      "code": "large_trunk_inclination",
+      "severity": "caution",
+      "joint": "trunk_inclination",
+      "observed": 61,
+      "expected": "Keep the torso position controlled and within a range you can maintain.",
+      "confidence": 0.86,
+      "source_ids": ["acsm_2021"]
+    }
+  ],
+  "cues": [
+    {
+      "priority": 2,
+      "text": "Use a controlled range and keep the movement comfortable.",
+      "rationale": "The trunk_inclination observation was outside this demo rule's review range."
+    }
+  ],
+  "safety_messages": [],
+  "limitations": [
+    "Angle-only pose data cannot establish pain, load, balance, or full movement quality.",
+    "Demo thresholds are not clinical cutoffs and need qualified-coach review."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "user_id": "demo-user",
+  "session_id": "session-001",
+  "timestamp": "2026-10-01T10:30:00+08:00",
+  "exercise_id": "bodyweight_squat",
+  "rep_index": 4,
+  "phase": "bottom",
+  "joints": {
+    "knee_flexion": {"angle_deg": 82, "confidence": 0.91},
+    "trunk_inclination": {"angle_deg": 61, "confidence": 0.86}
+  },
+  "reported_symptoms": [],
+  "metadata": {"angle_convention": "internal_flexion_degrees", "camera_view": "side"}
+}

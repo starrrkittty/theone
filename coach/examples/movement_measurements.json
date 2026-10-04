@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "session_id": "defined-angles-demo",
+  "timestamp": "2026-10-02T10:30:00+08:00",
+  "exercise_id": "bodyweight_squat",
+  "rep_index": 1,
+  "phase": "bottom",
+  "joints": {
+    "knee_flexion": {"angle_deg": 82, "confidence": 0.91, "definition": "flexion_from_extension"},
+    "trunk_inclination": {"angle_deg": 35, "confidence": 0.9, "definition": "inclination_from_vertical"}
+  },
+  "metadata": {"camera_view": "side", "measurement_space": "2d", "angle_convention": "anatomical_flexion_degrees"},
+  "reported_symptoms": []
+}

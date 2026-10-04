@@ -138,6 +138,18 @@ WS /api/ws/pose/{client_id}
 
 `recognition_event` 只在首次确认或运动切换时出现，避免每帧重复播报。完整响应还保留旧版字段，方便现有前端兼容。
 
+### A 与 B 的合并联调
+
+B 的教练 Agent 已放在 `coach/`，统一后端启动后可直接使用：
+
+- `POST /api/agent-a/normalize`：把 A 的 `ActionReport v1/v2` 映射为 B 的动作观测并检查证据，不调用模型。
+- `POST /api/agent-a/coach`：只在动作已确认且 B 有对应专家时调用动作 Agent。
+- `POST /api/plans/phase`、`POST /api/workouts/summary`、`POST /api/nutrition/advice`：阶段计划、训练总结和饮食建议。
+- `GET /api/app/v1/capabilities`：最终 App 的精简接口能力声明；完整契约见 `docs/contracts/app_coach_v1.md`。
+- `/coach`：B 的本地联调控制台。
+
+模型 Key 只配置在服务端 `coach/config.json` 或环境变量 `FITNESS_API_KEY`，不得放到前端或 App。没有 Key 时，确定性映射接口仍可验证；真正的生成接口会明确返回 503。
+
 其他接口：
 
 - `GET /api/health`：运行状态与支持的运动。

@@ -1,0 +1,58 @@
+{
+  "fixtures_only": true,
+  "profile": {
+    "schema_version": 1,
+    "goal": "建立运动习惯",
+    "experience": "新手",
+    "days_per_week": 2,
+    "minutes_per_session": 15,
+    "has_equipment": false,
+    "diet_preference": "无特别偏好"
+  },
+  "plan_request": {
+    "profile": {"schema_version": 1, "goal": "建立运动习惯", "experience": "新手", "days_per_week": 2, "minutes_per_session": 15, "has_equipment": false, "diet_preference": "无特别偏好"},
+    "history": [],
+    "executable_exercises": ["squat"]
+  },
+  "plan_success": {
+    "plan_id": "app_plan_fixture_001",
+    "stage_name": "适应期",
+    "headline": "今天练习徒手深蹲",
+    "reason": "先安排少量练习；当前记录不足以判断动作质量和恢复状态。",
+    "item": {"id": "app_plan_fixture_001_item_1", "exercise_id": "squat", "title": "徒手深蹲", "target_sets": 1, "target_reps": 6, "rest_seconds": 45},
+    "source": "agent"
+  },
+  "plan_no_item": {
+    "plan_id": "app_plan_fixture_002", "stage_name": "待确认", "headline": "暂不安排训练",
+    "reason": "目前无法提供适合的可执行项目，请先确认训练条件。", "item": null, "source": "agent"
+  },
+  "nutrition_request": {
+    "profile": {"schema_version": 1, "goal": "建立运动习惯", "experience": "新手", "days_per_week": 2, "minutes_per_session": 15, "has_equipment": false, "diet_preference": "有过敏或特殊限制"}
+  },
+  "nutrition_limited": {
+    "title": "饮食限制需要进一步确认",
+    "body": "尚未提供具体过敏或饮食限制，无法给出个体化餐食建议。请依照已明确的专业建议选择食物；这里不计算热量或判断食物对你是否安全。",
+    "source": "agent"
+  },
+  "summary_request": {
+    "installation_id": "00000000-0000-4000-8000-000000000001",
+    "profile": {"schema_version": 1, "goal": "建立运动习惯", "experience": "新手", "days_per_week": 2, "minutes_per_session": 15, "has_equipment": false, "diet_preference": "无特别偏好"},
+    "session": {
+      "schema_version": 1, "session_id": "fixture-session-001", "status": "completed",
+      "finished_at": "2026-10-03T17:50:00+08:00", "duration_seconds": 35,
+      "exercises": [{"exercise_id": "squat", "completed_sets": 1, "completed_reps": 6, "quality_trend": null, "main_error_code": null}],
+      "agent_summary": null, "next_plan_changed": false, "source": "real"
+    },
+    "history": []
+  },
+  "summary_success": {
+    "session_id": "fixture-session-001",
+    "agent_summary": "用户已结束本次训练。端侧记录有效训练时长 35 秒，记录组数 1，次数 6。未提供动作质量证据，无法评价姿势或质量趋势。\n下次先保持少量练习，不依据本次计数自动增加训练量。",
+    "quality_trend": null, "main_error_code": null, "next_plan_changed": false, "updated_plan": null, "source": "agent",
+    "facts": {"status": "completed", "duration_seconds": 35, "sets": 1, "reps": 6, "exercises": ["squat"], "quality_available": false, "error_evidence_available": false},
+    "limitations": ["总结使用 APP 端侧记录，未经视频复核。", "生成式建议不等于测量事实。", "本接口没有保存或调整训练计划。"]
+  },
+  "delete_request": {"installation_id": "00000000-0000-4000-8000-000000000001"},
+  "error_503": {"detail": {"code": "MODEL_NOT_CONFIGURED", "message": "模型未配置，请使用 APP 本地模板。", "retryable": false}},
+  "error_409": {"detail": {"code": "SESSION_CONFLICT", "message": "同一 session_id 的训练事实发生变化。", "retryable": false}}
+}

@@ -1,0 +1,63 @@
+[
+  {"id":"ace_front_plank","title":"Front Plank","organization":"American Council on Exercise","url":"https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/","used_for":"Forearm front-plank setup and controlled holds; not all trunk exercises.","review_status":"public coaching guidance, not a calibrated pose-angle standard"},
+  {"id":"ace_knee_pushup","title":"Bent Knee Push-up","organization":"American Council on Exercise","url":"https://www.acefitness.org/resources/everyone/exercise-library/13/bent-knee-push-up/","used_for":"Knee-supported push-up regression and trunk control; distinguish other press variants.","review_status":"public coaching guidance, not a universal elbow-angle rule"},
+  {"id":"ace_bent_row","title":"Bent-over Row","organization":"American Council on Exercise","url":"https://www.acefitness.org/resources/everyone/exercise-library/12/bent-over-row/","used_for":"Bent-over barbell row setup and shoulder/elbow motion; distinguish band rows.","review_status":"public coaching guidance; variant-specific"},
+  {"id":"ace_reverse_lunge","title":"Anti-rotation Reverse Lunge","organization":"American Council on Exercise","url":"https://www.acefitness.org/resources/everyone/exercise-library/348/anti-rotation-reverse-lunge/","used_for":"Reverse lunge with anti-rotation variation; do not transfer equipment or thresholds to all lunges.","review_status":"public coaching guidance; variant-specific"},
+  {"id":"fry_knee_position_2003","title":"Effect of knee position on hip and knee torques during the barbell squat","organization":"Journal of Strength and Conditioning Research / PubMed","url":"https://pubmed.ncbi.nlm.nih.gov/14636100/","retrieval_url":"https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:14636100%20AND%20SRC:MED&format=json&resultType=core","used_for":"Research context for knee travel and redistribution of joint torque; no personal safety threshold.","review_status":"abstract read via Europe PMC, PMID 14636100; seven weight-trained men and parallel loaded squats, not an injury trial or universal cutoff"},
+  {
+    "id": "ace_squat",
+    "title": "Bodyweight Squat",
+    "organization": "American Council on Exercise",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/",
+    "used_for": "General squat setup and controlled execution; no universal camera angle thresholds.",
+    "review_status": "public coaching guidance; fetch status in fetch_manifest.json; not individually validated"
+  },
+  {
+    "id": "nhs_strength",
+    "title": "Strength exercises",
+    "organization": "NHS",
+    "url": "https://www.nhs.uk/live-well/exercise/strength-and-flex-exercise-plan/strength-exercises/",
+    "used_for": "Beginner sit-to-stand, mini-squats, wall press-ups and supported strength practice.",
+    "review_status": "public coaching guidance; fetch status in fetch_manifest.json; not individually validated"
+  },
+  {
+    "id": "prototype_review_heuristic",
+    "title": "B-group prototype movement review heuristics",
+    "organization": "Project-local draft",
+    "url": null,
+    "used_for": "Experimental camera-angle triggers in deterministic specialists; not a research finding or validated coaching standard.",
+    "review_status": "unvalidated; replace or approve each rule with a qualified coach and validation data"
+  },
+  {
+    "id": "acsm_2021",
+    "title": "ACSM's Guidelines for Exercise Testing and Prescription, 11th Edition",
+    "organization": "American College of Sports Medicine",
+    "url": "https://www.acsm.org/education-resources/books/guidelines-exercise-testing-prescription",
+    "used_for": "General exercise prescription context. Does not validate the prototype's movement-angle rules.",
+    "review_status": "bibliographic pointer; confirm the current edition and consult full text before production use"
+  },
+  {
+    "id": "who_healthy_diet_2024",
+    "title": "Healthy diet",
+    "organization": "World Health Organization",
+    "url": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet",
+    "used_for": "General population principles for a varied healthy dietary pattern.",
+    "review_status": "public guidance pointer; check current page/version and local dietary guidance before release"
+  },
+  {
+    "id": "who_physical_activity_2020",
+    "title": "WHO guidelines on physical activity and sedentary behaviour",
+    "organization": "World Health Organization",
+    "url": "https://www.who.int/publications/i/item/9789240015128",
+    "used_for": "Population-level physical activity and sedentary behaviour recommendations.",
+    "review_status": "public guideline pointer; recommendations should be adapted to the user and local guidance"
+  },
+  {
+    "id": "acsm_nutrition_exercise_2016",
+    "title": "Nutrition and Athletic Performance",
+    "organization": "Academy of Nutrition and Dietetics, Dietitians of Canada, and American College of Sports Medicine",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/26920240/",
+    "used_for": "Background for sports nutrition; prototype deliberately avoids individual calorie/macronutrient prescriptions.",
+    "review_status": "citation pointer; verify applicability and newer position statements before production"
+  }
+]

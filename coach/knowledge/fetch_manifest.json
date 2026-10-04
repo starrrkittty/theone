@@ -1,0 +1,71 @@
+[
+  {
+    "id": "ace_front_plank",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
+    "retrieval_url": "https://www.acefitness.org/resources/everyone/exercise-library/32/front-plank/",
+    "fetched_at": "2026-10-02T06:36:10.501329+00:00",
+    "sha256": "42ae6250689282d407d4aff48366233ba12f8709db1ad81c0e4413713a222857",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "ace_knee_pushup",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/13/bent-knee-push-up/",
+    "retrieval_url": "https://www.acefitness.org/resources/everyone/exercise-library/13/bent-knee-push-up/",
+    "fetched_at": "2026-10-02T06:36:12.003269+00:00",
+    "sha256": "977956feda43f35982af3651a9965577bdf545c588dff85049199bb7ce56160b",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "ace_bent_row",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/12/bent-over-row/",
+    "retrieval_url": "https://www.acefitness.org/resources/everyone/exercise-library/12/bent-over-row/",
+    "fetched_at": "2026-10-02T06:36:13.917857+00:00",
+    "sha256": "660cbc6afab1d4c9ebc32f7f405d618932d9139f0f4cb45bfbd31243eda7ad1e",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "ace_reverse_lunge",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/348/anti-rotation-reverse-lunge/",
+    "retrieval_url": "https://www.acefitness.org/resources/everyone/exercise-library/348/anti-rotation-reverse-lunge/",
+    "fetched_at": "2026-10-02T06:36:15.376934+00:00",
+    "sha256": "26476b9f8888c7b65be3584be57332466a8d840489a53da096dde14aa50a83b8",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "fry_knee_position_2003",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/14636100/",
+    "retrieval_url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=EXT_ID:14636100%20AND%20SRC:MED&format=json&resultType=core",
+    "fetched_at": "2026-10-02T06:36:16.337779+00:00",
+    "sha256": "8b8eac9df4b4d592b4f351d24faf72f4ab963befcdc1c35b03c0c5ad137ae4d6",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "ace_squat",
+    "url": "https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/",
+    "retrieval_url": "https://www.acefitness.org/resources/everyone/exercise-library/135/bodyweight-squat/",
+    "fetched_at": "2026-10-02T06:36:18.174926+00:00",
+    "sha256": "00d6c0c7272ed9ef64fb173205c1455c8f21dc24a0bb2058a0bf61188b01adbe",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "nhs_strength",
+    "status": "fetch_failed",
+    "error_type": "HTTPError"
+  },
+  {
+    "id": "who_healthy_diet_2024",
+    "url": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet",
+    "retrieval_url": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet",
+    "fetched_at": "2026-10-02T06:36:19.401752+00:00",
+    "sha256": "2ff5d6fb06337e064b2fb909c78083a0f19e42d51ce7bc7675a1f095099b162c",
+    "status": "fetched; summaries require separate review"
+  },
+  {
+    "id": "who_physical_activity_2020",
+    "url": "https://www.who.int/publications/i/item/9789240015128",
+    "retrieval_url": "https://www.who.int/publications/i/item/9789240015128",
+    "fetched_at": "2026-10-02T06:36:19.721328+00:00",
+    "sha256": "306ff408cf8ecd19ceb89a10dca9301aa272d359977aaef7065c1294ecee1f64",
+    "status": "fetched; summaries require separate review"
+  }
+]

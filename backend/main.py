@@ -1,16 +1,26 @@
 """FastAPI application entry point."""
 
 import logging
+import sys
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from fastapi.responses import FileResponse
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+COACH_ROOT = PROJECT_ROOT / "coach"
+if str(COACH_ROOT) not in sys.path:
+    sys.path.insert(0, str(COACH_ROOT))
 
 from config.settings import settings
 from api.routes import router as api_router
 from api.upload import router as upload_router
 from api.yoga_routes import router as yoga_router
+from api.coach_bridge import router as coach_bridge_router
+from app.mobile import router as mobile_router
+from app.routers import router as coach_router
 
 
 # Configure detection logging.
@@ -54,6 +64,15 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api")
 app.include_router(upload_router, prefix="/api")
 app.include_router(yoga_router, prefix="/api")
+app.include_router(coach_router, prefix="/api")
+app.include_router(coach_bridge_router, prefix="/api")
+app.include_router(mobile_router, prefix="/api")
+
+
+@app.get("/coach", include_in_schema=False)
+def coach_console():
+    """Serve B's local integration console from the unified backend."""
+    return FileResponse(COACH_ROOT / "index.html")
 
 # Mount uploads directory for serving videos
 uploads_path = Path(settings.UPLOAD_DIR)
@@ -79,6 +98,13 @@ async def root():
                 "websocket": "/api/ws/yoga/{client_id}",
                 "catalog": "/api/yoga/poses",
                 "health": "/api/yoga/health",
+            },
+            "coach": {
+                "console": "/coach",
+                "status": "/api/status",
+                "a_to_b_normalize": "/api/agent-a/normalize",
+                "a_to_b_coach": "/api/agent-a/coach",
+                "app_contract": "/api/app/v1/capabilities",
             },
         },
     }

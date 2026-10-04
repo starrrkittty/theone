@@ -1,0 +1,10 @@
+{
+  "user_id": "demo-user-001",
+  "goal": "general_fitness",
+  "experience": "beginner",
+  "days_per_week": 3,
+  "minutes_per_session": 35,
+  "equipment": ["bodyweight", "resistance_band"],
+  "limitations": [],
+  "preferred_language": "zh-CN"
+}
