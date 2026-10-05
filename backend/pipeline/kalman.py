@@ -77,14 +77,21 @@ class KalmanPoseTracker:
 
         for i in range(33):
             vis = float(landmarks[i, 3])
-            vis_clamped = max(vis, self.config.min_visibility)
 
             # Predict
             x_pred = F @ self._x[i]
             P_pred = F @ self._P[i] @ F.T + Q
 
+            # A fully occluded landmark is not a noisy measurement: MediaPipe
+            # may leave stale or placeholder coordinates there. Keep the
+            # motion prediction and let covariance grow until it is observed.
+            if vis <= self.config.min_visibility:
+                self._x[i] = x_pred
+                self._P[i] = P_pred
+                continue
+
             # Measurement noise scaled by 1/visibility
-            R = self._R_base / vis_clamped
+            R = self._R_base / vis
 
             # Update
             z = landmarks[i, :3].astype(np.float64)

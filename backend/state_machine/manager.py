@@ -163,6 +163,19 @@ class FormManager:
         # 2. Kalman filter
         smoothed_xyz, uncertainty = self._kalman.update(validated.landmarks)
 
+        # Use the same stabilized skeleton for exercise counting and form
+        # checks as for classification. Keep source visibility so smoothing
+        # never disguises an occluded joint as an observed one.
+        exercise_landmarks = [
+            {
+                "x": float(smoothed_xyz[i, 0]),
+                "y": float(smoothed_xyz[i, 1]),
+                "z": float(smoothed_xyz[i, 2]),
+                "visibility": float(validated.landmarks[i, 3]),
+            }
+            for i in range(33)
+        ]
+
         # 3. Feature extraction
         vis = validated.landmarks[:, 3]
         frame = self._feature_extractor.extract(smoothed_xyz, uncertainty, vis)
@@ -290,7 +303,7 @@ class FormManager:
 
         # 9. Run active module (rep counting + form check)
         if self._active_module is not None:
-            self._last_result = self._active_module.process_frame(landmarks)
+            self._last_result = self._active_module.process_frame(exercise_landmarks)
             if self._last_result is not None:
                 # Log rep_count increments at INFO so they show up in prod logs.
                 rc = self._last_result.rep_count

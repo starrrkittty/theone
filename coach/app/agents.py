@@ -21,6 +21,14 @@ SPECIALIST_INSTRUCTIONS = {
     "lunge_form": "关注单腿支撑、左右观测和阶段；二维膝路径只是代理指标。",
     "plank_form": "区分静态支撑和死虫式等动态躯干训练；不能把静态标准硬套到动态动作。",
     "balance_form": "关注支撑环境和置信度；单帧不能推断摆动趋势或跌倒风险。",
+    "lower_body_general": "只对弓步动作家族提供类别级训练建议；不得推断支撑侧、膝路径或准确次数。",
+    "upper_body_push_general": "区分肩推与侧平举；只给一般训练建议，不做肩关节姿势纠错。",
+    "upper_body_pull_general": "区分划船与引体向上；不能从类别确认器械、握法或肩胛运动。",
+    "arms_general": "三头伸展变式未确认，只给舒适范围和负荷渐进的一般建议。",
+    "core_general": "仰卧起坐类别不能证明重复完整或脊柱姿势正确。",
+    "cardio_general": "跳绳、开合跳和原地跑只给类别级建议；不能确认绳子、心率或精确次数。",
+    "yoga_general": "只给姿势家族级建议；不能从类别推断保持时间、平衡质量或柔韧性。",
+    "full_body_general": "波比跳是多阶段动作；不能凭类别判断每阶段姿势或完成次数。",
 }
 
 
@@ -73,6 +81,8 @@ class AgentService:
             "引用仅限提供的 source_id；来源审核状态须尊重，项目启发式不能冒充科学证据。\n"
             "不得诊断、发明测量值/历史、给出伤病治疗或普适角度阈值。缺失依据时明确限制。\n"
             "measurement_review 是程序给出的测量解释门槛，不能覆盖。不可解释的关节只能描述数值和缺失条件，不给确定纠错。\n"
+            "measurement_review.threshold_profile 是本项目首批动作的阈值卡。只在动作变式、阶段、角度定义、视角和置信度全部匹配时使用；provisional 数值是工程代理，不是普适或医学阈值。qualitative_only、observation_only、requires_* 状态不得改写为数值纠错。宽松检测范围只表示动作周期可被计数，不代表达到评价目标。\n"
+            "movement 的 measurement_review.target_checks 是程序确定性比较结果：within_project_target 时不得把对应目标说成未达到；outside_project_target 只能表述为未达到项目暂定目标，不得说成动作错误/危险；insufficient_evidence 时不得给该目标通过或失败结论；non_numeric_guidance 只能给定性建议。不得自行重算或改写这些结果。\n"
             "按 checklist 逐项关注姿势，缺少脚跟接触、关键点、轨迹或左右数据时标为无法评估，不猜测。\n"
             "文献和教练页面的具体变式不能外推到所有动作。角度定义改变时不能直接比较。\n"
             "保持输入身份和已计算事实；运动观察不生成总分。计划遵守时间、天数、器材与限制。\n"
@@ -172,6 +182,8 @@ class AgentService:
                     raise ValueError("纠错引用了角度定义、视角或阶段不充分的观测")
                 if finding["severity"] == "caution" and not finding["source_ids"]:
                     raise ValueError("纠错必须附本次检索来源")
+            if BY_EXERCISE[data["exercise_id"]].guidance_level == "general" and output["findings"]:
+                raise ValueError("通用类别识别不能生成关节纠错 findings")
             if not evidence["has_interpretable_specialist_measurement"] and output["status"] != "limited":
                 raise ValueError("缺少可解释的专项观测，必须标为 limited")
             for key in ["session_id","rep_index","exercise_id"]:

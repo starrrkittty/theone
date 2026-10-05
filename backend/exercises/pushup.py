@@ -25,8 +25,9 @@ class PushupModule(BaseExercise):
         "hold": "At bottom",
     }
 
-    # Form thresholds
-    MIN_ELBOW_ANGLE = 70  # Bottom of push-up
+    # Coaching target proxy: lower under control until the elbow is near a
+    # right angle; feedback allows a 10 deg measurement margin.
+    MIN_ELBOW_ANGLE = 90
     MAX_ELBOW_ANGLE = 160  # Top of push-up (arms extended)
     ELBOW_FLARE_THRESHOLD = 75  # Max angle between upper arm and torso
     HIP_SAG_THRESHOLD = 0.05  # Normalized Y difference for hip sag
@@ -49,7 +50,8 @@ class PushupModule(BaseExercise):
         # Create hysteresis-based rep counter for stable counting
         self._create_rep_counter(
             upper_threshold=self.MAX_ELBOW_ANGLE - 10,  # ~150 degrees (arms extended)
-            lower_threshold=self.MIN_ELBOW_ANGLE + 20,  # ~90 degrees (bottom of push-up)
+            # Broad rep-detection envelope; form evaluation below is stricter.
+            lower_threshold=self.MIN_ELBOW_ANGLE + 20,  # ~110 degrees
             exercise_key="pushup",
             min_rep_duration=0.8,
             max_rep_duration=8.0,

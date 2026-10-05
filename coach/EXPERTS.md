@@ -12,11 +12,19 @@
 | plank_form | 静态支撑与动态躯干动作的区别 | movement-report |
 | balance_form | 稳定支撑、环境与时间序列限制 | movement-report |
 | curl_form | 同时/交替弯举、肘角定义及躯干时间序列限制 | movement-report |
+| lower_body_general | 语义弓步家族；不判断单侧膝路径 | movement-report |
+| upper_body_push_general | 肩推、侧平举类别级建议 | movement-report |
+| upper_body_pull_general | 哑铃划船、引体向上类别级建议 | movement-report |
+| arms_general | 三头伸展类别级建议 | movement-report |
+| core_general | 仰卧起坐类别级建议 | movement-report |
+| cardio_general | 开合跳、跳绳、原地跑类别级建议 | movement-report |
+| yoga_general | 树式、三角式姿势家族建议 | movement-report |
+| full_body_general | 波比跳类别级建议 | movement-report |
 | planning_agent | 四类阶段、周安排、恢复、历史调整 | training-plan |
 | report_agent | 真实记录的汇总、反馈与下次建议 | training-report |
 | nutrition_agent | 一般饮食、餐食替换、训练日前后建议 | nutrition-advice |
 
-注册目录 `app/experts/movement.py:BY_EXERCISE` 列出 33 个可路由动作，`GET /api/experts` 可查询。整合版新增双臂与交替弯举，其检查表标为工程规则，尚需已核验的专项科学来源。旧数值触发规则不参与当前 Agent 生成。不要在没有科学或测量依据时自行增加通用纠错阈值。
+注册目录 `app/experts/movement.py:BY_EXERCISE` 可由 `GET /api/experts` 查询。新增 8 个通用专家覆盖 A 稳定模型及 v9 候选的 13 个长尾语义类别；通用类别固定为受限报告，不能产生关节纠错 findings。v9 仍是未通过真实视频门禁的候选。双臂与交替弯举检查表标为工程规则，尚需已核验的专项科学来源。旧数值触发规则不参与当前 Agent 生成。不要在没有科学或测量依据时自行增加通用纠错阈值。
 
 `app/movement_evidence.py` 为每个专家提供细化姿势检查表，以及每个观测的解释条件。姿势条件包括：深蹲脚跟/髋膝协调；推类的肘屈曲与上臂外展区别；平板的肩肘位置/躯干形状；单腿动作的同阶段左右比较。缺失条件必须说明；不能把这些检查表当成程序已经从视频识别出的结果。
 

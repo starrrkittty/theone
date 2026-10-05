@@ -36,6 +36,7 @@ def normalized_report(payload: dict):
             "status": "ready",
             "report_id": report.get("report_id"),
             "session_generation": report.get("session_generation"),
+            "guidance_level": movement["metadata"]["guidance_level"],
             "movement": movement,
             "measurement_review": measurement_review(movement),
         }
@@ -85,6 +86,7 @@ async def coach_report(payload: dict):
             "status": "completed",
             "report_id": report.get("report_id"),
             "session_generation": report.get("session_generation"),
+            "guidance_level": movement["metadata"]["guidance_level"],
             "normalized_movement": movement,
             "analysis": result,
         }

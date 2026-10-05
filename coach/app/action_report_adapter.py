@@ -8,9 +8,6 @@ EXERCISE_ALIASES = {
     "squat": "bodyweight_squat",
     "pushup": "push_up",
     "plank": "forearm_plank",
-    "lunge": "forward_lunge",
-    "shoulder_press": "overhead_press",
-    "barbell_row": "barbell_bent_over_row",
 }
 VIEWS = {"frontal":"front", "profile_left":"side", "profile_right":"side", "three_quarter":"oblique", "auto":"unknown"}
 JOINTS = {
@@ -19,11 +16,14 @@ JOINTS = {
     "left_hip":"left_hip_flexion", "right_hip":"right_hip_flexion",
     "left_shoulder":"left_shoulder_segment_angle", "right_shoulder":"right_shoulder_segment_angle",
     "torso_angle":"trunk_inclination",
+    "trunk_sag_angle":"trunk_sag_angle",
+    "knee_medial_deviation_deg":"knee_medial_deviation_deg",
+    "shoulder_elevation_deg":"shoulder_elevation_deg",
 }
 RELEVANT = {
-    "squat": {"left_knee","right_knee","left_hip","right_hip","torso_angle"},
+    "squat": {"left_knee","right_knee","left_hip","right_hip","torso_angle","knee_medial_deviation_deg"},
     "pushup": {"left_elbow","right_elbow","left_hip","right_hip","torso_angle"},
-    "plank": {"left_elbow","right_elbow","left_hip","right_hip","torso_angle"},
+    "plank": {"left_elbow","right_elbow","left_hip","right_hip","torso_angle","trunk_sag_angle"},
     "bicep_curl": {"left_elbow","right_elbow","left_shoulder","right_shoulder","torso_angle"},
     "alternate_bicep_curl": {"left_elbow","right_elbow","left_shoulder","right_shoulder","torso_angle"},
 }
@@ -55,6 +55,17 @@ def normalize(payload):
     target_exercise = EXERCISE_ALIASES.get(exercise, exercise)
     if target_exercise not in BY_EXERCISE:
         raise InputError(f"B 组暂不支持动作专家：{exercise}")
+    expert = BY_EXERCISE[target_exercise]
+    routing = report.get("routing", {})
+    capabilities = report.get("capabilities", {})
+    if not isinstance(routing, dict) or not isinstance(capabilities, dict):
+        raise InputError("A 组 routing/capabilities 必须是对象。")
+    if routing.get("mode") == "general_coaching" and expert.guidance_level != "general":
+        raise InputError("A 组仅确认语义类别，不可升级为专项纠错。")
+    if capabilities.get("specialized_form_correction") is False and expert.guidance_level != "general":
+        raise InputError("A 组未提供专项纠错能力。")
+    if routing.get("mode") == "verified_specialist" and expert.guidance_level == "general":
+        raise InputError("A/B 专家能力标记不一致。")
     metrics = report.get("metrics", {})
     if not isinstance(metrics, dict) or not isinstance(metrics.get("joint_angles", {}), dict):
         raise InputError("A 组 metrics/joint_angles 必须是对象。")
@@ -75,18 +86,25 @@ def normalize(payload):
     if type(fallback) not in {int, float} or not math.isfinite(fallback) or not 0 <= fallback <= 1:
         fallback = 0.0
     joints = {}
+    relevant = RELEVANT.get(exercise, JOINTS.keys()) if expert.guidance_level == "specialized" else ()
     for name, value in metrics.get("joint_angles", {}).items():
-        if name not in RELEVANT.get(exercise, JOINTS.keys()):
+        if name not in relevant:
             continue
         if type(value) not in {int, float} or not math.isfinite(value):
             raise InputError(f"joint_angles.{name} 必须是有限数值。")
         joint_confidence = confidence.get(name, fallback)
-        if type(joint_confidence) not in {int, float} or not 0 <= joint_confidence <= 1:
+        if type(joint_confidence) not in {int, float} or not math.isfinite(joint_confidence) or not 0 <= joint_confidence <= 1:
             raise InputError(f"joint_confidences.{name} 必须在 0 到 1 之间。")
-        joints[JOINTS[name]] = {"angle_deg":value, "confidence":joint_confidence,
-                               "definition":"inclination_from_vertical" if name == "torso_angle" else "included_segment_angle"}
+        definition = {
+            "torso_angle":"inclination_from_vertical",
+            "trunk_sag_angle":"projected_deviation",
+            "knee_medial_deviation_deg":"projected_deviation",
+            "shoulder_elevation_deg":"projected_deviation",
+        }.get(name, "included_segment_angle")
+        joints[JOINTS[name]] = {"angle_deg":value, "confidence":joint_confidence, "definition":definition}
     view = VIEWS.get(report.get("camera_view"), report.get("camera_view", "unknown"))
     metadata = {"camera_view":view, "measurement_space":"2d", "calibrated":False,
+                "guidance_level":expert.guidance_level,
                 "angle_convention":"included_segment_angle", "classification_confidence":report.get("recognition_confidence",0),
                 "hold_duration_seconds":metrics.get("hold_seconds",0), "pose_quality":report.get("pose_quality", "unreliable"),
                 "measurement_method":"MediaPipe single-view normalized-coordinate angle estimates; not calibrated 3D measurements",

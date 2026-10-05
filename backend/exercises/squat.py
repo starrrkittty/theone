@@ -24,8 +24,9 @@ class SquatModule(BaseExercise):
         "hold": "At depth",
     }
 
-    # Form thresholds
-    MIN_KNEE_ANGLE = 70  # Minimum knee bend for valid squat depth
+    # Coaching target proxy: approach thigh-parallel depth (roughly 90 deg);
+    # feedback allows a 10 deg measurement and individual-variation margin.
+    MIN_KNEE_ANGLE = 90
     MAX_KNEE_ANGLE = 160  # Standing position
     KNEE_VALGUS_THRESHOLD = 0.03  # Normalized X difference threshold
     BACK_ANGLE_THRESHOLD = 45  # Maximum forward lean angle
@@ -53,7 +54,8 @@ class SquatModule(BaseExercise):
         # Create hysteresis-based rep counter for stable counting
         self._create_rep_counter(
             upper_threshold=self.MAX_KNEE_ANGLE - 10,  # ~150 degrees (standing)
-            lower_threshold=self.MIN_KNEE_ANGLE + 20,  # ~90 degrees (parallel)
+            # Broad rep-detection envelope; form evaluation below is stricter.
+            lower_threshold=self.MIN_KNEE_ANGLE + 20,  # ~110 degrees
             exercise_key="squat",
             min_rep_duration=1.0,
             max_rep_duration=10.0,

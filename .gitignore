@@ -68,6 +68,16 @@ temp/
 # Public datasets and generated training runs
 training/data/
 training/runs/
+.deps/
+.npm-cache/
+.setup-temp/
+.test-runtime/
+archive/
+evaluation/
+frontend/public/datasets/
+frontend/public/diagnostics/
+backend/pytest-cache-files-*/
+latest-a.bundle
 
 # Environment
 .env

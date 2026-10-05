@@ -1,6 +1,8 @@
 # AI 智能健身私教：Agent A 运动感知服务
 
-这是团队 **Agent A（运动感知与数据底座）** 的第一版可运行实现。它从 App 视频通话画面中取得的 33 点 MediaPipe Pose 骨架出发，完成动作候选识别、时间稳定确认、动作阶段/次数/姿态问题分析，并输出一个稳定、紧凑的 `ActionReport v2` 给 Agent B。
+这是 A+B 整合版。Agent A 从 MediaPipe Pose 骨架提取动作候选，经几何和状态机确认核心动作，并用本地 ST-GCN 给长尾动作提供语义候选；输出 `ActionReport v2` 交给 Agent B。稳定模型与 v9 候选模型的验收状态见 [训练状态](docs/TRAINING_STATUS.md)。
+
+APP 首轮对接见 [HTTP 契约](docs/contracts/app_coach_v1.md)、[固定样例](docs/contracts/app_coach_v1_examples.json) 和 [APP 分工](APP_ALIGNMENT.md)。Android 端继续负责本地训练计数，不要求上传视频。
 
 > 这里的前端只是开发与联调控制台。最终产品由 App 端建立用户与 AI 私教的视频通话，再把通话画面中的骨架帧发送给本服务；用户不需要先选择运动类型。
 

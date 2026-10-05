@@ -1,4 +1,5 @@
 from datetime import datetime
+import math
 from typing import Any
 
 from app.experts.movement import BY_EXERCISE, catalog
@@ -35,9 +36,9 @@ def validate_movement(data: dict[str, Any]) -> None:
             raise InputError(f"joints.{name} must contain angle_deg")
         angle = joint["angle_deg"]
         confidence = joint.get("confidence", 1.0)
-        if not isinstance(angle, (int, float)) or isinstance(angle, bool) or not 0 <= angle <= 360:
+        if type(angle) not in {int, float} or not math.isfinite(angle) or not 0 <= angle <= 360:
             raise InputError(f"joints.{name}.angle_deg must be between 0 and 360")
-        if not isinstance(confidence, (int, float)) or isinstance(confidence, bool) or not 0 <= confidence <= 1:
+        if type(confidence) not in {int, float} or not math.isfinite(confidence) or not 0 <= confidence <= 1:
             raise InputError(f"joints.{name}.confidence must be between 0 and 1")
 
 

@@ -26,13 +26,45 @@
     "plan_id": "app_plan_fixture_002", "stage_name": "待确认", "headline": "暂不安排训练",
     "reason": "目前无法提供适合的可执行项目，请先确认训练条件。", "item": null, "source": "agent"
   },
+  "plan_weekly_rest": {
+    "plan_id": "app_plan_fixture_rest", "stage_name": "本周安排", "headline": "今天安排休息",
+    "reason": "今天已记录一次完成训练，可安排休息或轻松活动。次数记录不能说明动作质量或恢复情况。",
+    "item": null, "source": "template"
+  },
   "nutrition_request": {
     "profile": {"schema_version": 1, "goal": "建立运动习惯", "experience": "新手", "days_per_week": 2, "minutes_per_session": 15, "has_equipment": false, "diet_preference": "有过敏或特殊限制"}
   },
+  "nutrition_general_request": {
+    "profile": {"schema_version": 1, "goal": "建立运动习惯", "experience": "新手", "days_per_week": 2, "minutes_per_session": 15, "has_equipment": false, "diet_preference": "无特别偏好"}
+  },
+  "nutrition_general_success": {
+    "title": "日常饮食安排",
+    "body": "尽量规律进餐，搭配蔬菜、水果、主食和豆类、蛋、奶、鱼或肉等符合个人饮食习惯的食物，按食欲与实际活动安排份量。",
+    "source": "agent"
+  },
+  "nutrition_vegetarian_success": {
+    "title": "日常饮食安排",
+    "body": "尽量规律进餐，搭配蔬菜、水果、主食和豆类、豆制品及其他符合个人饮食习惯的食物，按食欲与实际活动安排份量。",
+    "source": "agent"
+  },
   "nutrition_limited": {
     "title": "饮食限制需要进一步确认",
-    "body": "尚未提供具体过敏或饮食限制，无法给出个体化餐食建议。请依照已明确的专业建议选择食物；这里不计算热量或判断食物对你是否安全。",
-    "source": "agent"
+    "body": "尚未提供具体过敏或饮食限制，无法给出个体化餐食建议。请依照已明确的专业建议选择食物；这里不计算热量，也不判断具体食物是否安全。",
+    "source": "template"
+  },
+  "weekly_progress_request": {
+    "profile": {"schema_version": 1, "goal": "建立运动习惯", "experience": "新手", "days_per_week": 2, "minutes_per_session": 15, "has_equipment": false, "diet_preference": "无特别偏好"},
+    "local_date": "2026-10-03",
+    "history": [{"schema_version": 1, "session_id": "fixture-session-001", "status": "completed", "finished_at": "2026-10-03T17:50:00+08:00", "duration_seconds": 35, "exercises": [{"exercise_id": "squat", "completed_sets": 1, "completed_reps": 6, "quality_trend": null, "main_error_code": null}], "agent_summary": null, "next_plan_changed": false, "source": "real"}]
+  },
+  "weekly_progress_template": {
+    "week_start": "2026-09-28", "week_end": "2026-10-04", "completed_training_days": 1,
+    "weekly_day_goal": 2, "completed_sessions": 1, "total_duration_seconds": 35,
+    "total_reps": 6, "reps_by_exercise": {"squat": 6, "push_up": 0},
+    "cancelled_sessions": 0, "interrupted_sessions": 0, "status": "below_goal",
+    "summary": "本周记录 1/2 个已完成训练日，1 次完成训练，累计有效训练时长 35 秒、端侧记录 6 次动作。取消和中断不计入完成；缺少动作质量与恢复数据，不能据此判断姿势进步。",
+    "next_step": "可检查接下来可用的训练日，选择适合自己的节奏。",
+    "quality_available": false, "source": "template"
   },
   "summary_request": {
     "installation_id": "00000000-0000-4000-8000-000000000001",

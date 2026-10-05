@@ -15,6 +15,14 @@
   {"id":"activity_general","source_id":"who_physical_activity_2020","tags":["plan","report","movement"],"text":"成年人应结合有氧活动和肌力活动，活动量应根据个体能力循序渐进。人群层面的活动建议不能直接替代个体健康评估。"},
   {"id":"diet_general","source_id":"who_healthy_diet_2024","tags":["nutrition"],"text":"健康饮食强调多样性，包括蔬果、豆类、全谷物和适合个体的蛋白质来源；具体组合要考虑食物可获得性、文化、偏好和过敏。"},
   {"id":"nutrition_boundary","source_id":"acsm_nutrition_exercise_2016","tags":["nutrition","report"],"text":"运动营养建议需要结合训练需求和个体情况。缺少必要评估时，不应给出疾病治疗食谱、补剂治疗方案或精确热量处方。"},
+  {"id":"semantic_lower_body","source_id":"prototype_review_heuristic","tags":["movement","lower_body_general"],"specialist_only":true,"exercise_ids":["lunge"],"text":"工程能力边界：语义弓步只确认动作家族；前后方向、单腿支撑、膝路径和阶段均未验证。可以提示从可控且舒适的幅度开始，不能声称观察到姿势错误或准确计数。"},
+  {"id":"semantic_push","source_id":"prototype_review_heuristic","tags":["movement","upper_body_push_general"],"specialist_only":true,"exercise_ids":["shoulder_press","lateral_raise"],"text":"工程能力边界：肩推和侧平举类别不提供肩关节位置、肘轨迹或重量证据。只给一般的舒适范围、控制节奏和循序渐进建议，不设通用肩角阈值。"},
+  {"id":"semantic_pull","source_id":"prototype_review_heuristic","tags":["movement","upper_body_pull_general"],"specialist_only":true,"exercise_ids":["dumbbell_row","pullup"],"text":"工程能力边界：哑铃划船和引体向上只确认类别；器械、握法、支撑、肩胛运动和完整次数未由语义模型验证。避免具体姿势纠错。"},
+  {"id":"semantic_arms","source_id":"prototype_review_heuristic","tags":["movement","arms_general"],"specialist_only":true,"exercise_ids":["tricep_extension"],"text":"工程能力边界：三头伸展有多种器械和方向。类别标签不足以判断肘角是否合适、重量是否过大或左右是否同步。"},
+  {"id":"semantic_core","source_id":"prototype_review_heuristic","tags":["movement","core_general"],"specialist_only":true,"exercise_ids":["situp"],"text":"工程能力边界：仰卧起坐类别不验证颈部或脊柱动作、完整次数和节奏；可提供舒适范围内练习及不适时暂停的一般提示。"},
+  {"id":"semantic_cardio","source_id":"prototype_review_heuristic","tags":["movement","cardio_general"],"specialist_only":true,"exercise_ids":["jumping_jack","jump_rope","running_in_place"],"text":"工程能力边界：开合跳、跳绳、原地跑的语义识别不提供心率、精确次数、落地质量或器械存在的证据。骨架不能看到跳绳。"},
+  {"id":"semantic_yoga","source_id":"prototype_review_heuristic","tags":["movement","yoga_general"],"specialist_only":true,"exercise_ids":["yoga_tree","yoga_triangle"],"text":"工程能力边界：树式和三角式只确认姿势家族；支撑环境、保持时长、平衡趋势、舒适度和身体对齐须另有观测或用户报告。"},
+  {"id":"semantic_full_body","source_id":"prototype_review_heuristic","tags":["movement","full_body_general"],"specialist_only":true,"exercise_ids":["burpee"],"text":"工程能力边界：波比跳的语义类别不证明下蹲、支撑、跳跃和落地各阶段都完成，也不能证明具体次数或姿势质量。"},
   {"id":"camera_limits","source_id":"prototype_review_heuristic","tags":["movement","squat_form","hinge_form","push_form","pull_form","lunge_form","plank_form","balance_form"],"text":"项目约束：视频关节角度只是观测；缺少相机、角度定义、负重、时间序列等信息时，不能推断疼痛、伤病、脊柱负荷或完整动作质量。禁止创造普适角度阈值。该条是项目限制，不是医学研究结论。"},
   {"id":"progression_review","source_id":"prototype_review_heuristic","tags":["plan","report"],"text":"项目规划原则：根据用户目标、时间、器材、近期完成情况和恢复反馈调整；数据缺失时标明假设。恢复不佳、疼痛或停止信号出现时先暂停进阶。该条是保守项目策略，不是个体化处方。"}
 ]

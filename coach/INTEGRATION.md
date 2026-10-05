@@ -23,15 +23,17 @@
 
 推荐直接传 A 的 `ActionReport v2` 或包含 `action_report` 的完整 WebSocket 响应；适配器同时保留 v1 兼容。也可直接提供 B 的 schema_version、session_id、ISO-8601 timestamp（含时区）、exercise_id、rep_index、phase、joints。joints 每个条目包含 angle_deg 和可选 confidence；仅接受角度观测，保持时长等放入 metadata，不要把秒数伪装成角度。
 
-适配器识别 squat→bodyweight_squat、lunge→forward_lunge、pushup→push_up、plank→forearm_plank 等别名，并将 eccentric/concentric 转换为 descent/ascent。A 组必须给出关节和时间等必要字段；纯分类标签只能得到受限反馈。A 已识别但 B 尚无专家的动作返回 `expert_unavailable`，不能假装已完成专项指导。
+适配器识别 squat→bodyweight_squat、pushup→push_up、plank→forearm_plank，并将 eccentric/concentric 转换为 descent/ascent。A 的 `lunge` 保持语义类别，不映射成已验证的 `forward_lunge` 专项。当前稳定模型的长尾类别与 v9 候选新增类别由 8 个通用专家覆盖；通用结果的 `guidance_level=general`、`status=limited`，不做关节纠错、计数或评分。v9 不是默认模型，也未通过真实视频验收。A 组必须给出时间等必要字段；纯分类标签只能得到受限反馈。A 已识别但 B 尚无专家的动作返回 `expert_unavailable`，不能假装已完成专项指导。
 
 metadata 应包含 camera_view、angle_convention；缺失时模型须说明限制。reported_symptoms 的停止信号为 sharp_pain、chest_pain、dizziness、breathing_difficulty、faintness。没有动作识别置信度时，B 不知道分类是否可靠；A 应在 context/metadata 提供识别依据。
 
 每个 joints 条目可提供 definition：flexion_from_extension（伸直为零点屈曲角）、included_segment_angle（两骨段夹角）、inclination_from_vertical、inclination_from_horizontal、projected_deviation。后者仍须由 A 定义基准和算法，B 不把它直接解释为三维解剖结论。全局 internal_flexion_degrees/anatomical_flexion_degrees 只映射屈曲字段，不用于解释躯干倾角。
 
+A 的 `metrics.joint_angles.left_knee/right_knee` 与 `left_elbow/right_elbow` 会保留为 B 的分侧观测；B 专家清单已包含这些字段。`trunk_sag_angle`、`knee_medial_deviation_deg` 和 `shoulder_elevation_deg` 只在 A 显式给出同名指标时接收，并按项目定义解释为 `projected_deviation`。B 不会从 `torso_angle` 推导这些代理值；缺失时相关阈值结果为 `insufficient_evidence`。
+
 metadata.measurement_space 默认 2d；声明 3d 时需 calibrated=true。camera_view 支持 front、rear、side、oblique、unknown；侧面适于矢状面角度，正面/背面适于正面代理指标。提供 classification_confidence 时低置信度阻止确定性纠错；A 顶层 confidence 会适配到此字段。左右膝比较还需 sides_same_phase=true 及相同角度定义。支撑时间放 metadata.hold_duration_seconds；支撑环境放 metadata.support_used，不放角度字段。
 
-返回的 measurement_review 是后端计算的数据条件检查，并非模型自评。它包括专项检查表、可解释角度、限制及可比较的左右差值。它不提供通用正确姿势阈值。
+返回的 measurement_review 是后端计算的数据条件检查，并非模型自评。它包括专项检查表、可解释角度、限制、可比较的左右差值、threshold_profile 和确定性 target_checks。数值目标只有在阶段、角度定义、视角、分类/关键点置信度均满足要求时才返回 within_project_target 或 outside_project_target；不满足时是 insufficient_evidence。阈值卡中的 provisional 数值是条件受限的工程代理，不是普适或医学阈值；qualitative_only、observation_only 和 requires_* 状态只返回 non_numeric_guidance，不支持数值化纠错。
 
 ## E / D → B
 
