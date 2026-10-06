@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-forward-lunge-front-001",
+  "timestamp": "2026-10-05T12:45:00+08:00",
+  "exercise_id": "forward_lunge",
+  "rep_index": 2,
+  "phase": "bottom",
+  "joints": {
+    "knee_medial_deviation_deg": {"angle_deg": 16, "confidence": 0.8, "definition": "projected_deviation"},
+    "left_knee_flexion": {"angle_deg": 87, "confidence": 0.83, "definition": "flexion_from_extension"},
+    "right_knee_flexion": {"angle_deg": 75, "confidence": 0.82, "definition": "flexion_from_extension"}
+  },
+  "metadata": {"camera_view": "front", "measurement_space": "2d", "classification_confidence": 0.91, "exercise_variant": "forward lunge", "support_side": "left", "sides_same_phase": true, "phase_sequence": ["standing", "step_forward", "bottom", "return"]},
+  "reported_symptoms": []
+}

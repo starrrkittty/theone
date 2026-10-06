@@ -1,0 +1,18 @@
+{
+  "user_id": "demo-user-001",
+  "session_id": "demo-session-20261005-01",
+  "started_at": "2026-10-05T18:00:00+08:00",
+  "ended_at": "2026-10-05T18:36:00+08:00",
+  "sets": [
+    {"exercise_id": "bodyweight_squat", "reps": 10, "target_reps": 10, "perceived_effort": 6},
+    {"exercise_id": "bodyweight_squat", "reps": 9, "target_reps": 10, "perceived_effort": 7},
+    {"exercise_id": "resistance_band_row", "reps": 12, "target_reps": 12, "perceived_effort": 6},
+    {"exercise_id": "wall_push_up", "reps": 10, "target_reps": 10, "perceived_effort": 5}
+  ],
+  "movement_observations": [
+    {"status": "caution", "summary": "第二组深蹲的侧面膝角估计置信度一般，建议下次固定机位复核", "confidence": 0.68}
+  ],
+  "recovery_check": "usual",
+  "reported_symptoms": [],
+  "user_feedback": ["第二组深蹲比第一组吃力", "整体没有疼痛"]
+}

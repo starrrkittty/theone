@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-alternate-curl-right-001",
+  "timestamp": "2026-10-05T12:50:00+08:00",
+  "exercise_id": "alternate_bicep_curl",
+  "rep_index": 5,
+  "phase": "ascent",
+  "joints": {
+    "left_elbow_flexion": {"angle_deg": 145, "confidence": 0.85, "definition": "included_segment_angle"},
+    "right_elbow_flexion": {"angle_deg": 76, "confidence": 0.9, "definition": "included_segment_angle"},
+    "trunk_inclination": {"angle_deg": 8, "confidence": 0.8, "definition": "inclination_from_vertical"}
+  },
+  "metadata": {"camera_view": "oblique", "measurement_space": "2d", "classification_confidence": 0.92, "active_arm": "right", "exercise_variant": "alternating dumbbell curl", "phase_sequence": ["right_ascent", "right_descent"]},
+  "reported_symptoms": []
+}

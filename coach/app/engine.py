@@ -3,6 +3,8 @@ import math
 from typing import Any
 
 from app.experts.movement import BY_EXERCISE, catalog
+from app.experts.nutrition import SPECIALIST as NUTRITION_EXPERT
+from app.experts.planning import SPECIALIST as PLANNING_EXPERT
 from app.safety import STOP_SYMPTOMS
 
 
@@ -86,7 +88,8 @@ def analyze_movement(data: dict[str, Any]) -> dict[str, Any]:
 
 def experts_catalog() -> dict[str, Any]:
     return {"specialists": catalog(), "task_agents": [
-        {"specialist_id": "planning_agent", "skill": "training-plan"},
+        {"specialist_id": PLANNING_EXPERT["specialist_id"], "skill": PLANNING_EXPERT["skill"], "scope": PLANNING_EXPERT["instructions"]},
         {"specialist_id": "report_agent", "skill": "training-report"},
-        {"specialist_id": "nutrition_agent", "skill": "nutrition-advice"}],
+        {"specialist_id": NUTRITION_EXPERT["specialist_id"], "skill": NUTRITION_EXPERT["skill"], "scope": NUTRITION_EXPERT["instructions"]},
+        {"specialist_id": "personal_fitness_coach", "skill": "fitness-chat", "scope": "Local profile/history-aware conversation; no diagnosis or invented observations."}],
         "runtime": "model-backed bounded Agent workflow"}

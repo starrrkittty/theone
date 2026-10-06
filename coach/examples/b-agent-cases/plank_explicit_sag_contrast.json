@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-plank-trunk-sag-contrast",
+  "timestamp": "2026-10-05T12:20:00+08:00",
+  "exercise_id": "forearm_plank",
+  "rep_index": 0,
+  "phase": "hold",
+  "joints": {"trunk_sag_angle": {"angle_deg": 19, "confidence": 0.9, "definition": "projected_deviation"}},
+  "metadata": {"camera_view": "side", "measurement_space": "2d", "classification_confidence": 0.94, "hold_duration_seconds": 20},
+  "reported_symptoms": []
+}

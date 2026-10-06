@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-single-leg-balance-contrast-001",
+  "timestamp": "2026-10-05T12:55:00+08:00",
+  "exercise_id": "single_leg_stance",
+  "rep_index": 0,
+  "phase": "hold",
+  "joints": {"trunk_sway_deg": {"angle_deg": 16, "confidence": 0.78, "definition": "projected_deviation"}},
+  "metadata": {"camera_view": "front", "measurement_space": "2d", "classification_confidence": 0.89, "support_used": true, "support_side": "right", "hold_duration_seconds": 12, "balance_trajectory": "not_provided"},
+  "reported_symptoms": []
+}

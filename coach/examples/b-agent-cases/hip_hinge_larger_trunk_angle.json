@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-hip-hinge-contrast-001",
+  "timestamp": "2026-10-05T12:30:00+08:00",
+  "exercise_id": "hip_hinge",
+  "rep_index": 3,
+  "phase": "descent",
+  "joints": {
+    "hip_flexion": {"angle_deg": 72, "confidence": 0.87, "definition": "flexion_from_extension"},
+    "knee_flexion": {"angle_deg": 36, "confidence": 0.85, "definition": "flexion_from_extension"},
+    "trunk_inclination": {"angle_deg": 76, "confidence": 0.89, "definition": "inclination_from_vertical"}
+  },
+  "metadata": {"camera_view": "side", "measurement_space": "2d", "classification_confidence": 0.94, "exercise_variant": "unloaded hip-hinge practice", "load_kg": 0, "phase_sequence": ["standing", "descent", "ascent"]},
+  "reported_symptoms": []
+}

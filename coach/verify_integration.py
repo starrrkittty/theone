@@ -28,7 +28,7 @@ INVALID_RESPONSES = 0
 def fixture(context):
     task, data = context["task"], context["input"]
     if task == "movement":
-        return {"schema_version":"1.0", "session_id":data["session_id"], "rep_index":data["rep_index"], "exercise_id":data["exercise_id"], "routed_to":[BY_EXERCISE[data["exercise_id"]].specialist_id], "status":"limited" if not data["joints"] else "assessed", "overall_score":None,
+        return {"schema_version":"1.0", "session_id":data["session_id"], "rep_index":data["rep_index"], "exercise_id":data["exercise_id"], "routed_to":[BY_EXERCISE[data["exercise_id"]].specialist_id], "status":"limited" if not data["joints"] else "assessed", "overall_score":None, "overall_summary":"模拟总体总结，仅用于接口验证",
                 "findings":[], "cues":[{"priority":2,"text":"模拟模型反馈，仅用于接口验证", "rationale":"测试夹具"}], "safety_messages":[], "limitations":["模拟结果"], "missing_observations":[]}
     if task == "report":
         return {**context["computed_facts"], "next_session_suggestion":"模拟建议", "disclaimer":"模拟模型结果"}

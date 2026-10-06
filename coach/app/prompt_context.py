@@ -11,7 +11,7 @@ def report_facts(report):
 
 def model_input(task, payload):
     return {key:deepcopy(value) for key,value in payload.items()
-            if key not in {"context", "agent", "trace", "optimization"}}
+            if key not in {"context", "user_id", "agent", "trace", "optimization"}}
 
 
 def model_context(task, context):

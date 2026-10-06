@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-jumping-jack-001",
+  "timestamp": "2026-10-05T11:30:00+08:00",
+  "exercise_id": "jumping_jack",
+  "rep_index": 0,
+  "phase": "unknown",
+  "joints": {},
+  "metadata": {
+    "camera_view": "front",
+    "measurement_space": "2d",
+    "classification_confidence": 0.88,
+    "duration_seconds": 20,
+    "reported_exertion": "moderate",
+    "measurement_scope": "exercise category only"
+  },
+  "reported_symptoms": []
+}

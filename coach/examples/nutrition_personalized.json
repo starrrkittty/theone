@@ -1,0 +1,15 @@
+{
+  "user_id": "demo-user-001",
+  "goal": "general_fitness",
+  "dietary_preferences": ["vegetarian"],
+  "allergies": ["peanut"],
+  "medical_conditions": [],
+  "preferred_foods": ["oats", "tofu", "eggs", "seasonal vegetables"],
+  "disliked_foods": ["cilantro"],
+  "budget": "普通学生日常预算",
+  "cooking_access": "工作日主要在食堂就餐，周末可简单烹饪",
+  "context": {
+    "training_schedule": "每周三次全身基础力量训练",
+    "request": "给出容易执行的一日饮食搭配思路和食堂替换选择，不需要精确热量"
+  }
+}

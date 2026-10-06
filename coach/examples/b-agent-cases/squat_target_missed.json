@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-squat-target-missed",
+  "timestamp": "2026-10-05T10:05:00+08:00",
+  "exercise_id": "bodyweight_squat",
+  "rep_index": 6,
+  "phase": "bottom",
+  "joints": {
+    "left_knee_flexion": {"angle_deg": 108, "confidence": 0.93, "definition": "included_segment_angle"},
+    "right_knee_flexion": {"angle_deg": 110, "confidence": 0.91, "definition": "included_segment_angle"},
+    "trunk_inclination": {"angle_deg": 27, "confidence": 0.9, "definition": "inclination_from_vertical"}
+  },
+  "metadata": {
+    "camera_view": "side",
+    "measurement_space": "2d",
+    "classification_confidence": 0.96,
+    "sides_same_phase": true
+  },
+  "reported_symptoms": []
+}

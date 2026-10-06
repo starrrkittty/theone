@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-band-row-001",
+  "timestamp": "2026-10-05T11:10:00+08:00",
+  "exercise_id": "resistance_band_row",
+  "rep_index": 8,
+  "phase": "hold",
+  "joints": {
+    "shoulder_elevation_deg": {"angle_deg": 9, "confidence": 0.82, "definition": "projected_deviation"}
+  },
+  "metadata": {
+    "camera_view": "front",
+    "measurement_space": "2d",
+    "classification_confidence": 0.9,
+    "exercise_variant": "standing resistance-band row",
+    "resistance_description": "light band",
+    "phase_sequence": ["arms_extended", "pull", "hold", "return"]
+  },
+  "reported_symptoms": []
+}

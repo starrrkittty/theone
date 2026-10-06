@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-lunge-classification-uncertain",
+  "timestamp": "2026-10-05T12:25:00+08:00",
+  "exercise_id": "lunge",
+  "rep_index": 0,
+  "phase": "unknown",
+  "joints": {},
+  "metadata": {"camera_view": "front", "measurement_space": "2d", "classification_confidence": 0.42, "measurement_scope": "uncertain movement-family category"},
+  "reported_symptoms": []
+}

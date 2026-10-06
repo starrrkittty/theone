@@ -23,7 +23,7 @@ FINDING = obj({"code": string(), "severity": {"type": "string", "enum": ["info",
 CUE = obj({"priority": {"type": "integer", "minimum": 1, "maximum": 5}, "text": string(), "rationale": string()})
 MOVEMENT = obj({"schema_version": {"const": "1.0"}, "session_id": string(), "rep_index": INTEGER,
                 "exercise_id": string(), "routed_to": STRINGS, "status": {"enum": ["assessed", "limited"]},
-                "overall_score": {"type": "null"}, "findings": array(FINDING), "cues": array(CUE),
+                "overall_score": {"type": "null"}, "overall_summary": string(), "findings": array(FINDING), "cues": array(CUE),
                 "safety_messages": STRINGS, "limitations": STRINGS, "missing_observations": STRINGS})
 PLAN = obj({"schema_version": {"const": "1.0"}, "phase": {"enum": ["adaptation", "foundation", "specialized", "consolidation"]}, "duration_weeks": {"type": "integer", "minimum": 1, "maximum": 12},
             "goal": string(), "weekly_sessions": {"type": "integer", "minimum": 1, "maximum": 7}, "minutes_per_session": INTEGER,

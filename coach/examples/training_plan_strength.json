@@ -1,0 +1,16 @@
+{
+  "user_id": "demo-user-001",
+  "goal": "strength",
+  "experience": "beginner",
+  "days_per_week": 3,
+  "minutes_per_session": 40,
+  "equipment": ["bodyweight", "resistance_band", "dumbbells"],
+  "limitations": [],
+  "reported_symptoms": [],
+  "context": {
+    "schedule_preference": "周一、周三、周六",
+    "recent_adherence": "最近两周每周完成两次训练",
+    "recovery": "usual",
+    "request": "制定一个可恢复、循序渐进的四周基础力量计划"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-squat-low-confidence",
+  "timestamp": "2026-10-05T10:15:00+08:00",
+  "exercise_id": "bodyweight_squat",
+  "rep_index": 8,
+  "phase": "bottom",
+  "joints": {
+    "left_knee_flexion": {"angle_deg": 95, "confidence": 0.38, "definition": "included_segment_angle"},
+    "right_knee_flexion": {"angle_deg": 96, "confidence": 0.41, "definition": "included_segment_angle"}
+  },
+  "metadata": {
+    "camera_view": "side",
+    "measurement_space": "2d",
+    "classification_confidence": 0.96,
+    "sides_same_phase": true
+  },
+  "reported_symptoms": []
+}

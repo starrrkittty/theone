@@ -1,12 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from app.agents import service
 from app.engine import InputError, experts_catalog
+from app.chat import respond as chat_respond
 from app.model_client import ConfigurationError, ModelError
 from app.workflow import run_workflow
 from app.group_adapters import from_group_a
-from app.history import recent, delete
+from app.history import delete, memory_overview, recent, save_profile
 from app.engine import validate_movement
 from app.movement_evidence import measurement_review
+from app.routing import resolve_movement, resolve_task
 
 router = APIRouter()
 
@@ -38,6 +40,42 @@ def experts():
 @router.post("/movement/analyze")
 def movement(payload: dict):
     return run("movement", from_group_a(payload))
+
+
+@router.post("/movement/route")
+def movement_route(payload: dict):
+    try:
+        _, route = resolve_movement(payload)
+        return {"route": route}
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/plans/route")
+def plan_route(payload: dict):
+    try:
+        _, route = resolve_task("plan", payload)
+        return {"route": route}
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/nutrition/route")
+def nutrition_route(payload: dict):
+    try:
+        _, route = resolve_task("nutrition", payload)
+        return {"route": route}
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/workouts/route")
+def report_route(payload: dict):
+    try:
+        _, route = resolve_task("report", payload)
+        return {"route": route}
+    except (ValueError, KeyError, TypeError) as exc:
+        raise HTTPException(422, str(exc)) from exc
 
 
 @router.post("/movement/evidence")
@@ -75,6 +113,43 @@ def reports(user_id: str):
     try:
         return {"reports": recent(user_id)}
     except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.get("/memory")
+def memory(user_id: str):
+    try:
+        return memory_overview(user_id)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/memory/profile")
+def profile(payload: dict):
+    try:
+        return {"profile": save_profile(payload.get("user_id"), payload.get("profile"))}
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/memory/delete")
+def delete_memory(payload: dict):
+    try:
+        delete(payload.get("user_id"))
+        return {"deleted": True}
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/chat")
+def chat(payload: dict):
+    try:
+        return chat_respond(payload, service.client)
+    except ConfigurationError as exc:
+        raise HTTPException(503, str(exc)) from exc
+    except ModelError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    except (ValueError, TypeError, KeyError) as exc:
         raise HTTPException(422, str(exc)) from exc
 
 

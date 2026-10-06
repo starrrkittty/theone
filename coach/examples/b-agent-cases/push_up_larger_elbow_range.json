@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-push-up-contrast-001",
+  "timestamp": "2026-10-05T12:35:00+08:00",
+  "exercise_id": "push_up",
+  "rep_index": 6,
+  "phase": "bottom",
+  "joints": {
+    "left_elbow_flexion": {"angle_deg": 121, "confidence": 0.9, "definition": "included_segment_angle"},
+    "right_elbow_flexion": {"angle_deg": 117, "confidence": 0.87, "definition": "included_segment_angle"},
+    "trunk_inclination": {"angle_deg": 12, "confidence": 0.84, "definition": "inclination_from_vertical"}
+  },
+  "metadata": {"camera_view": "side", "measurement_space": "2d", "classification_confidence": 0.96, "exercise_variant": "standard push-up", "phase_sequence": ["top", "descent", "bottom", "ascent"]},
+  "reported_symptoms": []
+}

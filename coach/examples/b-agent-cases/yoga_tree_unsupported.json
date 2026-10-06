@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "session_id": "demo-yoga-tree-unsupported-001",
+  "timestamp": "2026-10-05T13:05:00+08:00",
+  "exercise_id": "yoga_tree",
+  "rep_index": 0,
+  "phase": "hold",
+  "joints": {},
+  "metadata": {"camera_view": "oblique", "measurement_space": "2d", "classification_confidence": 0.86, "hold_duration_seconds": 15, "support_used": false, "measurement_scope": "pose-family category only"},
+  "reported_symptoms": []
+}

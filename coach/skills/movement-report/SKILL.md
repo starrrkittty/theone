@@ -37,6 +37,32 @@ For each applicable checklist item, decide whether it is actually observable. He
 
 Return findings only for measured joints. Preserve the observed angle and confidence exactly. Missing temporal data cannot establish speed, fatigue, stability trends or repetition quality. Missing user reports cannot establish pain or comfort. No universal angle thresholds, invented citations or general form score.
 
+## User-facing report style
+
+Keep raw measurements as internal evidence for validation. In all user-facing
+Chinese text (`expected`, cue text/rationale, limitations, missing observations,
+and any overall summary), never print a numeric joint angle, confidence value,
+or a dump/list of every observed joint. Mention only the one or two observations
+that materially change the coaching recommendation. Describe supported
+magnitude qualitatively (for example, “略偏大”, “偏小”, “较明显”) and explain
+what that may mean for this exercise variation without calling it inherently
+wrong or unsafe. Do not enumerate measurements just because they are present.
+
+If an observation may indicate an issue but view, occlusion, confidence,
+calibration, phase, or measurement definition prevents a firm conclusion, phrase
+it as a warning: state that the signal is uncertain, avoid asserting a fault,
+and give a low-risk next step such as adjusting the camera, repeating the set,
+or using a comfortable controlled range. Such uncertain observations must be
+presented with warning tone, not as ordinary positive/neutral advice. Do not
+turn absent evidence into a warning about a specific body part; say what could
+not be assessed.
+
+Finish the user-facing response with a concise overall summary that integrates
+the main supported observation, evidence quality, and the highest-priority
+next action. If evidence is limited, the summary must say so and must not imply
+that the whole repetition or exercise form was verified. Do not create an
+overall numeric score.
+
 Prefer a small number of actionable cues supported by the input and knowledge. Express uncertainty and explicitly list missing observations. Low confidence must cause abstention or informational findings rather than certain correction. Unknown angle conventions limit anatomical interpretation.
 
 Use only retrieved source IDs and respect each source's review status. Project heuristics are not scientific findings. Stop symptoms are handled before generation by the safety tool.

@@ -24,5 +24,9 @@
   {"id":"semantic_yoga","source_id":"prototype_review_heuristic","tags":["movement","yoga_general"],"specialist_only":true,"exercise_ids":["yoga_tree","yoga_triangle"],"text":"工程能力边界：树式和三角式只确认姿势家族；支撑环境、保持时长、平衡趋势、舒适度和身体对齐须另有观测或用户报告。"},
   {"id":"semantic_full_body","source_id":"prototype_review_heuristic","tags":["movement","full_body_general"],"specialist_only":true,"exercise_ids":["burpee"],"text":"工程能力边界：波比跳的语义类别不证明下蹲、支撑、跳跃和落地各阶段都完成，也不能证明具体次数或姿势质量。"},
   {"id":"camera_limits","source_id":"prototype_review_heuristic","tags":["movement","squat_form","hinge_form","push_form","pull_form","lunge_form","plank_form","balance_form"],"text":"项目约束：视频关节角度只是观测；缺少相机、角度定义、负重、时间序列等信息时，不能推断疼痛、伤病、脊柱负荷或完整动作质量。禁止创造普适角度阈值。该条是项目限制，不是医学研究结论。"},
-  {"id":"progression_review","source_id":"prototype_review_heuristic","tags":["plan","report"],"text":"项目规划原则：根据用户目标、时间、器材、近期完成情况和恢复反馈调整；数据缺失时标明假设。恢复不佳、疼痛或停止信号出现时先暂停进阶。该条是保守项目策略，不是个体化处方。"}
+  {"id":"progression_review","source_id":"prototype_review_heuristic","tags":["plan","report"],"text":"项目规划原则：根据用户目标、时间、器材、近期完成情况和恢复反馈调整；数据缺失时标明假设。恢复不佳、疼痛或停止信号出现时先暂停进阶。该条是保守项目策略，不是个体化处方。"},
+  {"id":"who_adult_activity_baseline","source_id":"who_physical_activity_2020","tags":["plan","chat"],"text":"WHO 2020 成人身体活动指南给出人群层面的活动基线：每周累计 150–300 分钟中等强度有氧活动，或 75–150 分钟高强度活动，或等量组合；并建议每周至少 2 天进行涉及主要肌群的肌力活动。此为公共健康建议，不是要求初学者立即达到的训练处方；应依据能力、既往活动和恢复循序渐进。"},
+  {"id":"who_activity_progression","source_id":"who_physical_activity_2020","tags":["plan","chat"],"text":"WHO 身体活动指南强调任何活动量优于完全不活动，增加活动应结合能力并减少久坐。规划 Agent 应先帮助用户建立可持续规律，再逐步靠近人群建议；不能因为未达到目标而判为失败，也不能从短期记录推断疾病风险。"},
+  {"id":"nutrition_variety_pattern","source_id":"who_healthy_diet_2024","tags":["nutrition","chat"],"text":"WHO 健康饮食建议关注整体饮食模式的多样、平衡和适度，可围绕蔬果、豆类、全谷物及适合个人的蛋白质来源安排选择。食物组合需适配文化、可获得性、预算、偏好和过敏；该原则不构成个体化能量或医学处方。"},
+  {"id":"nutrition_training_context","source_id":"acsm_nutrition_exercise_2016","tags":["nutrition","chat"],"text":"运动营养的食物、液体与时间安排应结合训练类型、环境、个人耐受和日常饮食。缺少体重、训练量、环境和临床评估时不计算个人热量、宏量营养素或补水量；优先提供可执行的一般食物选择和按口渴/环境调整的保守建议。"}
 ]
